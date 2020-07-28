@@ -1,0 +1,10 @@
+amazon:
+  access:
+    key: XXXX
+    secret-key: XXX
+  region: eu-west-2
+  end-point:
+    url: dynamodb.eu-west-2.amazonaws.com
+server:
+    port: 5000
+cases-api-url: https://data.london.gov.uk/api/table/s8c9t_j4fs2?sql=
