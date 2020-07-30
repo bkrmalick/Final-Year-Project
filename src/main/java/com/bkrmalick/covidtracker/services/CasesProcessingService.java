@@ -64,7 +64,27 @@ public class CasesProcessingService
 				.mapToInt(row-> row.getNew_cases())
 				.sum();
 
-		return new CasesApiOutputRow(borough,69,totalCases,casesInPastTwoWeeks);
+		double dangerPercentage=calculateDangerPercentage(inputRows, borough,totalCases);
+
+		return new CasesApiOutputRow(borough,dangerPercentage,totalCases,casesInPastTwoWeeks);
+	}
+
+	/**
+	 * Calculates the danger level as totalcases/highesttotalcases
+	 * todo find out relation using r?
+	 */
+	private double calculateDangerPercentage(CasesApiInputRow[] inputRows,String borough, int totalCases)
+	{
+		int maxTotalCases=Arrays.stream(inputRows)
+				.max(Comparator.comparing(CasesApiInputRow::getTotal_cases))
+				.orElseThrow(()->new IllegalStateException("Cannot find max total cases of boroughs"))
+				.getTotal_cases();
+
+		double rValue=(double)totalCases*100/maxTotalCases;
+
+		rValue =Math.round(rValue *100.0)/100.0;
+		return  rValue;
+
 	}
 
 

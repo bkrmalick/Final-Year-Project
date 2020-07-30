@@ -1,0 +1,71 @@
+
+/*RESET RULES START*/
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/*RESET RULES END*/
+
+.App {
+  text-align: center;
+}
+
+nav{
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  min-height: 5vh;
+  background-color: #333;
+  margin: 0 auto;
+  width: 15%;
+  padding: 0;
+}
+
+.nav-links{
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  border: 1px solid lightcoral;
+}
+
+
+a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  border-bottom: 3px solid transparent;
+  margin: 0;
+}
+
+a:hover {
+  border-bottom: 3px solid red;
+}
+
