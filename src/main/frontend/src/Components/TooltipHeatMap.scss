@@ -1,0 +1,115 @@
+
+* {
+    box-sizing: border-box;
+  }
+  
+  $width: 70%;
+
+  .examples {
+      width: $width;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+      text-align: center;
+  
+      &__title {
+          margin-bottom: 80px;
+          padding-bottom: 40px;
+          border-bottom: 1px dotted black;
+          font-size: 24px;
+      }
+  
+      &__block {
+          margin-bottom: 80px;
+          padding-bottom: 20px;
+          border-bottom: 1px dotted black;
+  
+  
+          &__title {
+              margin-bottom: 40px;
+              padding-top: 40px;
+              font-size: 20px;
+          }
+
+          &__refreshDate {
+            margin: 50px 0 0 0;
+        }
+  
+          &__info {
+              display: inline-block;
+              vertical-align: top;
+              width: 450px;
+              text-align: left;
+  
+              &__item {
+                  margin-bottom: 20px;
+              }
+          }
+  
+          &__map {
+              display: inline-block;
+              width: 500px;
+
+              &--london {
+                  width: $width;
+  
+                  .svg-map__location {
+                    
+              /*         &--heat0 {
+                          fill: blue;
+                      }
+  
+                      &--heat1 {
+                          fill: lightblue;
+                      }
+  
+                      &--heat2 {
+                          fill: orange;
+                      }
+  
+                      &--heat3 {
+                          fill: red;
+                      }
+   */
+                      &:focus,
+                      &:hover {
+                          opacity: 0.75;
+                      }
+                  }
+              }
+  
+              &__tooltip {
+                  position: fixed;
+                  width: 200px;
+                  margin-top: 20px;
+                  padding: 10px;
+                  border: 1px solid darkgray;
+                  background-color: white;
+              }
+          }
+      }
+  }
+
+
+  .svg-map {
+	width: 100%;
+	height: auto;
+	stroke: #666;
+	stroke-width: 1;
+	stroke-linecap: round;
+    stroke-linejoin: round;
+
+	&__location {
+		fill: navy;
+		cursor: pointer;
+
+		&:focus,
+		&:hover {
+			fill: lightblue;
+			outline: 0;
+		}
+
+		&[aria-checked=true] {
+			fill: #f4bc44;
+		}
+	}
+}

@@ -22,6 +22,7 @@ public class CasesController
 	@GetMapping("/cases")
 	public CasesApiOutput getCases()
 	{
+		System.out.println("CALL");
 		return casesProcessingService.produceOutputResponse();
 	}
 

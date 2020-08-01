@@ -1,11 +1,14 @@
 import React from 'react';
+import TooltipHeatMap from './TooltipHeatMap';
 
 
 function Home() {
   return (
-    <div>
-        <h1>Home Page</h1>
-    </div>
+    <>
+      <section className="examples">
+        <TooltipHeatMap />
+      </section>
+    </>
   );
 }
 

@@ -1,11 +1,15 @@
 package com.bkrmalick.covidtracker.models.cases_api.output;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CasesApiOutput
 {
+	@JsonFormat(pattern="dd-MM-yyyy")
 	private Date lastRefreshDate;
+
 	private CasesApiOutputRow[] rows;
 
 	public CasesApiOutput(CasesApiOutputRow[] rows, Date lastRefreshDate)
