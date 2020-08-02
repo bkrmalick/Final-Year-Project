@@ -3,9 +3,9 @@ import React from 'react';
 function App(props) {
     return (
         <>
-		<p>{"LOCATION: "+props.location}</p>
-		<p>{"DANGER:"+String(props.dangerLevel)}</p>
-        <p>{"Cases in past two wks: "+String(props.casesInPastTwoWks)}</p>
+		<h1>{props.location}</h1><br/>
+		<p>{+String(props.dangerLevel)+"%"}</p> <br/>
+        <p>{"cases in past two wks: "+String(props.casesInPastTwoWks)}</p>
 		</>
     );
   }

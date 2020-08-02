@@ -4,11 +4,11 @@ import './App.css';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 //navigation
-import Nav from './Components/Nav'
+import Nav from './components/Nav'
 
 //pages
-import Home from './Components/Home'
-import About from './Components/About'
+import Home from './components/Home'
+import About from './components/About'
 
 function App() {
   return (

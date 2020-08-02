@@ -1,5 +1,5 @@
 import React from 'react';
-import Map from "../map";
+import Map from "../map2";
 import { SVGMap } from "react-svg-map";
 
 import './TooltipHeatMap.scss';
@@ -18,6 +18,7 @@ class TooltipHeatMap extends React.Component {
 			tooltipStyle: {
 				display: 'none'
 			},
+			casesData:null,
 			casesDataRefreshDate:null,
 			casesDataLoaded: false
 		};
@@ -35,7 +36,8 @@ class TooltipHeatMap extends React.Component {
 				console.log(res);
 				this.setState ( {
 					casesDataRefreshDate:res.data.lastRefreshDate,
-					casesDataLoaded: true
+					casesDataLoaded: true,
+					casesData:res.data.rows
 				});
 		
 			})
@@ -49,9 +51,15 @@ class TooltipHeatMap extends React.Component {
 	}
 
 	getTooltipText(event) {
+		
+		var {casesData,casesDataLoaded} = this.state;
 		const LOCATION_NAME=getLocationName(event);
+		let CASES_DATA_RECORD={danger_percentage:null,cases_in_past_2_wks:null};
 
-		return <TooltipText location={LOCATION_NAME} dangerLevel={69} casesInPastTwoWks={1}/>;
+		if(casesDataLoaded)
+			CASES_DATA_RECORD=casesData.filter(row=>row.area_name.toUpperCase()===LOCATION_NAME.toUpperCase())[0];
+
+		return <TooltipText location={LOCATION_NAME} dangerLevel={CASES_DATA_RECORD.danger_percentage} casesInPastTwoWks={CASES_DATA_RECORD.cases_in_past_2_wks}/>;
 	}
 
 	handleLocationMouseOut() {
@@ -93,7 +101,7 @@ class TooltipHeatMap extends React.Component {
 					</div>
 				</div>
 				
-				<p className="examples__block__refreshDate">Valid as of: { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
+				<p className="examples__block__refreshDate">Valid as of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
 		);
 	}
