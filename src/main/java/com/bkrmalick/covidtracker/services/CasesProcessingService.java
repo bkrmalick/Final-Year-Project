@@ -23,8 +23,6 @@ public class CasesProcessingService
 
 	public CasesApiOutput produceOutputResponse()
 	{
-		//todo etag check
-
 		/*GET THE INPUT DATA FROM EXT API*/
 		Date lastRefreshDate= casesDataAccessService.getLastRefreshDate();
 		CasesApiInput dataForTwoWeeks = casesDataAccessService.getDataForTwoWeeksBeforeDate(lastRefreshDate);

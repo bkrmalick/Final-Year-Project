@@ -5,7 +5,7 @@
   
   $width: 70%;
 
-  .examples {
+  .MapContainer {
       width: $width;
       margin: 0 auto;
       font-family: Arial, sans-serif;
@@ -54,25 +54,25 @@
   
                   .svg-map__location {
                     
-              /*         &--heat0 {
-                          fill: blue;
+                       &--heat0 {
+                          fill: navy;
                       }
   
                       &--heat1 {
-                          fill: lightblue;
+                          fill: lightyellow;
                       }
   
                       &--heat2 {
-                          fill: orange;
+                          fill: rosybrown;
                       }
   
                       &--heat3 {
-                          fill: red;
+                          fill: lightcoral;
                       }
-   */
+   
                       &:focus,
                       &:hover {
-                          opacity: 0.75;
+                          opacity: 0.5;
                       }
                   }
               }
@@ -84,6 +84,7 @@
                   padding: 10px;
                   border: 1px solid darkgray;
                   background-color: white;
+                  opacity: 90%;
               }
           }
       }
@@ -92,7 +93,7 @@
 
   .svg-map {
 	width: 100%;
-	height: auto;
+	height: 150%;
 	stroke: #666;
 	stroke-width: 1;
 	stroke-linecap: round;
@@ -104,8 +105,8 @@
 
 		&:focus,
 		&:hover {
-			fill: lightblue;
-			outline: 0;
+            outline: 0;
+            fill: gray;
 		}
 
 		&[aria-checked=true] {

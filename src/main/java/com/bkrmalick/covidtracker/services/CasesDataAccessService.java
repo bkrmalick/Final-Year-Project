@@ -3,6 +3,7 @@ package com.bkrmalick.covidtracker.services;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +16,7 @@ public class CasesDataAccessService
 	private RestTemplate restTemplate;
 
 	@Autowired
-	public CasesDataAccessService(String apiURL, RestTemplate restTemplate)
+	public CasesDataAccessService(@Qualifier("casesApiURL") String apiURL, RestTemplate restTemplate)
 	{
 		this.apiURL = apiURL;
 		this.restTemplate = restTemplate;

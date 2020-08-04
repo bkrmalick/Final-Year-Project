@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/cases")
 public class CasesController
 {
 	private CasesProcessingService casesProcessingService;
@@ -19,10 +19,10 @@ public class CasesController
 		this.casesProcessingService=casesProcessingService;
 	}
 
-	@GetMapping("/cases")
-	public CasesApiOutput getCases()
+	@GetMapping
+	public CasesApiOutput getCasesApiOutput()
 	{
-		System.out.println("CALL");
+		System.out.println("CALL CASES");
 		return casesProcessingService.produceOutputResponse();
 	}
 

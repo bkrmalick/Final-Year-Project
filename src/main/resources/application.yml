@@ -8,3 +8,4 @@ amazon:
 server:
     port: 5000
 cases-api-url: https://data.london.gov.uk/api/table/s8c9t_j4fs2?sql=
+postcode-api-url: http://api.postcodes.io/postcodes/
