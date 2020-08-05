@@ -30,8 +30,8 @@ public class PostCodeDataAccessService
 
 		borough=(String) result.get("primary_care_trust");
 
-		//if(borough==null)
-		//	throw new NullPointerException("key [primary_care_trust] in ext API not found or null");
+		if(borough==null)
+			throw new IllegalStateException("key [primary_care_trust] in ext API not found or null");
 
 		return borough;
 	}
