@@ -17,7 +17,7 @@ public class PostCodeProcessingService
 		this.postCodeDataAccessService = postCodeDataAccessService;
 	}
 
-	public PostCodeApiOutput produceOutputResponse(String postCode) //throws Exception
+	public PostCodeApiOutput produceOutputResponse(String postCode)
 	{
 		String borough=null;
 

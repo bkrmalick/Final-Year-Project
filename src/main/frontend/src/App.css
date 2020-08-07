@@ -68,6 +68,23 @@ a:hover {
   border-bottom: 3px solid red;
 }
 
-.date{
+.dateBox{
   float:right;
+}
+
+.dateBox #mode{
+  margin-top: 5%;
+  text-align: left;
+}
+
+.NormalMode
+{
+  font-weight: bold;
+  color: green;
+}
+
+.PredictionMode
+{
+  font-weight: bold;
+  color: blue;
 }

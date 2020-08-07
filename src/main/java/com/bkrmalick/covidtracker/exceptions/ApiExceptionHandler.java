@@ -32,7 +32,7 @@ public class ApiExceptionHandler
 
 		//1. Create payload containing exception details
 		ApiExceptionDescriber z= new ApiExceptionDescriber(
-				e.getMessage(),
+				e.getResponseBodyAsString(),
 				statusCode,
 				ZonedDateTime.now(ZoneId.of("Europe/London")));
 

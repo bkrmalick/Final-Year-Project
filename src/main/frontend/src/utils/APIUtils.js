@@ -6,3 +6,8 @@ export function getCasesData(event)
 {
      return axios.get(API_URL +`api/v1/cases`);
 }
+
+export function getBoroughForPostCode(postCode)
+{
+     return axios.get(API_URL +`api/v1/postcode/`+postCode);
+}

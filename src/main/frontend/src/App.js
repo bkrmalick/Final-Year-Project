@@ -11,6 +11,14 @@ import Home from './components/Home'
 import About from './components/About'
 
 function App() {
+
+  const CONSOLE_LOGGING=true; //change for proeuction as affects performance
+
+  if (!CONSOLE_LOGGING)
+  {
+    console.log = () => {};
+  }
+
   return (
     <Router>
       <div className="App">

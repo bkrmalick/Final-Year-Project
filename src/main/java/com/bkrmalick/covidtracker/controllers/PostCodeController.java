@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.UnknownContentTypeException;
 
 @RestController
 @RequestMapping("/api/v1/postcode")
@@ -22,9 +21,15 @@ public class PostCodeController
 	}
 
 	@GetMapping(path="{postCode}")
-	public PostCodeApiOutput getPostCodeApiOutput(@PathVariable("postCode") String postCode)
+	public PostCodeApiOutput getPostCodeApiOutput(@PathVariable(value = "postCode") String postCode)
 	{
 		System.out.println("CALL POSTCODE");
 		return postCodeProcessingService.produceOutputResponse(postCode);
+	}
+
+	@GetMapping
+	public PostCodeApiOutput getPostCodeApiOutputWithoutParameter()
+	{
+		return getPostCodeApiOutput("");
 	}
 }

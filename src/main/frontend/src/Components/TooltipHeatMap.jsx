@@ -4,6 +4,7 @@ import { SVGMap } from "react-svg-map";
 
 import './TooltipHeatMap.scss';
 import TooltipText from './TooltipText';
+import DatePicker from './Datepicker';
 
 //utils
 import {getLocationName} from '../utils/MapUtils'
@@ -81,12 +82,7 @@ class TooltipHeatMap extends React.Component {
 		};
 		this.setState({ tooltipStyle });
 	}
-
-/* 	getLocationClassName(location, index) 
-	{
-		return `svg-map__location svg-map__location--heat${((0/100)*4).toFixed(0) }`;
-	} */
-
+	
 	getLocationClassName(location, index) 
 	{
 		let CASES_DATA_RECORD;
@@ -112,7 +108,9 @@ class TooltipHeatMap extends React.Component {
 		var {casesDataRefreshDate,casesDataLoaded} = this.state;
 
 		return (
+			<>
 			<article className="MapContainer__block">
+			<DatePicker date={casesDataRefreshDate}/><br/>
 				<h2 className="MapContainer__block__title">
 					London Boroughs
 				</h2>
@@ -128,8 +126,9 @@ class TooltipHeatMap extends React.Component {
 					</div>
 				</div>
 				
-				<p className="MapContainer__block__refreshDate">Valid as of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
+				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
+			</>
 		);
 	}
 }

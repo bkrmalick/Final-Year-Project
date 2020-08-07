@@ -1,9 +1,6 @@
 package com.bkrmalick.covidtracker.exceptions;
 
-
-
 import org.springframework.http.HttpStatus;
-
 import java.time.ZonedDateTime;
 
 /**
@@ -11,7 +8,7 @@ import java.time.ZonedDateTime;
  */
 public class ApiExceptionDescriber
 {
-	private final String message;
+	private final String message; //actually the external api response - set in ApiExceptionHandler
 	private final HttpStatus httpStatus;
 	private final ZonedDateTime timestamp;
 
