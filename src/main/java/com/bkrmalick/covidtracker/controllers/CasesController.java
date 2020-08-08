@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/cases")
+//todo CORS policy
 public class CasesController
 {
 	private CasesProcessingService casesProcessingService;

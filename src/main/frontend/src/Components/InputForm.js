@@ -5,7 +5,7 @@ import './InputForm.css';
 //utils
 import {getBoroughForPostCode} from '../utils/APIUtils'
 
-function InputForm()
+function InputForm(props)
 {
     const [postCode,setPostCode] = useState("");
     const [errorText,setErrorText] = useState("");
@@ -27,7 +27,9 @@ function InputForm()
         console.log(resp);
         const BOROUGH=resp.data.borough;
         console.log(BOROUGH);
+        
 
+        props.triggerHover(BOROUGH);
         setSubmitDisabled(false);
     }
 

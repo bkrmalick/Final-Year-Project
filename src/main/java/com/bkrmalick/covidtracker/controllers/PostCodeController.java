@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/postcode")
+//todo CORS policy
 public class PostCodeController
 {
 	private PostCodeProcessingService postCodeProcessingService;

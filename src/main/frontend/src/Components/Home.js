@@ -1,6 +1,5 @@
 import React from 'react';
-import TooltipHeatMap from './TooltipHeatMap';
-import InputForm from './InputForm';
+import TooltipHeatMap from './map/TooltipHeatMap';
 
 
 
@@ -11,7 +10,6 @@ function Home() {
     <>
       <section className="MapContainer">
         <TooltipHeatMap />
-        <InputForm/>
       </section>
     </>
   );

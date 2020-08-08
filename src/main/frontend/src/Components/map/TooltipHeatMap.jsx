@@ -1,14 +1,16 @@
 import React from 'react';
-import Map from "../map";
-import { SVGMap } from "react-svg-map";
-
+import LondonMap from "../../raw_map_files";
 import './TooltipHeatMap.scss';
-import TooltipText from './TooltipText';
-import DatePicker from './Datepicker';
+
+//other components
+import  SVGMap  from "./svg-map";
+import TooltipText from '../TooltipText';
+import DatePicker from '../Datepicker';
+import InputForm from '../InputForm';
 
 //utils
-import {getLocationName} from '../utils/MapUtils'
-import {getCasesData} from '../utils/APIUtils'
+import {getLocationName} from '../../utils/MapUtils'
+import {getCasesData} from '../../utils/APIUtils'
 
 class TooltipHeatMap extends React.Component {
 	constructor(props) {
@@ -62,10 +64,11 @@ class TooltipHeatMap extends React.Component {
 		return casesData.filter(row=>row.area_name.toUpperCase()===LOCATION_NAME.toUpperCase())[0];
 	}
 
-	getTooltipText(event) {
+	//accepts either name of location to hover over OR the actual hover event
+	getTooltipText(nameOrEvent) {
 		
 		var {casesData,casesDataLoaded} = this.state;
-		const LOCATION_NAME=getLocationName(event);
+		const LOCATION_NAME= (typeof nameOrEvent)==="string" ? nameOrEvent: getLocationName(nameOrEvent);
 		let CASES_DATA_RECORD={danger_percentage:"Loading",cases_in_past_2_wks:"Loading"};
 
 		if(casesDataLoaded)
@@ -103,6 +106,14 @@ class TooltipHeatMap extends React.Component {
 		return `svg-map__location svg-map__location--heat${heatNumber}`;
 	}
 
+	triggerHover(LOCATION_NAME)
+	{
+		let ev = new Event('Hover', { bubbles: true});
+		ev.simulated = true;
+		this.dispatch(ev);
+		
+	}
+
 	render() {
 
 		var {casesDataRefreshDate,casesDataLoaded} = this.state;
@@ -116,11 +127,12 @@ class TooltipHeatMap extends React.Component {
 				</h2>
 				<div className="MapContainer__block__map MapContainer__block__map--london">
 					<SVGMap
-						map={Map}
+						map={LondonMap}
 						locationClassName={this.getLocationClassName}
 						onLocationMouseOver={this.handleLocationMouseOver}
 						onLocationMouseOut={this.handleLocationMouseOut}
-						onLocationMouseMove={this.handleLocationMouseMove} />
+						onLocationMouseMove={this.handleLocationMouseMove}
+						onLocationClick={e=>console.log(e.target.id)} />
 					<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 						{this.state.pointedLocation}
 					</div>
@@ -128,6 +140,8 @@ class TooltipHeatMap extends React.Component {
 				
 				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
+			<InputForm triggerHover={this.triggerHover}/>
+
 			</>
 		);
 	}
