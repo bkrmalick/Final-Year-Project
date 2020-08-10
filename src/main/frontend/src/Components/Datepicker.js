@@ -50,7 +50,6 @@ function Datepicker(props) {
         else
         {
             if(newDate>refreshDate)
-                //alert("You have selected a date beyond what we have data for. The application will now try to predict the data for the selected date.");
                 setMode("Prediction");
             else
                 setMode("Normal");

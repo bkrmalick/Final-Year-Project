@@ -30,6 +30,7 @@ class TooltipHeatMap extends React.Component {
 		this.handleLocationMouseOut = this.handleLocationMouseOut.bind(this);
 		this.handleLocationMouseMove = this.handleLocationMouseMove.bind(this);
 		this.getLocationClassName = this.getLocationClassName.bind(this); 
+		this.triggerHover = this.triggerHover.bind(this); 
 	}
 
 	componentDidMount()
@@ -50,8 +51,8 @@ class TooltipHeatMap extends React.Component {
 			.catch(err=>console.log(err));
 	}
 
-	handleLocationMouseOver(event) {
-		const pointedLocation = this.getTooltipText(event);
+	handleLocationMouseOver(nameOrEvent) {
+		const pointedLocation = this.getTooltipText(nameOrEvent);
 		this.setState({ pointedLocation });
 	}
 
@@ -106,12 +107,16 @@ class TooltipHeatMap extends React.Component {
 		return `svg-map__location svg-map__location--heat${heatNumber}`;
 	}
 
+
 	triggerHover(LOCATION_NAME)
 	{
 		let ev = new Event('Hover', { bubbles: true});
+		ev.clientX= 1126;
+		ev.ClientY= 647;
 		ev.simulated = true;
-		this.dispatch(ev);
 		
+		this.handleLocationMouseMove(ev);	
+		this.handleLocationMouseOver(LOCATION_NAME); 
 	}
 
 	render() {

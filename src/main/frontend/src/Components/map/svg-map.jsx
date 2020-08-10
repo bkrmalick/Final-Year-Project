@@ -5,22 +5,21 @@ import { useState } from 'react';
 
 function SVGMap(props) {
 
-	const SCALE_SVG = 1.4; //Scale SVG inside the viewer
 	const [tool, setTool] = useState(TOOL_NONE);
-	const [value, setValue] = useState({ "a": SCALE_SVG, "c": 0, "e": 0, "b": 0, "d": SCALE_SVG, "f": 0, "version": 3, "mode": "idle", "focus": false, "pinchPointDistance": null, "prePinchMode": null, "viewerWidth": 1120, "viewerHeight": 539, "SVGMinX": 0, "SVGMinY": 0, "SVGWidth": 800, "SVGHeight": 385, "scaleFactorMin": null, "scaleFactorMax": null, "startX": null, "startY": null, "endX": null, "endY": null, "miniatureOpen": true, "lastAction": null });
-
+	//below intial value sets position/size of svg inside viewer
+	const [value, setValue] = useState({SVGHeight: 385,SVGMinX: 0,SVGMinY: 0,SVGWidth: 800,a: 1.2727272727272727,b: 0,c: 0,d: 1.2727272727272727,e: 50.27272727272731,endX: null,endY: null,f: 21.363636363636374,focus: false,lastAction: null,miniatureOpen: true,mode: "idle",pinchPointDistance: null,prePinchMode: null,scaleFactorMax: null,scaleFactorMin: null,startX: null,startY: null,version: 3, 		viewerHeight: 539, 		viewerWidth: 1120});
 
 	return (
 		<ReactSVGPanZoom
-			width={800 * SCALE_SVG} height={385 * SCALE_SVG} //sets the dimensions of the viewer and not the svg map
+			width={800} height={385} //sets the dimensions of the viewer and not the svg map (will increase itself to fit intial value)  //TODO make this responsive to screen size
 			onClick={event => { console.log(event.x, event.y, event.originalEvent); zoom(472, 128, 1.5); }} //TODO not working?? ? 
 			tool={tool}
 			onChangeTool={t => setTool(t)}
 			value={value}
-			onChangeValue={v => { console.log(v); setValue(v); }}
+			onChangeValue={v => {console.log(v);setValue(v); }}
 			detectAutoPan={false}
 			preventPanOutside={true}
-			background="grey" //TODO change to white
+			background="white" //TODO change to white
 			className="MapContainer__block__map MapContainer__block__map__ViewerBox"
 			toolbarProps={{
 				activeToolColor: "LightCoral"

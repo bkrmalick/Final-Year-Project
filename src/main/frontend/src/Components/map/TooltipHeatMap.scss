@@ -54,6 +54,7 @@
 
                   .svg-map__location {
                       stroke:black;
+                      stroke-width: 0.5;
                     
                        &--heat0 {
                           fill: navy;
@@ -110,11 +111,9 @@
 			fill: #f4bc44;
 		}
     }
+}
 
-    path{
-        stroke: black; //#666;
-        stroke-width: 0.5;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
+div[role="toolbar"]
+{
+    transform:scale(1.2)!important;
 }

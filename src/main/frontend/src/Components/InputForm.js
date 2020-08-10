@@ -26,9 +26,7 @@ function InputForm(props)
     {
         console.log(resp);
         const BOROUGH=resp.data.borough;
-        console.log(BOROUGH);
         
-
         props.triggerHover(BOROUGH);
         setSubmitDisabled(false);
     }
@@ -39,10 +37,12 @@ function InputForm(props)
 
         if(err.response.status===500)
         {
-            setErrorText("Server error, please contact admin.");
+            //something went wrong with our backend
+            setErrorText("Server error, please contact admin."); 
         }
         else
         {
+            //something wrong with the user request
             const errorResp=JSON.parse(err.response.data.message);
             setErrorText(errorResp.error);
         }
