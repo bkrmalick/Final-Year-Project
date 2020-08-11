@@ -3,12 +3,21 @@ import PropTypes from 'prop-types';
 import { ReactSVGPanZoom, TOOL_NONE, zoom  } from 'react-svg-pan-zoom';
 import { useState } from 'react';
 import {AutoSizer} from 'react-virtualized';
+import { useRef } from 'react';
 
 function SVGMap(props) {
 
 	const [tool, setTool] = useState(TOOL_NONE);
 	//below intial value sets position/size of svg inside viewer
 	const [value, setValue] = useState({});
+	const viewerRef  = useRef({});
+	const [isFirstRender, setIsFirstRender] = useState(true);
+
+	if(viewerRef.current.fitToViewer!==undefined && isFirstRender) //for first few renders the viewerRef does not have this function
+	{	
+		viewerRef.current.fitToViewer("center", "center");
+		setIsFirstRender(false);
+	}
 
 	return (
     <AutoSizer>
@@ -19,12 +28,13 @@ function SVGMap(props) {
 			tool={tool}
 			onChangeTool={t => setTool(t)}
 			value={value}
-			onChangeValue={v => {console.log(v);setValue(v); }}
+			onChangeValue={v => setValue(v) }
 			detectAutoPan={false}
 			preventPanOutside={true}
 			background="white" //TODO change to white
 			className="MapContainer__block__map MapContainer__block__map__ViewerBox"
 			toolbarProps={{	activeToolColor: "LightCoral"}}
+			ref={viewerRef}
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -38,13 +48,13 @@ function SVGMap(props) {
 					return (
 						<path
 							id={location.id}
-							name={location.name}
+//							name={location.name}
 							d={location.path}
 							className={typeof props.locationClassName === 'function' ? props.locationClassName(location, index) : props.locationClassName}
 							tabIndex={typeof props.locationTabIndex === 'function' ? props.locationTabIndex(location, index) : props.locationTabIndex}
-							role={props.locationRole}
-							aria-label={location.name}
-							aria-checked={props.isLocationSelected && props.isLocationSelected(location, index)}
+//							role={props.locationRole}
+//							aria-label={location.id}
+							aria-checked={props.isLocationSelected && props.isLocationSelected(location.id)}
 							onMouseOver={props.onLocationMouseOver}
 							onMouseOut={props.onLocationMouseOut}
 							onMouseMove={props.onLocationMouseMove}

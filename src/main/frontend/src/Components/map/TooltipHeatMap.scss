@@ -55,6 +55,10 @@
                   .svg-map__location {
                       stroke:black;
                       stroke-width: 0.5;
+
+                      &[aria-checked="false"]{
+                          opacity: 0.3;
+                      }
                     
                        &--heat0 {
                           fill: navy;

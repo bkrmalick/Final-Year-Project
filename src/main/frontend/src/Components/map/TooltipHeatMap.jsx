@@ -23,7 +23,8 @@ class TooltipHeatMap extends React.Component {
 			},
 			casesData:null,
 			casesDataRefreshDate:null,
-			casesDataLoaded: false
+			casesDataLoaded: false,
+			selectedLocation:null
 		};
 
 		this.handleLocationMouseOver = this.handleLocationMouseOver.bind(this);
@@ -31,6 +32,7 @@ class TooltipHeatMap extends React.Component {
 		this.handleLocationMouseMove = this.handleLocationMouseMove.bind(this);
 		this.getLocationClassName = this.getLocationClassName.bind(this); 
 		this.triggerHover = this.triggerHover.bind(this); 
+		this.isLocationSelected = this.isLocationSelected.bind(this); 
 	}
 
 	componentDidMount()
@@ -65,6 +67,11 @@ class TooltipHeatMap extends React.Component {
 		return casesData.filter(row=>row.area_name.toUpperCase()===LOCATION_NAME.toUpperCase())[0];
 	}
 
+	isLocationSelected(LOCATION_NAME)
+	{
+		return this.state.selectedLocation===null || this.state.selectedLocation===LOCATION_NAME;
+	}
+
 	//accepts either name of location to hover over OR the actual hover event
 	getTooltipText(nameOrEvent) {
 		
@@ -79,6 +86,9 @@ class TooltipHeatMap extends React.Component {
 	}
 
 	handleLocationMouseMove(event) {
+
+		this.setState({selectedLocation:null}); //unselect any location
+
 		const tooltipStyle = {
 			display: 'block',
 			top: event.clientY + 10,
@@ -115,8 +125,10 @@ class TooltipHeatMap extends React.Component {
 		ev.ClientY= 647;
 		ev.simulated = true;
 
-		this.handleLocationMouseMove(ev);	
+		//this.handleLocationMouseMove(ev);	
 		this.handleLocationMouseOver(LOCATION_NAME); 
+
+		this.setState({selectedLocation:LOCATION_NAME});
 	}
 
 	render() {
@@ -130,7 +142,7 @@ class TooltipHeatMap extends React.Component {
 				<h2 className="MapContainer__block__title">
 					London Boroughs
 				</h2>
-				<div className="MapContainer__block__map MapContainer__block__map--london" style={{width: "60%", height: "50vh"}}>
+				<div className="MapContainer__block__map MapContainer__block__map--london" style={{width: "70%", height: "50vh"}}>
 					<SVGMap
 						map={LondonMap}
 						locationClassName={this.getLocationClassName}
@@ -138,7 +150,8 @@ class TooltipHeatMap extends React.Component {
 						onLocationMouseOut={this.handleLocationMouseOut}
 						onLocationMouseMove={this.handleLocationMouseMove}
 						onLocationClick={e=>console.log(e.target.id)} 
-						className="svg-map"/>
+						className="svg-map"
+						isLocationSelected={this.isLocationSelected}/>
 					<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 						{this.state.pointedLocation}
 					</div>
