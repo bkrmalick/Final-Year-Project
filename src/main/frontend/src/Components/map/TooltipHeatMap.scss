@@ -50,8 +50,8 @@
               
               &--london {
                   text-align: center;
-                  border: 1px solid darkgray;
-
+                  border: 1px solid black;
+                  
                   .svg-map__location {
                       stroke:black;
                       stroke-width: 0.5;
@@ -93,23 +93,22 @@
   }
 
 //TODO check if this is even being used? Find tool to remove unused css!
-  .svg-map {
-	width: 100%;
-	height: 150%;
-
-	&__location {
-		fill: navy;
-		cursor: pointer;
-
-		&:focus,
-		&:hover {
+svg {
+    
+    &__location //single borough
+    {
+        fill: navy;
+        cursor: pointer;
+        
+        &:focus,
+        &:hover {
             outline: 0;
             fill: gray;
-		}
+        }
 
-		&[aria-checked=true] {
-			fill: #f4bc44;
-		}
+        &[aria-checked=true] {
+            fill: #f4bc44;
+        }
     }
 }
 

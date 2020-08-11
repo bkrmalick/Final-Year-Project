@@ -114,7 +114,7 @@ class TooltipHeatMap extends React.Component {
 		ev.clientX= 1126;
 		ev.ClientY= 647;
 		ev.simulated = true;
-		
+
 		this.handleLocationMouseMove(ev);	
 		this.handleLocationMouseOver(LOCATION_NAME); 
 	}
@@ -125,19 +125,20 @@ class TooltipHeatMap extends React.Component {
 
 		return (
 			<>
-			<article className="MapContainer__block">
+			<article className="MapContainer__block" >
 			<DatePicker date={casesDataRefreshDate}/><br/>
 				<h2 className="MapContainer__block__title">
 					London Boroughs
 				</h2>
-				<div className="MapContainer__block__map MapContainer__block__map--london">
+				<div className="MapContainer__block__map MapContainer__block__map--london" style={{width: "60%", height: "50vh"}}>
 					<SVGMap
 						map={LondonMap}
 						locationClassName={this.getLocationClassName}
 						onLocationMouseOver={this.handleLocationMouseOver}
 						onLocationMouseOut={this.handleLocationMouseOut}
 						onLocationMouseMove={this.handleLocationMouseMove}
-						onLocationClick={e=>console.log(e.target.id)} />
+						onLocationClick={e=>console.log(e.target.id)} 
+						className="svg-map"/>
 					<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 						{this.state.pointedLocation}
 					</div>

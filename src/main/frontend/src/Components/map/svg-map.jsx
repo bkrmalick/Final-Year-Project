@@ -1,18 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ReactSVGPanZoom, TOOL_NONE, zoom } from 'react-svg-pan-zoom';
+import { ReactSVGPanZoom, TOOL_NONE, zoom  } from 'react-svg-pan-zoom';
 import { useState } from 'react';
+import {AutoSizer} from 'react-virtualized';
 
 function SVGMap(props) {
 
 	const [tool, setTool] = useState(TOOL_NONE);
 	//below intial value sets position/size of svg inside viewer
-	const [value, setValue] = useState({SVGHeight: 385,SVGMinX: 0,SVGMinY: 0,SVGWidth: 800,a: 1.2727272727272727,b: 0,c: 0,d: 1.2727272727272727,e: 50.27272727272731,endX: null,endY: null,f: 21.363636363636374,focus: false,lastAction: null,miniatureOpen: true,mode: "idle",pinchPointDistance: null,prePinchMode: null,scaleFactorMax: null,scaleFactorMin: null,startX: null,startY: null,version: 3, 		viewerHeight: 539, 		viewerWidth: 1120});
+	const [value, setValue] = useState({});
 
 	return (
+    <AutoSizer>
+      {(({width, height}) => width === 0 || height === 0 ? null : (
 		<ReactSVGPanZoom
-			width={800} height={385} //sets the dimensions of the viewer and not the svg map (will increase itself to fit intial value)  //TODO make this responsive to screen size
-			onClick={event => { console.log(event.x, event.y, event.originalEvent); zoom(472, 128, 1.5); }} //TODO not working?? ? 
+		width={width-5} height={height-5} //sets the dimensions of the viewer and not the svg map (will increase itself to fit intial value)  //TODO make this padded/margin instead of 5
+			onClick={event => { console.log(event.x, event.y, event.originalEvent); zoom(472, 128, 1.5); }} //TODO zoom not working?? ? 
 			tool={tool}
 			onChangeTool={t => setTool(t)}
 			value={value}
@@ -21,12 +24,8 @@ function SVGMap(props) {
 			preventPanOutside={true}
 			background="white" //TODO change to white
 			className="MapContainer__block__map MapContainer__block__map__ViewerBox"
-			toolbarProps={{
-				activeToolColor: "LightCoral"
-			}}
-
+			toolbarProps={{	activeToolColor: "LightCoral"}}
 		>
-
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox={"0 0 800 385"} //controls the dimensions of the actual svg map, ensure this matches the one defined in the map/index.js
@@ -60,6 +59,8 @@ function SVGMap(props) {
 				{props.childrenAfter}
 			</svg>
 		</ReactSVGPanZoom>
+      ))}
+    </AutoSizer>
 	);
 }
 
