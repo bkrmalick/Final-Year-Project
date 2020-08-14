@@ -3,6 +3,7 @@ package com.bkrmalick.covidtracker.services;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
@@ -12,13 +13,14 @@ import java.util.*;
 @Service
 public class CasesProcessingService
 {
-	private final static String [] BOROUGHS={"Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney and City of London","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster"};
+	private final String [] BOROUGHS;
 	private CasesDataAccessService casesDataAccessService;
 
 	@Autowired
-	public CasesProcessingService(CasesDataAccessService casesDataAccessService)
+	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String [] BOROUGHS)
 	{
 		this.casesDataAccessService=casesDataAccessService;
+		this.BOROUGHS=BOROUGHS;
 	}
 
 	public CasesApiOutput produceOutputResponse()

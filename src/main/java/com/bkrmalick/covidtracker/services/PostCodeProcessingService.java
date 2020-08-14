@@ -4,8 +4,6 @@ import com.bkrmalick.covidtracker.models.postcode_api.output.PostCodeApiOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-
 @Service
 public class PostCodeProcessingService
 {

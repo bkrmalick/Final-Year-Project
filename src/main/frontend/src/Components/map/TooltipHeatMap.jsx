@@ -13,6 +13,7 @@ import {getLocationName} from '../../utils/MapUtils'
 import {getCasesData} from '../../utils/APIUtils'
 
 class TooltipHeatMap extends React.Component {
+
 	constructor(props) {
 		super(props);
 
@@ -24,15 +25,17 @@ class TooltipHeatMap extends React.Component {
 			casesData:null,
 			casesDataRefreshDate:null,
 			casesDataLoaded: false,
-			selectedLocation:null
+			selectedLocationName:null,
+			selectedLocationCoordinates:null
 		};
 
 		this.handleLocationMouseOver = this.handleLocationMouseOver.bind(this);
 		this.handleLocationMouseOut = this.handleLocationMouseOut.bind(this);
 		this.handleLocationMouseMove = this.handleLocationMouseMove.bind(this);
 		this.getLocationClassName = this.getLocationClassName.bind(this); 
-		this.triggerHover = this.triggerHover.bind(this); 
+		this.setSelectedLocationName = this.setSelectedLocationName.bind(this); 
 		this.isLocationSelected = this.isLocationSelected.bind(this); 
+		this.setSelectedLocationCoordinates=this.setSelectedLocationCoordinates.bind(this);
 	}
 
 	componentDidMount()
@@ -40,18 +43,34 @@ class TooltipHeatMap extends React.Component {
 		//once map and its subcomponents have rendered 
 
 		//1. fetch data from API and update state 
-		getCasesData().then(res=>
-			{
-				console.log(res);
-				this.setState ( {
-					casesDataRefreshDate:res.data.lastRefreshDate,
-					casesDataLoaded: true,
-					casesData:res.data.rows
-				});
-		
-			})
-			.catch(err=>console.log(err));
+		if(!this.state.casesDataLoaded)
+		{
+			getCasesData().then(res=>
+				{
+					console.log(res);
+					this.setState ( {
+						casesDataRefreshDate:res.data.lastRefreshDate,
+						casesDataLoaded: true,
+						casesData:res.data.rows
+					});
+			
+				})
+				.catch(err=>console.log(err));
+		}
 	}
+
+	/*
+	componentDidUpdate(prevProps, prevState) {
+		Object.entries(this.props).forEach(([key, val]) =>
+		  prevProps[key] !== val && console.log(`Prop '${key}' changed`)
+		);
+		if (this.state) {
+		  Object.entries(this.state).forEach(([key, val]) =>
+			prevState[key] !== val && console.log(`State '${key}' changed`)
+		  );
+		}
+	  }
+	*/
 
 	handleLocationMouseOver(nameOrEvent) {
 		const pointedLocation = this.getTooltipText(nameOrEvent);
@@ -62,6 +81,18 @@ class TooltipHeatMap extends React.Component {
 		this.setState({ pointedLocation: null, tooltipStyle: { display: 'none' } });
 	}
 	
+	handleLocationMouseMove(event) 
+	{
+		this.setState({selectedLocationName:null, selectedLocationCoordinates:null}); //unselect any location
+
+		const tooltipStyle = {
+			display: 'block',
+			top: event.clientY + 10,
+			left: event.clientX - 100
+		};
+		this.setState({ tooltipStyle });
+	}
+
 	getDataRecordForArea(LOCATION_NAME, casesData)
 	{
 		return casesData.filter(row=>row.area_name.toUpperCase()===LOCATION_NAME.toUpperCase())[0];
@@ -69,12 +100,16 @@ class TooltipHeatMap extends React.Component {
 
 	isLocationSelected(LOCATION_NAME)
 	{
-		return this.state.selectedLocation===null || this.state.selectedLocation===LOCATION_NAME;
+		//console.log(this.state.selectedLocation);
+		//console.log(null);
+
+		//if no location has been selected then mark all as selected (e.g first render)
+		return this.state.selectedLocationName==null || this.state.selectedLocationName===LOCATION_NAME;
 	}
 
 	//accepts either name of location to hover over OR the actual hover event
-	getTooltipText(nameOrEvent) {
-		
+	getTooltipText(nameOrEvent) 
+	{
 		var {casesData,casesDataLoaded} = this.state;
 		const LOCATION_NAME= (typeof nameOrEvent)==="string" ? nameOrEvent: getLocationName(nameOrEvent);
 		let CASES_DATA_RECORD={danger_percentage:"Loading",cases_in_past_2_wks:"Loading"};
@@ -83,18 +118,6 @@ class TooltipHeatMap extends React.Component {
 			CASES_DATA_RECORD=this.getDataRecordForArea(LOCATION_NAME, casesData);
 
 		return <TooltipText location={LOCATION_NAME} dangerLevel={CASES_DATA_RECORD.danger_percentage} casesInPastTwoWks={CASES_DATA_RECORD.cases_in_past_2_wks}/>;
-	}
-
-	handleLocationMouseMove(event) {
-
-		this.setState({selectedLocation:null}); //unselect any location
-
-		const tooltipStyle = {
-			display: 'block',
-			top: event.clientY + 10,
-			left: event.clientX - 100
-		};
-		this.setState({ tooltipStyle });
 	}
 	
 	getLocationClassName(location, index) 
@@ -117,18 +140,38 @@ class TooltipHeatMap extends React.Component {
 		return `svg-map__location svg-map__location--heat${heatNumber}`;
 	}
 
-
-	triggerHover(LOCATION_NAME)
+	setSelectedLocationName(LOCATION_NAME)
 	{
-		let ev = new Event('Hover', { bubbles: true});
-		ev.clientX= 1126;
-		ev.ClientY= 647;
-		ev.simulated = true;
+		this.setState({selectedLocationName:LOCATION_NAME}); 
+	}
 
-		//this.handleLocationMouseMove(ev);	
-		this.handleLocationMouseOver(LOCATION_NAME); 
+	/*
+		This function gets called twice, once for path component in miniature and once for actual path. 
+		We check which left coordinate is bigger to findout the non-minature path
+	*/
+	setSelectedLocationCoordinates(el)
+	{
+		const coor=el.getBoundingClientRect(); //see object spec here: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+	
+		console.log("reached");
+		if(this.state.selectedLocationName==null) //first render where no post code inputted
+			return;
 
-		this.setState({selectedLocation:LOCATION_NAME});
+		 if(this.state.selectedLocationCoordinates==null || (coor.left > this.state.tooltipStyle.left)) //TODO bug with differernt subseuquent selected boroughs
+		{
+			
+			let tooltipStyle = {
+				display: 'block',
+				top: (coor.top + (coor.bottom-coor.y)/2 ) ,
+				left: (coor.left ) //+ (coor.right-coor.x)/2
+			};
+
+			this.setState({ tooltipStyle });
+
+			this.handleLocationMouseOver(String(el.id)); 
+
+			this.setState({selectedLocationCoordinates:coor});
+		} 
 	}
 
 	render() {
@@ -142,16 +185,17 @@ class TooltipHeatMap extends React.Component {
 				<h2 className="MapContainer__block__title">
 					London Boroughs
 				</h2>
-				<div className="MapContainer__block__map MapContainer__block__map--london" style={{width: "70%", height: "50vh"}}>
+				<div className="MapContainer__block__map MapContainer__block__map--london" style={{width: "50vw", height: "25vw"}}> {/*TODO make heigh/width proportional*/}
 					<SVGMap
 						map={LondonMap}
 						locationClassName={this.getLocationClassName}
 						onLocationMouseOver={this.handleLocationMouseOver}
 						onLocationMouseOut={this.handleLocationMouseOut}
 						onLocationMouseMove={this.handleLocationMouseMove}
-						onLocationClick={e=>console.log(e.target.id)} 
-						className="svg-map"
-						isLocationSelected={this.isLocationSelected}/>
+						isLocationSelected={this.isLocationSelected}
+						setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
+						//onLocationClick={e=>console.log(e.target.id)} 
+						className="svg-map"/>
 					<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 						{this.state.pointedLocation}
 					</div>
@@ -159,8 +203,7 @@ class TooltipHeatMap extends React.Component {
 				
 				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
-			<InputForm triggerHover={this.triggerHover}/>
-
+			<InputForm setSelectedLocationName={this.setSelectedLocationName}/>
 			</>
 		);
 	}

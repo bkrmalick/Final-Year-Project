@@ -1,8 +1,6 @@
 package com.bkrmalick.covidtracker.models.cases_api.output;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CasesApiOutput

@@ -17,6 +17,8 @@ public class ApiConfig
 	@Value("${postcode-api-url}")
 	private String postCodeApiURL;
 
+	private static final String [] BOROUGHS={"Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney and City of London","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster"};
+
 	/*create a single RestTemplate() instance bean to use for external API's ingestion*/
 	@Bean
 	public RestTemplate getRestTemplate()
@@ -38,5 +40,13 @@ public class ApiConfig
 	public String getPostCodeApiURL()
 	{
 		return postCodeApiURL;
+	}
+
+	/*create single String bean for borough names*/
+	@Bean
+	@Qualifier("BOROUGH_NAMES")
+	public String [] getBoroughNames()
+	{
+		return this.BOROUGHS;
 	}
 }

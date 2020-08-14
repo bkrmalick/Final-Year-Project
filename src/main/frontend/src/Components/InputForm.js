@@ -11,7 +11,7 @@ function InputForm(props)
     const [errorText,setErrorText] = useState("");
     const [submitDisabled,setSubmitDisabled] = useState(false);
 
-    function submit(event)
+    function onSubmit(event)
     {
         event.preventDefault();
 
@@ -27,7 +27,7 @@ function InputForm(props)
         console.log(resp);
         const BOROUGH=resp.data.borough;
         
-        props.triggerHover(BOROUGH);
+        props.setSelectedLocationName(BOROUGH);
         setSubmitDisabled(false);
     }
 
@@ -57,7 +57,7 @@ function InputForm(props)
     }
 
     return (
-        <form id="input" onSubmit={submit}>
+        <form id="input" onSubmit={onSubmit}>
           <label htmlFor="fname" id="LabelForPostCode">Post Code</label>
           <input type="text" id="postcode" value={postCode} onChange={changeHandler} /><br /><br />
           <p className="error">{errorText}</p>

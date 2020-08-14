@@ -59,9 +59,9 @@
                       &[aria-checked="false"]{
                           opacity: 0.3;
                       }
-                    
-                       &--heat0 {
-                          fill: navy;
+
+                      &--heat0 {
+                          fill: white;
                       }
   
                       &--heat1 {
@@ -79,6 +79,7 @@
                       &:focus,
                       &:hover {
                           opacity: 0.5;
+                          
                       }
                   }
               }
@@ -97,6 +98,7 @@
   }
 
 //TODO check if this is even being used? Find tool to remove unused css!
+
 svg {
     
     &__location //single borough
@@ -109,14 +111,10 @@ svg {
             outline: 0;
             fill: gray;
         }
-
-        &[aria-checked=true] {
-            fill: #f4bc44;
-        }
     }
 }
 
 div[role="toolbar"]
 {
-    transform:scale(1.2)!important;
+    transform:scale(1.15)!important;
 }
