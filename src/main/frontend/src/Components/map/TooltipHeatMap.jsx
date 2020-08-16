@@ -1,5 +1,5 @@
 import React from 'react';
-import LondonMap from "../../raw_map_files";
+import LondonMap from "../../map files";
 import './TooltipHeatMap.scss';
 
 //other components

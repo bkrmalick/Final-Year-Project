@@ -11,10 +11,8 @@ import Home from './components/Home'
 import About from './components/About'
 
 function App() {
-
-  const CONSOLE_LOGGING=true; //change for proeuction as affects performance
-
-  if (!CONSOLE_LOGGING)
+  
+  if (process.env.NODE_ENV!=="development") //change for production as affects performance
   {
     console.log = () => {};
   }
@@ -22,8 +20,8 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <h3>logo</h3>
         <Nav />
+        <h3>logo</h3>
         <Switch>
           <Route path="/" exact component={Home}/>
           <Route path="/about" exact component={About}/>

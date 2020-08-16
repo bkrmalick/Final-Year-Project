@@ -23,8 +23,6 @@ function SVGMap(props) {
 	{
 		if(pathEl!==null && !isMiniaturePath(pathEl))
 		{
-			//console.log(findParentSVGElement(pathEl).className.baseVal); //(pathEl.parentElement.parentElement.parentElement.nodeName);
-			
 			const REFIT=props.setSelectedLocationCoordinates(pathEl);
 			
 			if(REFIT)
