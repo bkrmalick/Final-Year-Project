@@ -1,9 +1,9 @@
-import React from 'react';
+import React,{useRef}  from 'react';
 import PropTypes from 'prop-types';
 import { ReactSVGPanZoom, TOOL_NONE  } from 'react-svg-pan-zoom';
 import { useState } from 'react';
 import {AutoSizer} from 'react-virtualized';
-import { useRef } from 'react';
+import Miniature from './ui-miniature/miniature.jsx';
 
 function SVGMap(props) {
 
@@ -19,10 +19,34 @@ function SVGMap(props) {
 		setIsFirstRender(false);
 	}
 
-	function setSelectedLocationElement(pathRef)
+	function setSelectedLocationElement(pathEl)
 	{
-		if(pathRef!==null)
-			props.setSelectedLocationCoordinates(pathRef);
+		if(pathEl!==null && !isMiniaturePath(pathEl))
+		{
+			//console.log(findParentSVGElement(pathEl).className.baseVal); //(pathEl.parentElement.parentElement.parentElement.nodeName);
+			
+			const REFIT=props.setSelectedLocationCoordinates(pathEl);
+			
+			if(REFIT)
+				setIsFirstRender(true);
+		}
+	}
+	
+	function isMiniaturePath(pathEl)
+	{
+		return findParentSVGElement(pathEl).className.baseVal==="miniature";
+	}
+
+	function findParentSVGElement(el)
+	{
+		let parentEl=el.parentElement;
+		
+		while(parentEl.nodeName!=="svg" )
+		{
+			parentEl=parentEl.parentElement;
+		}
+
+		return parentEl;
 	}
 
 	/*function useTraceUpdate(props) {
@@ -62,10 +86,11 @@ return (
 				className="MapContainer__block__map MapContainer__block__map__ViewerBox"
 				toolbarProps={{	activeToolColor: "LightCoral"}}
 				ref={viewerRef}
+				customMiniature={Miniature}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
-					viewBox={"0 0 800 385"} //controls the dimensions of the actual svg map, ensure this matches the one defined in the map/index.js
+					viewBox={"0 0 800 385"} //controls the dimensions of the actual svg map, ensure this matches the one defined in the raw_map_files/index.js
 					className={props.className}
 					role={props.role}
 					aria-label={props.map.label}

@@ -100,9 +100,6 @@ class TooltipHeatMap extends React.Component {
 
 	isLocationSelected(LOCATION_NAME)
 	{
-		//console.log(this.state.selectedLocation);
-		//console.log(null);
-
 		//if no location has been selected then mark all as selected (e.g first render)
 		return this.state.selectedLocationName==null || this.state.selectedLocationName===LOCATION_NAME;
 	}
@@ -146,32 +143,36 @@ class TooltipHeatMap extends React.Component {
 	}
 
 	/*
-		This function gets called twice, once for path component in miniature and once for actual path. 
-		We check which left coordinate is bigger to findout the non-minature path
+		Sets the selectedLocationCoordinates and returns whether location coordinates have been set and if the svg needs to be refit
 	*/
 	setSelectedLocationCoordinates(el)
 	{
+		const {selectedLocationName, selectedLocationCoordinates,tooltipStyle} = this.state;
 		const coor=el.getBoundingClientRect(); //see object spec here: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
 	
-		console.log("reached");
 		if(this.state.selectedLocationName==null) //first render where no post code inputted
-			return;
+			return false;
 
-		 if(this.state.selectedLocationCoordinates==null || (coor.left > this.state.tooltipStyle.left)) //TODO bug with differernt subseuquent selected boroughs
-		{
-			
-			let tooltipStyle = {
+		 if(selectedLocationCoordinates===null || (coor.left !== tooltipStyle.left) ) 
+		{	
+			let newTooltipStyle = {
 				display: 'block',
 				top: (coor.top + (coor.bottom-coor.y)/2 ) ,
 				left: (coor.left ) //+ (coor.right-coor.x)/2
 			};
 
-			this.setState({ tooltipStyle });
+			this.setState({ tooltipStyle :newTooltipStyle });
 
-			this.handleLocationMouseOver(String(el.id)); 
+			this.handleLocationMouseOver(selectedLocationName); 
 
 			this.setState({selectedLocationCoordinates:coor});
+
+			return true;
 		} 
+		else
+		{
+			return false;
+		}
 	}
 
 	render() {
