@@ -1,5 +1,5 @@
 import React from 'react';
-import TooltipHeatMap from './map/TooltipHeatMap';
+import TooltipHeatMap from '../map/TooltipHeatMap';
 
 
 

@@ -1,5 +1,13 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'PT Sans', sans-serif;
+}
 
-/*RESET RULES START*/
+/*
+
+//RESET RULES START
 html {
   box-sizing: border-box;
   font-size: 16px;
@@ -7,11 +15,12 @@ html {
 
 *, *:before, *:after {
   box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  font-family: 'PT Sans', sans-serif;
 }
 
 body, h1, h2, h3, h4, h5, h6, p, ol, ul {
-  margin: 0;
-  padding: 0;
   font-weight: normal;
 }
 
@@ -24,12 +33,12 @@ img {
   height: auto;
 }
 
-/*RESET RULES END*/
+//RESET RULES END
 
 .App {
   text-align: center;
 }
-
+/*
 nav{
   display:flex;
   justify-content:space-around;
@@ -50,8 +59,9 @@ nav{
   padding: 0;
   margin: 0;
 }
+*/
 
-
+/*
 a {
   float: left;
   display: block;
@@ -103,3 +113,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+*/
+
