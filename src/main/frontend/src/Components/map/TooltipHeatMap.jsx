@@ -6,7 +6,7 @@ import './TooltipHeatMap.scss';
 import  SVGMap  from "./svg-map";
 import TooltipText from '../TooltipText';
 import DatePicker from '../Datepicker';
-import InputForm from '../InputForm';
+import PostCodeForm from '../PostCodeForm';
 
 //utils
 import {getLocationName} from '../../utils/MapUtils'
@@ -204,7 +204,7 @@ class TooltipHeatMap extends React.Component {
 				
 				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
-			<InputForm setSelectedLocationName={this.setSelectedLocationName}/>
+			<PostCodeForm setSelectedLocationName={this.setSelectedLocationName}/>
 			</>
 		);
 	}

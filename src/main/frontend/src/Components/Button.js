@@ -12,6 +12,7 @@ export const Button = ({ children, type, onClick, buttonStyle, buttonSize, butto
     const checkButtonSize = SIZES.includes(buttonSize) ? buttonSize : SIZES[0];
     const checkButtonColor = COLOR.includes(buttonColor) ? buttonColor : null;
     
+    console.log(children,buttonStyle);
 
     return (
         <button className={`btn ${checkButtonStyle} ${checkButtonSize} ${checkButtonColor}`} onClick={onClick} type={type}>

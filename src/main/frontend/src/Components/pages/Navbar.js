@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from './Button';
+import { Button } from '../Button';
 
 import { FcMindMap } from 'react-icons/fc'
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaHome,FaMapMarkedAlt } from 'react-icons/fa';
+
+import { IconContext } from 'react-icons/lib';
 
 import './Navbar.css';
 
@@ -34,6 +36,7 @@ function Nav() {
 
   return (
     <>
+      <IconContext.Provider value={{color:'#fff'}}> 
       <div className="navbar" >
         <div className="navbar-container container">
           <Link to="/" className="navbar-logo">
@@ -47,10 +50,16 @@ function Nav() {
 
           <ul className={click ? 'nav-menu active' : 'nav-menu'}>
             <li className="nav-item">
-              <Link to="/" className="nav-links">Home</Link>
+              <Link to="/" className="nav-links" onClick={closeMobileMenu}>
+                <FaHome className="navbar-icon" />
+                Home
+              </Link>
             </li>
             <li className="nav-item">
-              <Link to="/about" className="nav-links">About</Link>
+              <Link to="/go" className="nav-links" onClick={closeMobileMenu}>
+              <FaMapMarkedAlt className="navbar-icon" />
+                Tracker   
+              </Link>
             </li>
             <li className='nav-btn'>
                 {button ? (
@@ -58,7 +67,7 @@ function Nav() {
                     <Button buttonStyle='btn--outline'>CONTACT</Button>
                   </Link>
                 ) : (
-                  <Link to='/' className='btn-link'>
+                  <Link to='/' className='btn-link' onClick={closeMobileMenu}>
                     <Button
                       buttonStyle='btn--outline'
                       buttonSize='btn--mobile'
@@ -71,7 +80,8 @@ function Nav() {
               </li>
           </ul>
         </div>
-      </div>
+        </div>
+        </IconContext.Provider>
     </>
   );
 }

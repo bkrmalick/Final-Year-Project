@@ -1,11 +1,11 @@
 import React,{useState} from 'react';
 
-import './InputForm.css';
+import './PostCodeForm.css';
 
 //utils
 import {getBoroughForPostCode} from '../utils/APIUtils'
 
-function InputForm(props)
+function PostCodeForm(props)
 {
     const [postCode,setPostCode] = useState("");
     const [errorText,setErrorText] = useState("");
@@ -66,4 +66,4 @@ function InputForm(props)
     ); 
 }
 
-export default InputForm;
+export default PostCodeForm;

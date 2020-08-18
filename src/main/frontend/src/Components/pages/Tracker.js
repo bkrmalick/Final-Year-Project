@@ -2,9 +2,7 @@ import React from 'react';
 import TooltipHeatMap from '../map/TooltipHeatMap';
 
 
-
-function Home() {
-
+function Tracker() {
 
   return (
     <>
@@ -15,4 +13,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Tracker;

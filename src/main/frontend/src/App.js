@@ -7,12 +7,12 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Navbar from './components/pages/Navbar'
 
 //pages
-import Home from './components/pages/Home'
-import About from './components/pages/About'
+import Home from './components/pages/home/Home'
+import Tracker from './components/pages/Tracker'
 
 function App() {
   
-  if (process.env.NODE_ENV!=="development") //change for production as affects performance
+  if (process.env.NODE_ENV!=="development") //don't console log in production as affects performance
   {
     console.log = () => {};
   }
@@ -23,7 +23,7 @@ function App() {
         <Navbar />
         <Switch>
           <Route path="/" exact component={Home}/>
-          <Route path="/about" exact component={About}/>
+          <Route path="/go" exact component={Tracker}/>
         </Switch>
       </div>
     </Router>
