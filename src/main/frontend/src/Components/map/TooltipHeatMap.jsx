@@ -181,30 +181,38 @@ class TooltipHeatMap extends React.Component {
 
 		return (
 			<>
+      <section className="MapContainer">
 			<article className="MapContainer__block" >
-			<DatePicker date={casesDataRefreshDate}/><br/>
-				<h2 className="MapContainer__block__title">
-					London Boroughs
-				</h2>
-				<div className="MapContainer__block__map MapContainer__block__map--london" style={{width: "50vw", height: "25vw"}}> {/*TODO make heigh/width proportional*/}
-					<SVGMap
-						map={LondonMap}
-						locationClassName={this.getLocationClassName}
-						onLocationMouseOver={this.handleLocationMouseOver}
-						onLocationMouseOut={this.handleLocationMouseOut}
-						onLocationMouseMove={this.handleLocationMouseMove}
-						isLocationSelected={this.isLocationSelected}
-						setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
-						//onLocationClick={e=>console.log(e.target.id)} 
-						className="svg-map"/>
-					<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
-						{this.state.pointedLocation}
-					</div>
-				</div>
+					
+					<h2 className="MapContainer__block__title">
+							London Boroughs
+					</h2>
+					<DatePicker className="MapContainer__block__dateBox" date={casesDataRefreshDate} /><br/>
 				
+				<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }}> {/*TODO make heigh/width proportional*/}
+		
+							<SVGMap
+								map={LondonMap}
+								locationClassName={this.getLocationClassName}
+								onLocationMouseOver={this.handleLocationMouseOver}
+								onLocationMouseOut={this.handleLocationMouseOut}
+								onLocationMouseMove={this.handleLocationMouseMove}
+								isLocationSelected={this.isLocationSelected}
+								setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
+								//onLocationClick={e=>console.log(e.target.id)} 
+								className="svg-map"
+							/>
+						
+							<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
+								{this.state.pointedLocation}
+							</div>
+						
+				</div>
+					
 				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
-			<PostCodeForm setSelectedLocationName={this.setSelectedLocationName}/>
+				<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} />
+		</section>
 			</>
 		);
 	}

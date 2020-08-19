@@ -2,8 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../../Button';
 
-import { FaInfoCircle } from 'react-icons/fa';
-
 import './HeroSection.css';
 
 function HeroSection({lightBg, topLine, lightText,lightTextDesc, headLine,description, buttonLabel, img,alt,imgStart}) {

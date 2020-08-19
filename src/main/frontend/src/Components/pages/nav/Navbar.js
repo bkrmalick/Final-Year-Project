@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../Button';
+import { Button } from '../../Button';
 
 import { FcMindMap } from 'react-icons/fc'
 import { FaBars, FaTimes, FaHome,FaMapMarkedAlt } from 'react-icons/fa';

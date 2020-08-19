@@ -1,11 +1,7 @@
 import React from 'react';
 import './Footer.css';
-import { Button } from '../../Button';
 import { Link } from 'react-router-dom';
-import {
-  FaGithub,
-  FaLinkedin
-} from 'react-icons/fa';
+import {FaGithub,FaLinkedin} from 'react-icons/fa';
 import { FcMindMap } from 'react-icons/fc';
 
 function Footer() {

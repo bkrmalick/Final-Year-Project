@@ -90,7 +90,7 @@ function Datepicker(props) {
 
     return (
         <>
-            <div className="dateBox">
+            <div className={props.className}>
             <label htmlFor="start">Showing Data from: </label>
             <input type="date" id="start" name="trip-start"
                 value={date}

@@ -7,7 +7,7 @@
 
   .MapContainer {
       width: $width;
-      margin: 0 auto;
+      margin: 3% auto;
       font-family: Arial, sans-serif;
       text-align: center;
   
@@ -19,17 +19,29 @@
       }
   
       &__block {
+          width: 100%;
           margin-bottom: 20px;
           padding-bottom: 20px;
           border-bottom: 1px dotted black;
   
-  
-          &__title {
-              margin-bottom: 40px;
-              padding-top: 40px;
-              font-size: 20px;
-          }
+         
+        &__title{
+            padding-top: 10px;
+            font-size: 20px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
 
+         &__dateBox{
+            margin-left: 80%;
+            text-align: left;                  
+
+            @media screen and (max-width: 960px) {
+                margin: 20px auto;
+                text-align: center;    
+            }
+         }
+         
           &__refreshDate {
             margin: 50px 0 0 0;
             }
@@ -47,6 +59,7 @@
   
           &__map {
               display: inline-block;
+              clear:both;
               
               &--london {
                   text-align: center;
@@ -94,6 +107,9 @@
                   opacity: 90%;
               }
           }
+
+
+
       }
   }
 
