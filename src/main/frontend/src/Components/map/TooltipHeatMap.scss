@@ -26,7 +26,7 @@
   
          
         &__title{
-            padding-top: 10px;
+            padding-top: 30px;
             font-size: 20px;
             padding-right: 15px;
             padding-left: 15px;
@@ -63,6 +63,8 @@
               
               &--london {
                   text-align: center;
+                  min-width: 321px;
+                  min-height: 158px;
                   border: 1px solid black;
                   
                   .svg-map__location {
@@ -117,10 +119,10 @@
 
 svg {
     
-    &__location //single borough
+    &__location // borough
     {
-        fill: navy;
-        cursor: pointer;
+        //fill: navy;
+        //cursor: pointer;
         
         &:focus,
         &:hover {
@@ -132,5 +134,11 @@ svg {
 
 div[role="toolbar"]
 {
-    transform:scale(1.15)!important;
+    transform: scale(1.15)!important;
+    position: absolute!important;
+    top: 3%!important;
+    right: 0.1%!important;
+    background-color: rgba(19, 20, 22, 0.9)!important;
+    border-radius: 2px!important;
+    padding: 2px 1px!important;
 }

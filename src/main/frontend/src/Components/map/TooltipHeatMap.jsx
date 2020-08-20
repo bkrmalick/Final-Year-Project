@@ -206,10 +206,9 @@ class TooltipHeatMap extends React.Component {
 							<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 								{this.state.pointedLocation}
 							</div>
-						
 				</div>
 					
-				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
+				<p className="MapContainer__block__refreshDate">Most recent data from { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
 				<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} />
 		</section>
