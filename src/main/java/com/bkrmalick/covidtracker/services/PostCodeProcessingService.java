@@ -21,6 +21,9 @@ public class PostCodeProcessingService
 
 		borough=postCodeDataAccessService.getBoroughForPostCode(postCode);
 
+		if(borough.equalsIgnoreCase("City of London") || borough.equalsIgnoreCase("Hackney"))
+			borough="Hackney and City of London";
+
 		PostCodeApiOutput output=new PostCodeApiOutput(borough);
 
 		return output;

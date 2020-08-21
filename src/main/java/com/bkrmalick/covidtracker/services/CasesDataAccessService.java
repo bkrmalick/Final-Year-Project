@@ -22,9 +22,9 @@ public class CasesDataAccessService
 		this.restTemplate = restTemplate;
 	}
 
-	public CasesApiInput getDataForTwoWeeksBeforeDate(Date date)
+	public CasesApiInput getDataForDaysBeforeDate(Date date, int days)
 	{
-		String sql="select area_name,area_code,\"date\",new_cases,total_cases FROM dataset WHERE date > (cast('"+date+"' as date) - interval '14 day') order by area_name desc offset 0 limit 500;";
+		String sql="select area_name,area_code,\"date\",new_cases,total_cases FROM dataset WHERE date > (cast('"+date+"' as date) - interval '"+days+" day') order by area_name desc offset 0 limit 500;";
 		CasesApiInput responseReceived=restTemplate.getForObject(apiURL+sql, CasesApiInput.class );
 
 		return responseReceived;

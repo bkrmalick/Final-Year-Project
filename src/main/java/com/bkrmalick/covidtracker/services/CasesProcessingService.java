@@ -2,6 +2,7 @@ package com.bkrmalick.covidtracker.services;
 
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
+import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,19 +16,21 @@ public class CasesProcessingService
 {
 	private final String [] BOROUGHS;
 	private CasesDataAccessService casesDataAccessService;
+	private PopulationDensityDataAccessService populationDensityDataAccessService;
 
 	@Autowired
-	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String [] BOROUGHS)
+	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String [] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService)
 	{
 		this.casesDataAccessService=casesDataAccessService;
 		this.BOROUGHS=BOROUGHS;
+		this.populationDensityDataAccessService = populationDensityDataAccessService;
 	}
 
 	public CasesApiOutput produceOutputResponse()
 	{
 		/*GET THE INPUT DATA FROM EXT API*/
 		Date lastRefreshDate= casesDataAccessService.getLastRefreshDate();
-		CasesApiInput dataForTwoWeeks = casesDataAccessService.getDataForTwoWeeksBeforeDate(lastRefreshDate);
+		CasesApiInput dataForTwoWeeks = casesDataAccessService.getDataForDaysBeforeDate(lastRefreshDate,14);
 
 		/*PROCESS DATA*/
 		CasesApiOutput responseToSend=processCasesApiResponse(dataForTwoWeeks, lastRefreshDate);
@@ -37,6 +40,7 @@ public class CasesProcessingService
 
 	public CasesApiOutput processCasesApiResponse(CasesApiInput input, Date lastRefreshDate)
 	{
+		populationDensityDataAccessService.getPopulationDensityRecordForBoroughForCurrentYear("Bexley");
 		CasesApiInputRow[] inputRows= input.getRows();
 		CasesApiOutputRow[] outputRows = new CasesApiOutputRow[BOROUGHS.length];
 
@@ -64,9 +68,12 @@ public class CasesProcessingService
 				.mapToInt(row-> row.getNew_cases())
 				.sum();
 
-		double dangerPercentage=calculateDangerPercentage(inputRows, borough,totalCases);
+		double populationDensityPerSqKM=getPopulationDensityForBorough(borough);
 
-		return new CasesApiOutputRow(borough,dangerPercentage,totalCases,casesInPastTwoWeeks);
+		double dangerPercentage=//calculateDangerPercentage(inputRows, borough,totalCases);
+				calculateAbsoluteDangerValue(casesInPastTwoWeeks,populationDensityPerSqKM);//todo scale this value and check if long needed
+
+		return new CasesApiOutputRow(borough,dangerPercentage,totalCases,casesInPastTwoWeeks, populationDensityPerSqKM);
 	}
 
 	/**
@@ -84,8 +91,50 @@ public class CasesProcessingService
 
 		rValue =Math.round(rValue *100.0)/100.0;
 		return  rValue;
-
 	}
 
+	/**
+	 *  danger percentage = cases in past two weeks * population density
+	 */
+	private double calculateAbsoluteDangerValue(int casesPastTwoWeeks,double populationDensity)
+	{
+		return (double) casesPastTwoWeeks * populationDensity;
+	}
 
+	private double roundToTwoDecimalPlaces(double value)
+	{
+		return Math.round(value * 100.0) / 100.0;
+	}
+
+	private double getPopulationDensityForBorough(String borough)
+	{
+		double boroughPopDensity;
+
+		if(borough.equalsIgnoreCase("Hackney and City of London"))
+		{
+			PopulationDensityRecord popDensityRecordHackney = populationDensityDataAccessService
+					.getPopulationDensityRecordForBoroughForCurrentYear("Hackney");
+
+			PopulationDensityRecord popDensityRecordCOL = populationDensityDataAccessService
+					.getPopulationDensityRecordForBoroughForCurrentYear("City of London");
+
+			double areaHackney=popDensityRecordHackney.getSquareKilometres();
+			double areaCOL=popDensityRecordCOL.getSquareKilometres();
+			double combinedArea=areaHackney+areaCOL;
+
+			double popDensityHackney=popDensityRecordHackney.getPopulationPerSquareKilometre();
+			double popDensityCOL=popDensityRecordCOL.getPopulationPerSquareKilometre();
+
+			//combine the population densities acc. to area sizes
+			boroughPopDensity=(popDensityHackney*areaHackney/combinedArea) + (popDensityCOL*areaCOL/combinedArea);
+		}
+		else
+		{
+			boroughPopDensity = populationDensityDataAccessService
+					.getPopulationDensityRecordForBoroughForCurrentYear(borough)
+					.getPopulationPerSquareKilometre();
+		}
+
+		return boroughPopDensity;
+	}
 }

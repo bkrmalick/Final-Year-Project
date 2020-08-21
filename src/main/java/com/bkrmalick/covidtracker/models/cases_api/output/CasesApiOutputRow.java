@@ -6,13 +6,15 @@ public class CasesApiOutputRow
 	private double danger_percentage;
 	private int total_cases;
 	private int cases_in_past_2_wks;
+	private double population_per_sq_km;
 
-	public CasesApiOutputRow(String area_name, double danger_percentage, int total_cases, int cases_in_past_2_wks)
+	public CasesApiOutputRow(String area_name, double danger_percentage, int total_cases, int cases_in_past_2_wks, double population_per_sq_km)
 	{
 		this.area_name = area_name;
 		this.danger_percentage = danger_percentage;
 		this.total_cases = total_cases;
 		this.cases_in_past_2_wks = cases_in_past_2_wks;
+		this.population_per_sq_km = population_per_sq_km;
 	}
 
 	public String getArea_name()
@@ -55,5 +57,14 @@ public class CasesApiOutputRow
 		this.cases_in_past_2_wks = cases_in_past_2_wks;
 	}
 
+	public double getPopulation_per_sq_km()
+	{
+		return population_per_sq_km;
+	}
+
+	public void setPopulation_per_sq_km(double population_per_sq_km)
+	{
+		this.population_per_sq_km = population_per_sq_km;
+	}
 
 }

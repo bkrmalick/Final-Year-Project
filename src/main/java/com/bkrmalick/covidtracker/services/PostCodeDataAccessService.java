@@ -35,8 +35,6 @@ public class PostCodeDataAccessService
 
 		if(borough==null)
 			throw new IllegalStateException("key [admin_district] in ext API not found or null");
-		else if(borough.equalsIgnoreCase("City of London") || borough.equalsIgnoreCase("Hackney"))
-			borough="Hackney and City of London";
 		else if(!validBorough(borough))
 			throw new IllegalStateException("ext API returned invalid borough ["+borough+"]");
 
