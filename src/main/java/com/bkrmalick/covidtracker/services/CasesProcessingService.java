@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Service
@@ -49,9 +51,16 @@ public class CasesProcessingService
 			outputRows[i]=produceOutputRow(inputRows, BOROUGHS[i]);
 		}
 
-		CasesApiOutput output=new CasesApiOutput(outputRows, lastRefreshDate);
+		for(int i=0;i<BOROUGHS.length;i++)
+		{
+			outputRows[i].setDanger_percentage(
+					calculateDangerPercentage(outputRows,outputRows[i].getDanger_value())
+			);
+		}
 
-		return output;
+		//todo scale the absolute danger values here
+
+		return new CasesApiOutput(outputRows, lastRefreshDate);
 	}
 
 	private CasesApiOutputRow produceOutputRow(CasesApiInputRow[] inputRows, String borough)
@@ -60,7 +69,7 @@ public class CasesProcessingService
 				.filter(row->row.getArea_name().equals(borough))
 				.sorted(Comparator.comparing(CasesApiInputRow::getDate).reversed())
 				.findFirst()
-				.orElseThrow(()->new IllegalStateException("Cannot find latest input row for borough ["+borough+"]"))
+				.orElseThrow(()->new IllegalStateException("Cannot find latest cases input row for borough ["+borough+"]"))
 				.getTotal_cases();
 
 		int casesInPastTwoWeeks=Arrays.stream(inputRows)
@@ -70,40 +79,41 @@ public class CasesProcessingService
 
 		double populationDensityPerSqKM=getPopulationDensityForBorough(borough);
 
-		double dangerPercentage=//calculateDangerPercentage(inputRows, borough,totalCases);
-				calculateAbsoluteDangerValue(casesInPastTwoWeeks,populationDensityPerSqKM);//todo scale this value and check if long needed
+		double dangerPercentage=0;
 
-		return new CasesApiOutputRow(borough,dangerPercentage,totalCases,casesInPastTwoWeeks, populationDensityPerSqKM);
+		BigDecimal dangerValue=calculateAbsoluteDangerValue(casesInPastTwoWeeks,populationDensityPerSqKM);
+		//todo scale this value and check if long needed
+
+		return new CasesApiOutputRow(borough, dangerValue, dangerPercentage,totalCases,casesInPastTwoWeeks, populationDensityPerSqKM);
 	}
 
 	/**
 	 * Calculates the danger level as totalcases/highesttotalcases
 	 * todo find out relation using r?
 	 */
-	private double calculateDangerPercentage(CasesApiInputRow[] inputRows,String borough, int totalCases)
+	private double calculateDangerPercentage(CasesApiOutputRow[] outputRows, BigDecimal dangerValueOfBorough)
 	{
-		int maxTotalCases=Arrays.stream(inputRows)
-				.max(Comparator.comparing(CasesApiInputRow::getTotal_cases))
+		BigDecimal maxDanger_value=Arrays.stream(outputRows)
+				.max(Comparator.comparing(CasesApiOutputRow::getDanger_value))
 				.orElseThrow(()->new IllegalStateException("Cannot find max total cases of boroughs"))
-				.getTotal_cases();
+				.getDanger_value();
 
-		double rValue=(double)totalCases*100/maxTotalCases;
-
-		rValue =Math.round(rValue *100.0)/100.0;
-		return  rValue;
+		return dangerValueOfBorough
+				.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)
+				.multiply(BigDecimal.valueOf(100))
+				.doubleValue();
 	}
 
 	/**
-	 *  danger percentage = cases in past two weeks * population density
+	 *  absolute danger value  = cases in past two weeks * population density
 	 */
-	private double calculateAbsoluteDangerValue(int casesPastTwoWeeks,double populationDensity)
+	private BigDecimal calculateAbsoluteDangerValue(int casesPastTwoWeeks,double populationDensity)
 	{
-		return (double) casesPastTwoWeeks * populationDensity;
-	}
+		BigDecimal bd_cases = BigDecimal.valueOf(casesPastTwoWeeks);
+		BigDecimal bd_populationDensity = BigDecimal.valueOf(populationDensity);
 
-	private double roundToTwoDecimalPlaces(double value)
-	{
-		return Math.round(value * 100.0) / 100.0;
+		return bd_cases
+				.multiply(bd_populationDensity);
 	}
 
 	private double getPopulationDensityForBorough(String borough)

@@ -1,20 +1,25 @@
 package com.bkrmalick.covidtracker.models.cases_api.output;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class CasesApiOutputRow
 {
 	private String area_name;
+	private BigDecimal danger_value;
 	private double danger_percentage;
 	private int total_cases;
 	private int cases_in_past_2_wks;
 	private double population_per_sq_km;
 
-	public CasesApiOutputRow(String area_name, double danger_percentage, int total_cases, int cases_in_past_2_wks, double population_per_sq_km)
+	public CasesApiOutputRow(String area_name, BigDecimal danger_value, double danger_percentage, int total_cases, int cases_in_past_2_wks, double population_per_sq_km)
 	{
 		this.area_name = area_name;
-		this.danger_percentage = danger_percentage;
+		this.population_per_sq_km = roundToOneDecimalPlaces(population_per_sq_km);
 		this.total_cases = total_cases;
 		this.cases_in_past_2_wks = cases_in_past_2_wks;
-		this.population_per_sq_km = population_per_sq_km;
+		this.danger_value = danger_value.setScale(2, RoundingMode.HALF_UP); //set precision to two decimal places
+		this.danger_percentage = danger_percentage;
 	}
 
 	public String getArea_name()
@@ -67,4 +72,18 @@ public class CasesApiOutputRow
 		this.population_per_sq_km = population_per_sq_km;
 	}
 
+	public BigDecimal getDanger_value()
+	{
+		return danger_value;
+	}
+
+	public void setDanger_value(BigDecimal danger_value)
+	{
+		this.danger_value = danger_value;
+	}
+
+	private double roundToOneDecimalPlaces(double value)
+	{
+		return Math.round(value * 10.0) / 10.0;
+	}
 }

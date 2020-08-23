@@ -25,20 +25,6 @@ public class PopulationDensityDataAccessService
 		this.dynamoDBMapper=dynamoDBMapper;
 	}
 
-	List<PopulationDensityRecord> getPopulationDensityRecordsForCurrentYear()
-	{
-		String currentYear = Year.now().toString();
-
-		Map<String, AttributeValue>  eav = new HashMap<>();
-		eav.put(":year",new AttributeValue().withN(currentYear));
-
-		DynamoDBScanExpression scanExpression= new DynamoDBScanExpression()
-				.withFilterExpression("Year = :year")
-				.withExpressionAttributeValues(eav);
-
-		return dynamoDBMapper.scan(PopulationDensityRecord.class,scanExpression);
-	}
-
 	PopulationDensityRecord getPopulationDensityRecordForBoroughForCurrentYear(String borough)
 	{
 		String currentYear = Year.now().toString();
