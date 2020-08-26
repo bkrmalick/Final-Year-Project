@@ -1,12 +1,12 @@
 package com.bkrmalick.covidtracker.models.cases_api.input;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class CasesApiInputRow //implements Comparable<CasesApiInputRow>
 {
 	private String area_name;
 	private String area_code;
-	private Date date;
+	private LocalDate date;
 	private int new_cases;
 	private int total_cases;
 
@@ -15,7 +15,7 @@ public class CasesApiInputRow //implements Comparable<CasesApiInputRow>
 		//no need to do anything default values already set for instance variables
 	}
 
-	public CasesApiInputRow(String area_name, String area_code, Date date, int new_cases, int total_cases)
+	public CasesApiInputRow(String area_name, String area_code, LocalDate date, int new_cases, int total_cases)
 	{
 		this.area_name = area_name;
 		this.area_code = area_code;
@@ -44,12 +44,12 @@ public class CasesApiInputRow //implements Comparable<CasesApiInputRow>
 		this.area_code = area_code;
 	}
 
-	public Date getDate()
+	public LocalDate getDate()
 	{
 		return date;
 	}
 
-	public void setDate(Date date)
+	public void setDate(LocalDate date)
 	{
 		this.date = date;
 	}

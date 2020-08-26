@@ -97,23 +97,24 @@ return (
 					{props.map.locations.map((location, index) => {
 						return (
 							<path
-						id={location.id}
-	//							name={location.name}
-						d={location.path}
-						className={typeof props.locationClassName === 'function' ? props.locationClassName(location, index) : props.locationClassName}
-						tabIndex={typeof props.locationTabIndex === 'function' ? props.locationTabIndex(location, index) : props.locationTabIndex}
-	//							role={props.locationRole}
-	//							aria-label={location.id}
-						aria-checked={props.isLocationSelected && props.isLocationSelected(location.id)}
-						ref={ (props.isLocationSelected && props.isLocationSelected(location.id)) ? setSelectedLocationElement : null}
-						onMouseOver={props.onLocationMouseOver}
-						onMouseOut={props.onLocationMouseOut}
-						onMouseMove={props.onLocationMouseMove}
-						onClick={props.onLocationClick}
-						onKeyDown={props.onLocationKeyDown}
-						onFocus={props.onLocationFocus}
-						onBlur={props.onLocationBlur}
-						key={location.id}
+								id={location.id}
+								//							name={location.name}
+								d={location.path}
+								className={typeof props.locationClassName === 'function' ? props.locationClassName(location, index) : props.locationClassName}
+								tabIndex={typeof props.locationTabIndex === 'function' ? props.locationTabIndex(location, index) : props.locationTabIndex}
+								//							role={props.locationRole}
+								//							aria-label={location.id}
+								aria-checked={props.isLocationSelected && props.isLocationSelected(location.id)}
+								ref={(props.isLocationSelected && props.isLocationSelected(location.id)) ? setSelectedLocationElement : null}
+								onMouseOver={props.onLocationMouseOver}
+								onMouseOut={props.onLocationMouseOut}
+								onMouseMove={props.onLocationMouseMove}
+								onClick={props.onLocationClick}
+								onKeyDown={props.onLocationKeyDown}
+								onFocus={props.onLocationFocus}
+								onBlur={props.onLocationBlur}
+								key={location.id}
+								style={props.locationStyles(location)} //sets color of heatmap
 							/>
 						);
 					})}

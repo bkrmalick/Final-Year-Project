@@ -1,39 +1,53 @@
 package com.bkrmalick.covidtracker.models.cases_api.output;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.util.Date;
+
+import java.time.LocalDate;
 
 public class CasesApiOutput
 {
 	@JsonFormat(pattern="dd-MM-yyyy")
-	private Date lastRefreshDate;
+	private LocalDate date; //Date for which the output has been returned
 
-	private CasesApiOutputRow[] rows;
+	@JsonFormat(pattern="dd-MM-yyyy")
+	private LocalDate data_last_refreshed;
 
-	public CasesApiOutput(CasesApiOutputRow[] rows, Date lastRefreshDate)
+	private CasesApiOutputRow[] cases_data;
+
+	public CasesApiOutput(CasesApiOutputRow[] cases_data, LocalDate data_last_refreshed, LocalDate date)
 	{
-		this.rows = rows;
-		this.lastRefreshDate = lastRefreshDate;
+		this.cases_data = cases_data;
+		this.data_last_refreshed = data_last_refreshed;
+		this.date=date;
 	}
 
-	public Date getLastRefreshDate()
+	public LocalDate getData_last_refreshed()
 	{
-		return lastRefreshDate;
+		return data_last_refreshed;
 	}
 
-	public void setLastRefreshDate(Date lastRefreshDate)
+	public void setData_last_refreshed(LocalDate data_last_refreshed)
 	{
-		this.lastRefreshDate = lastRefreshDate;
+		this.data_last_refreshed = data_last_refreshed;
 	}
 
-	public CasesApiOutputRow[] getRows()
+	public CasesApiOutputRow[] getCases_data()
 	{
-		return rows;
+		return cases_data;
 	}
 
-	public void setRows(CasesApiOutputRow[] rows)
+	public void setCases_data(CasesApiOutputRow[] cases_data)
 	{
-		this.rows = rows;
+		this.cases_data = cases_data;
 	}
 
+	public LocalDate getDate()
+	{
+		return date;
+	}
+
+	public void setDate(LocalDate date)
+	{
+		this.date = date;
+	}
 }

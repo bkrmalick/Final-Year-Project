@@ -11,6 +11,7 @@ import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -31,18 +32,17 @@ public class CasesProcessingService
 	public CasesApiOutput produceOutputResponse()
 	{
 		/*GET THE INPUT DATA FROM EXT API*/
-		Date lastRefreshDate= casesDataAccessService.getLastRefreshDate();
-		CasesApiInput dataForTwoWeeks = casesDataAccessService.getDataForDaysBeforeDate(lastRefreshDate,14);
+		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
+		CasesApiInput dataForTwoWeeks = casesDataAccessService.getDataForDaysBeforeDate(dataLastRefreshedDate,14);
 
 		/*PROCESS DATA*/
-		CasesApiOutput responseToSend=processCasesApiResponse(dataForTwoWeeks, lastRefreshDate);
+		CasesApiOutput responseToSend=processCasesApiResponse(dataForTwoWeeks, dataLastRefreshedDate);
 
 		return responseToSend;
 	}
 
-	public CasesApiOutput processCasesApiResponse(CasesApiInput input, Date lastRefreshDate)
+	public CasesApiOutput processCasesApiResponse(CasesApiInput input, LocalDate dataLastRefreshedDate)
 	{
-		populationDensityDataAccessService.getPopulationDensityRecordForBoroughForCurrentYear("Bexley");
 		CasesApiInputRow[] inputRows= input.getRows();
 		CasesApiOutputRow[] outputRows = new CasesApiOutputRow[BOROUGHS.length];
 
@@ -58,9 +58,7 @@ public class CasesProcessingService
 			);
 		}
 
-		//todo scale the absolute danger values here
-
-		return new CasesApiOutput(outputRows, lastRefreshDate);
+		return new CasesApiOutput(outputRows, dataLastRefreshedDate, LocalDate.now()); //TODO change now() to actual
 	}
 
 	private CasesApiOutputRow produceOutputRow(CasesApiInputRow[] inputRows, String borough)
@@ -82,7 +80,6 @@ public class CasesProcessingService
 		double dangerPercentage=0;
 
 		BigDecimal dangerValue=calculateAbsoluteDangerValue(casesInPastTwoWeeks,populationDensityPerSqKM);
-		//todo scale this value and check if long needed
 
 		return new CasesApiOutputRow(borough, dangerValue, dangerPercentage,totalCases,casesInPastTwoWeeks, populationDensityPerSqKM);
 	}

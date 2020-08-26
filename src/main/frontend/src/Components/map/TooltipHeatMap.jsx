@@ -33,6 +33,7 @@ class TooltipHeatMap extends React.Component {
 		this.handleLocationMouseOut = this.handleLocationMouseOut.bind(this);
 		this.handleLocationMouseMove = this.handleLocationMouseMove.bind(this);
 		this.getLocationClassName = this.getLocationClassName.bind(this); 
+		this.getLocationStyles = this.getLocationStyles.bind(this); 
 		this.setSelectedLocationName = this.setSelectedLocationName.bind(this); 
 		this.isLocationSelected = this.isLocationSelected.bind(this); 
 		this.setSelectedLocationCoordinates=this.setSelectedLocationCoordinates.bind(this);
@@ -49,9 +50,9 @@ class TooltipHeatMap extends React.Component {
 				{
 					console.log(res);
 					this.setState ( {
-						casesDataRefreshDate:res.data.lastRefreshDate,
+						casesDataRefreshDate:res.data.data_last_refreshed,
 						casesDataLoaded: true,
-						casesData:res.data.rows
+						casesData:res.data.cases_data
 					});
 			
 				})
@@ -137,6 +138,30 @@ class TooltipHeatMap extends React.Component {
 		return `svg-map__location svg-map__location--heat${heatNumber}`;
 	}
 
+	//sets color of heatmap acc. to the danger percentage
+	getLocationStyles(location)
+	{
+		let CASES_DATA_RECORD;
+		if(!this.state.casesDataLoaded)
+		{
+			CASES_DATA_RECORD={danger_percentage:null,cases_in_past_2_wks:null};
+		}
+		else
+		{
+			CASES_DATA_RECORD=this.getDataRecordForArea(location.id, this.state.casesData);
+		}
+
+		return { fill: this.heatMapColorforValue(CASES_DATA_RECORD.danger_percentage) };
+	}
+
+	heatMapColorforValue(value)
+	{
+		//const RED = 100-value, GREEN = 100-value, BLUE = 100-value; //B&W
+		const RED = 100, GREEN = 100-value, BLUE = 100-value; //RED
+
+		return "rgb("+RED+"%,"+GREEN+"%, "+BLUE+"%)";
+	}
+
 	setSelectedLocationName(LOCATION_NAME)
 	{
 		this.setState({selectedLocationName:LOCATION_NAME}); 
@@ -194,6 +219,7 @@ class TooltipHeatMap extends React.Component {
 							<SVGMap
 								map={LondonMap}
 								locationClassName={this.getLocationClassName}
+								locationStyles={this.getLocationStyles}
 								onLocationMouseOver={this.handleLocationMouseOver}
 								onLocationMouseOut={this.handleLocationMouseOut}
 								onLocationMouseMove={this.handleLocationMouseMove}
@@ -208,7 +234,7 @@ class TooltipHeatMap extends React.Component {
 							</div>
 				</div>
 					
-				<p className="MapContainer__block__refreshDate">Most recent data from { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
+				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
 				<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} />
 		</section>
