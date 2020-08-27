@@ -24,15 +24,14 @@ public class CasesController
 	@GetMapping
 	public CasesApiOutput getCasesApiOutput()
 	{
-		System.out.println("CALL CASES");
-		return casesProcessingService.produceOutputResponse();
+		//if no date path variable has been provided, just get most recent data
+		return casesProcessingService.produceOutputResponse(null);
 	}
 
 	@GetMapping("/{date}")
-	public LocalDate getCasesApiOutput(@PathVariable("date") @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date)
+	public CasesApiOutput getCasesApiOutput(@PathVariable("date") @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date)
 	{
-		System.out.println(date);
-		return date;
+		return casesProcessingService.produceOutputResponse(date);
 	}
 
 }

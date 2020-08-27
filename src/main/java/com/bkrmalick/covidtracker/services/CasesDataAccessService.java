@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Repository
 public class CasesDataAccessService
@@ -23,8 +24,17 @@ public class CasesDataAccessService
 
 	public CasesApiInput getDataForDaysBeforeDate(LocalDate date, int days)
 	{
-		String sql="select area_name,area_code,\"date\",new_cases,total_cases FROM dataset WHERE date > (cast('"+date+"' as date) - interval '"+days+" day') order by area_name desc offset 0 limit 500;";
-		CasesApiInput responseReceived=restTemplate.getForObject(apiURL+sql, CasesApiInput.class );
+		String sql="select area_name,area_code,\"date\",new_cases,total_cases FROM dataset "
+				+"WHERE date > (cast('"+date.format(DateTimeFormatter.BASIC_ISO_DATE)+"' as date) - interval '"+days+" day') "
+				+"and  date <= cast('"+date.format(DateTimeFormatter.BASIC_ISO_DATE)+"' as date) "
+				+"order by area_name desc offset 0 limit 500;";
+
+
+		//response will have 14 records * 32 boroughs = 448 TODO add assert for responseReceived.getRows().length
+		CasesApiInput responseReceived = restTemplate.getForObject(apiURL + sql, CasesApiInput.class);
+
+		//not catching the error or throwing a user visible exception here as we do not want to expose the query to the client
+		//TODO logging for exceptions e.g when changing to area_name1
 
 		return responseReceived;
 	}
