@@ -1,8 +1,10 @@
 package com.bkrmalick.covidtracker.services;
 
+import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,11 +29,14 @@ public class CasesDataAccessService
 		String sql="select area_name,area_code,\"date\",new_cases,total_cases FROM dataset "
 				+"WHERE date > (cast('"+date.format(DateTimeFormatter.BASIC_ISO_DATE)+"' as date) - interval '"+days+" day') "
 				+"and  date <= cast('"+date.format(DateTimeFormatter.BASIC_ISO_DATE)+"' as date) "
-				+"order by area_name desc offset 0 limit 500;";
+				+"order by area_name desc offset 0 limit 500;"; //14*32 will always be lesser than 500
 
 
 		//response will have 14 records * 32 boroughs = 448 TODO add assert for responseReceived.getRows().length
 		CasesApiInput responseReceived = restTemplate.getForObject(apiURL + sql, CasesApiInput.class);
+
+		if(responseReceived.getRows().length==0)
+			throw new GeneralUserVisibleException("No data found for this date", HttpStatus.NOT_FOUND);
 
 		//not catching the error or throwing a user visible exception here as we do not want to expose the query to the client
 		//TODO logging for exceptions e.g when changing to area_name1
