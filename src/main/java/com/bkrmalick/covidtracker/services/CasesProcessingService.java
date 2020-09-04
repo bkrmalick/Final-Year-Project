@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 
+import javax.script.ScriptException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -22,13 +25,15 @@ public class CasesProcessingService
 	private final String [] BOROUGHS;
 	private CasesDataAccessService casesDataAccessService;
 	private PopulationDensityDataAccessService populationDensityDataAccessService;
+	private RCallerService rCallerService;
 
 	@Autowired
-	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String [] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService)
+	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService, RCallerService rCallerService)
 	{
 		this.casesDataAccessService=casesDataAccessService;
 		this.BOROUGHS=BOROUGHS;
 		this.populationDensityDataAccessService = populationDensityDataAccessService;
+		this.rCallerService = rCallerService;
 	}
 
 	/**
@@ -36,7 +41,7 @@ public class CasesProcessingService
 	 * @param LocalDate The user defined date for which the response/output is to be produced. Can be in the future or past.
 	 * @return CasesApiOutput The final response to be shown to the user
 	 */
-	public CasesApiOutput produceOutputResponse(LocalDate date)
+	public CasesApiOutput produceOutputResponse(LocalDate date) throws  ScriptException, IOException, URISyntaxException
 	{
 		/*GET THE INPUT DATA FROM EXT API*/
 		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
@@ -46,6 +51,8 @@ public class CasesProcessingService
 
 		if(date!=null && date.isAfter(dataLastRefreshedDate))
 		{
+			//System.out.println(rCallerService.mean(new int[]{1,2,3,4,6}));
+			System.out.println(rCallerService.getPredictedCasesUntilDate(date,"Bexley"));
 			/*PREDICTION MODE - user asking for data beyond the data available*/
 			outputData=null; //TODO
 			throw new GeneralUserVisibleException("asking for future data - WIP", HttpStatus.INTERNAL_SERVER_ERROR);

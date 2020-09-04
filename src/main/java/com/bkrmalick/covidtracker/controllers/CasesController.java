@@ -8,6 +8,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.script.ScriptException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -26,14 +29,14 @@ public class CasesController
 	}
 
 	@GetMapping
-	public CasesApiOutput getCasesApiOutput()
+	public CasesApiOutput getCasesApiOutput() throws ScriptException, IOException, URISyntaxException
 	{
 		//if no date path variable has been provided, just get most recent data
 		return casesProcessingService.produceOutputResponse(null);
 	}
 
 	@GetMapping("/{date}")
-	public CasesApiOutput getCasesApiOutputDate(@PathVariable("date") @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date)
+	public CasesApiOutput getCasesApiOutputDate(@PathVariable("date") @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date) throws ScriptException, IOException, URISyntaxException
 	{
 		return casesProcessingService.produceOutputResponse(date);
 	}

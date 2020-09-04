@@ -49,4 +49,18 @@ public class CasesDataAccessService
 		CasesApiInput responseReceived= restTemplate.getForObject(apiURL+"select max(date) as date FROM dataset;", CasesApiInput.class);;
 		return responseReceived.getRows()[0].getDate();
 	}
+
+	public CasesApiInput getAllDataForBorough(String borough)
+	{
+		CasesApiInput responseReceived= restTemplate.getForObject(apiURL+
+						"select \"date\",total_cases FROM dataset " +
+						"WHERE area_name like '"+borough+"'"+
+						"offset 0 limit 5000;"
+				, CasesApiInput.class); //todo remove limit?
+
+		if(responseReceived.getRows().length==0)
+			throw new GeneralUserVisibleException("No data found for borough [" +borough+ "]", HttpStatus.NOT_FOUND);
+
+		return responseReceived;
+	}
 }
