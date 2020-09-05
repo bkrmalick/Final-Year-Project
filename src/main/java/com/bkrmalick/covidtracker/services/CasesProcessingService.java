@@ -41,7 +41,7 @@ public class CasesProcessingService
 	 * @param LocalDate The user defined date for which the response/output is to be produced. Can be in the future or past.
 	 * @return CasesApiOutput The final response to be shown to the user
 	 */
-	public CasesApiOutput produceOutputResponse(LocalDate date) throws  ScriptException, IOException, URISyntaxException
+	public CasesApiOutput produceOutputResponse(LocalDate date)
 	{
 		/*GET THE INPUT DATA FROM EXT API*/
 		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
@@ -51,8 +51,15 @@ public class CasesProcessingService
 
 		if(date!=null && date.isAfter(dataLastRefreshedDate))
 		{
-			//System.out.println(rCallerService.mean(new int[]{1,2,3,4,6}));
-			System.out.println(rCallerService.getPredictedCasesUntilDate(date,"Bexley"));
+			try
+			{
+				System.out.println(rCallerService.getPredictedDataUntilDate(date, "Bexley"));
+			}
+			catch(IOException | ScriptException | URISyntaxException e)
+			{
+				e.printStackTrace();
+			}
+
 			/*PREDICTION MODE - user asking for data beyond the data available*/
 			outputData=null; //TODO
 			throw new GeneralUserVisibleException("asking for future data - WIP", HttpStatus.INTERNAL_SERVER_ERROR);

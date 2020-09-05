@@ -29,14 +29,14 @@ public class CasesController
 	}
 
 	@GetMapping
-	public CasesApiOutput getCasesApiOutput() throws ScriptException, IOException, URISyntaxException
+	public CasesApiOutput getCasesApiOutput()
 	{
 		//if no date path variable has been provided, just get most recent data
 		return casesProcessingService.produceOutputResponse(null);
 	}
 
 	@GetMapping("/{date}")
-	public CasesApiOutput getCasesApiOutputDate(@PathVariable("date") @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date) throws ScriptException, IOException, URISyntaxException
+	public CasesApiOutput getCasesApiOutputDate(@PathVariable("date") @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date)
 	{
 		return casesProcessingService.produceOutputResponse(date);
 	}

@@ -17,7 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class RCallerService
@@ -34,27 +36,21 @@ public class RCallerService
 		URI rScriptUri = RCallerService.class.getClassLoader().getResource("r-scripts/cases-predictor.R").toURI();
 		Path inputScript = Paths.get(rScriptUri);
 
-		this.scriptContent=Files.lines(inputScript).collect(Collectors.joining("\n"));
-	}
-
-	public double mean(int[] values) throws IOException, URISyntaxException, ScriptException
-	{
-		RenjinScriptEngine engine = new RenjinScriptEngine();
-
-		//only read trigger read script if hasn't been loaded already
-		if(this.scriptContent==null)
+		//try block will automatically close file
+		try(Stream<String> lines = Files.lines(inputScript))
 		{
-			loadScriptContentFromFile();
+			this.scriptContent = lines.collect(Collectors.joining("\n"));
 		}
-
-		String meanScriptContent = this.scriptContent;
-		engine.put("input", values);
-		engine.eval(meanScriptContent);
-		DoubleArrayVector result = (DoubleArrayVector) engine.eval("customMean(input)");
-		return result.asReal();
 	}
 
-	public int[] getPredictedCasesUntilDate(LocalDate date, String borough) throws IOException, URISyntaxException, ScriptException
+	/**
+	 * Runs the R script to train model on all data for borough,
+	 * and then returns predicted data for two weeks leading up to date provided.
+	 * @param date for which to predict up until
+	 * @param borough
+	 * @return predicted cases data rows
+	 */
+	public CasesApiInputRow[] getPredictedDataUntilDate(LocalDate date, String borough) throws IOException, ScriptException, URISyntaxException
 	{
 		RenjinScriptEngine engine = new RenjinScriptEngine();
 		String boroughData= getBoroughDataAsDataFrame(borough);
@@ -66,12 +62,38 @@ public class RCallerService
 		}
 
 		engine.put("predict_date", date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) ;
-		engine.put("bdata", boroughData);
 
 		engine.eval(this.scriptContent);
 
-		IntArrayVector result = (IntArrayVector) engine.eval("predictCasesUntilDate(predict_date,bdata)");
-		return result.toIntArray();
+		ListVector predictionsDataFrame = (ListVector) engine.eval("predictCasesUntilDate(predict_date,"+boroughData+")");
+
+		Vector predictionDates=(Vector) predictionsDataFrame.get("date");
+		Vector predictionTotalCases=(Vector) predictionsDataFrame.get("total_cases");
+
+		int numberOfPredictions= predictionDates.length();
+
+		CasesApiInputRow [] predictionRows = new CasesApiInputRow[numberOfPredictions];
+
+		for(int i=0;i<numberOfPredictions;i++)
+		{
+			predictionRows[i]= new CasesApiInputRow(
+					borough,
+					null,
+					LocalDate.ofEpochDay(predictionDates.getElementAsInt(i)),
+					0, //todo
+					predictionTotalCases.getElementAsInt(i));
+		}
+
+		return predictionRows;
+	}
+
+	public CasesApiInput getPredictedDataForDate(LocalDate date) throws IOException, URISyntaxException, ScriptException
+	{
+		ArrayList<CasesApiInputRow> rowsList= new ArrayList<>();
+
+		//loop throw the boroughs and call getPredictedDataUntilDate
+
+		return new CasesApiInput(null, null,  (CasesApiInputRow[]) rowsList.toArray());
 	}
 
 	private String getBoroughDataAsDataFrame(String borough)
