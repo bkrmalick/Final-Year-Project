@@ -2,7 +2,7 @@ package com.bkrmalick.covidtracker.models.cases_api.input;
 
 import java.time.LocalDate;
 
-public class CasesApiInputRow //implements Comparable<CasesApiInputRow>
+public class CasesApiInputRow
 {
 	private String area_name;
 	private String area_code;

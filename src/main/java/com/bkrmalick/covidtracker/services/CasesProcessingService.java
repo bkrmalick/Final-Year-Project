@@ -46,36 +46,38 @@ public class CasesProcessingService
 		/*GET THE INPUT DATA FROM EXT API*/
 		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
 
-		CasesApiInput inputData;
+		CasesApiInput inputData = null;
 		CasesApiOutput outputData;
+
+		LocalDate dataForDate;
 
 		if(date!=null && date.isAfter(dataLastRefreshedDate))
 		{
+			/*PREDICTION MODE - user asking for data beyond the data available*/
+			dataForDate=date;
+
 			try
 			{
-				System.out.println(rCallerService.getPredictedDataUntilDate(date, "Bexley"));
+				//System.out.println(rCallerService.getPredictedDataUntilDate(date, "Bexley"));
+				inputData=rCallerService.getPredictedDataForDate(date);
 			}
 			catch(IOException | ScriptException | URISyntaxException e)
 			{
 				e.printStackTrace();
 			}
-
-			/*PREDICTION MODE - user asking for data beyond the data available*/
-			outputData=null; //TODO
-			throw new GeneralUserVisibleException("asking for future data - WIP", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		else
 		{
 			/*NORMAL MODE - user asking data for historical data*/
-			LocalDate dataForDate = (date == null ? dataLastRefreshedDate : date);
+			dataForDate = (date == null ? dataLastRefreshedDate : date);
 
 			inputData= casesDataAccessService.getDataForDaysBeforeDate(dataForDate,14);
-
-			outputData = processCasesApiResponse(
-					inputData,
-					dataLastRefreshedDate,
-					dataForDate );
 		}
+
+		outputData = processCasesApiResponse(
+				inputData,
+				dataLastRefreshedDate,
+				dataForDate );
 
 		return outputData;
 	}

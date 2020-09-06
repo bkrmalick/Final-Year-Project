@@ -12,6 +12,8 @@ public class CasesApiOutput
 	@JsonFormat(pattern="dd-MM-yyyy")
 	private LocalDate data_last_refreshed;
 
+	private String mode;
+
 	private CasesApiOutputRow[] cases_data;
 
 	public CasesApiOutput(CasesApiOutputRow[] cases_data, LocalDate data_last_refreshed, LocalDate date)
@@ -19,6 +21,7 @@ public class CasesApiOutput
 		this.cases_data = cases_data;
 		this.data_last_refreshed = data_last_refreshed;
 		this.date=date;
+		this.mode=date.isAfter(data_last_refreshed)? "Prediction": "Analysis" ;
 	}
 
 	public LocalDate getData_last_refreshed()
@@ -50,4 +53,15 @@ public class CasesApiOutput
 	{
 		this.date = date;
 	}
+
+	public String getMode()
+	{
+		return mode;
+	}
+
+	public void setMode(String mode)
+	{
+		this.mode = mode;
+	}
+
 }

@@ -6,6 +6,7 @@ import org.renjin.script.RenjinScriptEngine;
 import org.renjin.sexp.*;
 import org.renjin.sexp.ListVector;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.script.ScriptException;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,13 +28,18 @@ public class RCallerService
 {
 	@Autowired
 	private CasesDataAccessService casesDataAccessService;
-	private String scriptContent;
+	private String scriptContent; //todo try declaring string here to see if faster
+
+	@Autowired
+	@Qualifier("BOROUGH_NAMES")
+	private String[] BOROUGHS;
 
 	/**
 	 * Will only get called once during applications run
 	 */
 	void loadScriptContentFromFile() throws IOException, URISyntaxException
 	{
+		System.out.println("LOAD SCRIPT");
 		URI rScriptUri = RCallerService.class.getClassLoader().getResource("r-scripts/cases-predictor.R").toURI();
 		Path inputScript = Paths.get(rScriptUri);
 
@@ -41,11 +48,12 @@ public class RCallerService
 		{
 			this.scriptContent = lines.collect(Collectors.joining("\n"));
 		}
+		System.out.println("END LOAD SCRIPT");
 	}
 
 	/**
 	 * Runs the R script to train model on all data for borough,
-	 * and then returns predicted data for two weeks leading up to date provided.
+	 * and then returns predicted data for two weeks leading up to date provided for that specific borough only.
 	 * @param date for which to predict up until
 	 * @param borough
 	 * @return predicted cases data rows
@@ -55,7 +63,7 @@ public class RCallerService
 		RenjinScriptEngine engine = new RenjinScriptEngine();
 		String boroughData= getBoroughDataAsDataFrame(borough);
 
-		//only read script if hasn't been loaded already
+		//only load script if hasn't been loaded already
 		if(this.scriptContent==null)
 		{
 			loadScriptContentFromFile();
@@ -69,6 +77,7 @@ public class RCallerService
 
 		Vector predictionDates=(Vector) predictionsDataFrame.get("date");
 		Vector predictionTotalCases=(Vector) predictionsDataFrame.get("total_cases");
+		Vector predictionNewCases=(Vector) predictionsDataFrame.get("new_cases");
 
 		int numberOfPredictions= predictionDates.length();
 
@@ -80,7 +89,7 @@ public class RCallerService
 					borough,
 					null,
 					LocalDate.ofEpochDay(predictionDates.getElementAsInt(i)),
-					0, //todo
+					predictionNewCases.getElementAsInt(i),
 					predictionTotalCases.getElementAsInt(i));
 		}
 
@@ -92,15 +101,21 @@ public class RCallerService
 		ArrayList<CasesApiInputRow> rowsList= new ArrayList<>();
 
 		//loop throw the boroughs and call getPredictedDataUntilDate
+		for(String borough:BOROUGHS)
+		{
+			rowsList.addAll(
+					Arrays.asList(this.getPredictedDataUntilDate(date,borough))
+			);
+		}
 
-		return new CasesApiInput(null, null,  (CasesApiInputRow[]) rowsList.toArray());
+		return new CasesApiInput(null, null,  rowsList.toArray(new CasesApiInputRow[0]));
 	}
 
 	private String getBoroughDataAsDataFrame(String borough)
 	{
 		CasesApiInputRow [] casesData=casesDataAccessService.getAllDataForBorough(borough).getRows();
 
-		String dataFrame="data.frame(date=c(";
+		String dataFrame="data.frame(date=as.Date(c(";
 
 		StringBuilder datesCSV= new StringBuilder(); //e.g "2020-03-03","2020-03-04"
 		StringBuilder totalCasesCSV= new StringBuilder(); //e.g 1024,1026
@@ -114,7 +129,7 @@ public class RCallerService
 		datesCSV.setCharAt(0,' ');
 		totalCasesCSV.setCharAt(0,' ');
 
-		dataFrame+=datesCSV+"), total_cases=c("+totalCasesCSV+"))";
+		dataFrame+=datesCSV+")), total_cases=c("+totalCasesCSV+"))";
 
 		return dataFrame;
 	}
