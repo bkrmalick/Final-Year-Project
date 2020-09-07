@@ -1,12 +1,10 @@
 package com.bkrmalick.covidtracker.services;
 
-import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
 import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
@@ -26,6 +24,7 @@ public class CasesProcessingService
 	private CasesDataAccessService casesDataAccessService;
 	private PopulationDensityDataAccessService populationDensityDataAccessService;
 	private RCallerService rCallerService;
+
 
 	@Autowired
 	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService, RCallerService rCallerService)

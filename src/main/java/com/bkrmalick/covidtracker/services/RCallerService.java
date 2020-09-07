@@ -7,6 +7,7 @@ import org.renjin.sexp.*;
 import org.renjin.sexp.ListVector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.script.ScriptException;
@@ -26,52 +27,61 @@ import java.util.stream.Stream;
 @Service
 public class RCallerService
 {
-	@Autowired
 	private CasesDataAccessService casesDataAccessService;
-	private String scriptContent; //todo try declaring string here to see if faster
 
-	@Autowired
-	@Qualifier("BOROUGH_NAMES")
 	private String[] BOROUGHS;
 
-	/**
-	 * Will only get called once during applications run
-	 */
-	void loadScriptContentFromFile() throws IOException, URISyntaxException
+	@Autowired
+	private RCallerService proxy; //cached methods MUST only be called through this proxy
+
+	//private HashMap<String, CasesApiInputRow[]> predictionCache; //<Borough, predicted rows>
+	//private LocalDate lastRefreshedDateForCache; //lastRefresheddate on data for which cache was generated
+
+	@Autowired
+	public RCallerService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS)
 	{
-		System.out.println("LOAD SCRIPT");
+		this.casesDataAccessService = casesDataAccessService;
+		this.BOROUGHS = BOROUGHS;
+		//this.predictionCache = new HashMap<>();
+		//this.lastRefreshedDateForCache = null;
+	}
+
+	@Cacheable(value="scripts")
+	public String getScriptContent() throws IOException, URISyntaxException
+	{
+		String scriptContent;
+
+		System.out.println("READ FILE");
 		URI rScriptUri = RCallerService.class.getClassLoader().getResource("r-scripts/cases-predictor.R").toURI();
 		Path inputScript = Paths.get(rScriptUri);
 
 		//try block will automatically close file
 		try(Stream<String> lines = Files.lines(inputScript))
 		{
-			this.scriptContent = lines.collect(Collectors.joining("\n"));
+			scriptContent = lines.collect(Collectors.joining("\n"));
 		}
-		System.out.println("END LOAD SCRIPT");
+
+		return scriptContent;
 	}
 
 	/**
 	 * Runs the R script to train model on all data for borough,
-	 * and then returns predicted data for two weeks leading up to date provided for that specific borough only.
+	 * and then returns predicted data leading up to date provided for that specific borough only.
 	 * @param date for which to predict up until
 	 * @param borough
 	 * @return predicted cases data rows
 	 */
+
+	@Cacheable(value="predictions", key="") //#date.isAfter()
 	public CasesApiInputRow[] getPredictedDataUntilDate(LocalDate date, String borough) throws IOException, ScriptException, URISyntaxException
 	{
+		System.out.println("PREDICTION");
 		RenjinScriptEngine engine = new RenjinScriptEngine();
 		String boroughData= getBoroughDataAsDataFrame(borough);
 
-		//only load script if hasn't been loaded already
-		if(this.scriptContent==null)
-		{
-			loadScriptContentFromFile();
-		}
-
 		engine.put("predict_date", date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) ;
 
-		engine.eval(this.scriptContent);
+		engine.eval(proxy.getScriptContent());
 
 		ListVector predictionsDataFrame = (ListVector) engine.eval("predictCasesUntilDate(predict_date,"+boroughData+")");
 
@@ -104,7 +114,7 @@ public class RCallerService
 		for(String borough:BOROUGHS)
 		{
 			rowsList.addAll(
-					Arrays.asList(this.getPredictedDataUntilDate(date,borough))
+					Arrays.asList(proxy.getPredictedDataUntilDate(date,borough))
 			);
 		}
 
