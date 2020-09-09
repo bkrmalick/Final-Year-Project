@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
+import org.springframework.util.Assert;
 
 import javax.script.ScriptException;
 import java.io.IOException;
@@ -37,28 +38,27 @@ public class CasesProcessingService
 
 	/**
 	 * Called by the controller
-	 * @param LocalDate The user defined date for which the response/output is to be produced. Can be in the future or past.
+	 * @param date The user defined date for which the response/output is to be produced. Can be in the future or past.
 	 * @return CasesApiOutput The final response to be shown to the user
 	 */
 	public CasesApiOutput produceOutputResponse(LocalDate date)
 	{
-		/*GET THE INPUT DATA FROM EXT API*/
+
 		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
 
 		CasesApiInput inputData = null;
 		CasesApiOutput outputData;
 
-		LocalDate dataForDate;
+		LocalDate dateForOutput;
 
 		if(date!=null && date.isAfter(dataLastRefreshedDate))
 		{
 			/*PREDICTION MODE - user asking for data beyond the data available*/
-			dataForDate=date;
+			dateForOutput=date;
 
 			try
 			{
-				//System.out.println(rCallerService.getPredictedDataUntilDate(date, "Bexley"));
-				inputData=rCallerService.getPredictedDataForDate(date);
+				inputData=rCallerService.getPredictedCasesDataForDate(date,14, dataLastRefreshedDate);
 			}
 			catch(IOException | ScriptException | URISyntaxException e)
 			{
@@ -68,15 +68,16 @@ public class CasesProcessingService
 		else
 		{
 			/*NORMAL MODE - user asking data for historical data*/
-			dataForDate = (date == null ? dataLastRefreshedDate : date);
+			dateForOutput = (date == null ? dataLastRefreshedDate : date);
 
-			inputData= casesDataAccessService.getDataForDaysBeforeDate(dataForDate,14);
+			//get the data from ext api
+			inputData= casesDataAccessService.getDataForDaysBeforeDate(dateForOutput,14);
 		}
 
 		outputData = processCasesApiResponse(
 				inputData,
 				dataLastRefreshedDate,
-				dataForDate );
+				dateForOutput );
 
 		return outputData;
 	}
@@ -95,8 +96,8 @@ public class CasesProcessingService
 		//populate relative danger percentages
 		for(int i=0;i<BOROUGHS.length;i++)
 		{
-			outputRows[i].setDanger_percentage(
-					calculateDangerPercentage(outputRows,outputRows[i].getDanger_value())
+			outputRows[i].setRelative_danger_percentage(
+					calculateDangerPercentage(outputRows,outputRows[i].getAbsolute_danger_value())
 			);
 		}
 
@@ -116,6 +117,10 @@ public class CasesProcessingService
 				.mapToInt(CasesApiInputRow::getNew_cases)
 				.sum();
 
+		Assert.isTrue(Arrays.stream(inputRows)
+				.filter(row->row.getArea_name().equals(borough))
+				.mapToInt(CasesApiInputRow::getNew_cases).count() == 14); //todo remove
+
 		double populationDensityPerSqKM=getPopulationDensityForBorough(borough);
 
 		double dangerPercentage=0;
@@ -131,9 +136,9 @@ public class CasesProcessingService
 	private double calculateDangerPercentage(CasesApiOutputRow[] outputRows, BigDecimal dangerValueOfBorough)
 	{
 		BigDecimal maxDanger_value=Arrays.stream(outputRows)
-				.max(Comparator.comparing(CasesApiOutputRow::getDanger_value))
+				.max(Comparator.comparing(CasesApiOutputRow::getAbsolute_danger_value))
 				.orElseThrow(()->new IllegalStateException("Cannot find max danger value of boroughs"))
-				.getDanger_value();
+				.getAbsolute_danger_value();
 
 		return dangerValueOfBorough
 				.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)

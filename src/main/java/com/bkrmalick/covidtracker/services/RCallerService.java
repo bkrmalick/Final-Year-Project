@@ -7,8 +7,10 @@ import org.renjin.sexp.*;
 import org.renjin.sexp.ListVector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.script.ScriptException;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,18 +35,16 @@ public class RCallerService
 	private String[] BOROUGHS;
 
 	@Autowired
-	private RCallerService proxy; //cached methods MUST only be called through this proxy
+	private RCallerService proxy; //@Cacheable methods MUST only be called through this proxy
 
-	//private HashMap<String, CasesApiInputRow[]> predictionCache; //<Borough, predicted rows>
-	//private LocalDate lastRefreshedDateForCache; //lastRefresheddate on data for which cache was generated
+	public static LocalDate maxDateCache; //request Date on data for which cache was generated
+	public static LocalDate lastRefreshedDateCache; //lastRefreshedDate on data for which cache was generated
 
 	@Autowired
 	public RCallerService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS)
 	{
 		this.casesDataAccessService = casesDataAccessService;
 		this.BOROUGHS = BOROUGHS;
-		//this.predictionCache = new HashMap<>();
-		//this.lastRefreshedDateForCache = null;
 	}
 
 	@Cacheable(value="scripts")
@@ -66,16 +67,18 @@ public class RCallerService
 
 	/**
 	 * Runs the R script to train model on all data for borough,
-	 * and then returns predicted data leading up to date provided for that specific borough only.
+	 * and then returns combined original + predicted data leading up to date
+	 * provided for that specific borough only.
+	 *
 	 * @param date for which to predict up until
 	 * @param borough
 	 * @return predicted cases data rows
 	 */
-
-	@Cacheable(value="predictions", key="") //#date.isAfter()
+	//todo add class javadoc, add note to report text file
+	@Cacheable(value="predictedCasesData",key="'data'+#borough")
 	public CasesApiInputRow[] getPredictedDataUntilDate(LocalDate date, String borough) throws IOException, ScriptException, URISyntaxException
 	{
-		System.out.println("PREDICTION");
+		System.out.println("PREDICTION"); //todo loggger
 		RenjinScriptEngine engine = new RenjinScriptEngine();
 		String boroughData= getBoroughDataAsDataFrame(borough);
 
@@ -106,16 +109,43 @@ public class RCallerService
 		return predictionRows;
 	}
 
-	public CasesApiInput getPredictedDataForDate(LocalDate date) throws IOException, URISyntaxException, ScriptException
+	/**
+	 * Checks if the data for the new date being queried should replace old cache or not
+	 */
+	public boolean isCacheable(LocalDate requestDate, LocalDate lastRefreshedDate)
 	{
+		return RCallerService.maxDateCache ==null ||  //no caches previously
+				!lastRefreshedDate.isEqual(RCallerService.lastRefreshedDateCache) || //external data has since been refreshed
+				requestDate.isAfter(RCallerService.maxDateCache); //requestDate > cacheDate
+	}
+
+	@CacheEvict(value="predictedCasesData", condition ="#root.target.isCacheable(#date,#lastRefreshedDate)",allEntries = true, beforeInvocation = true)
+	public CasesApiInput getPredictedCasesDataForDate(LocalDate date, int days, LocalDate lastRefreshedDate) throws IOException, URISyntaxException, ScriptException
+	{
+		if(isCacheable(date,lastRefreshedDate))
+		{
+			//set these cache variables as we can be sure that @CacheEvict was triggered
+			//and that the next run of getPredictedDataUntilDate
+			//will store new cache
+
+			RCallerService.maxDateCache = date;
+			RCallerService.lastRefreshedDateCache=lastRefreshedDate;
+		}
+
 		ArrayList<CasesApiInputRow> rowsList= new ArrayList<>();
 
 		//loop throw the boroughs and call getPredictedDataUntilDate
 		for(String borough:BOROUGHS)
 		{
-			rowsList.addAll(
-					Arrays.asList(proxy.getPredictedDataUntilDate(date,borough))
-			);
+			//filter to data days leading up to  date
+			List<CasesApiInputRow> dataForBorough=
+					Arrays.stream(proxy.getPredictedDataUntilDate(date, borough))
+					.filter(r-> r.getDate().isAfter(date.minusDays(days))  && r.getDate().isBefore(date.plusDays(1)))
+					.collect(Collectors.toList());
+
+			Assert.isTrue(dataForBorough.size()==14); //todo remove
+
+			rowsList.addAll(dataForBorough);
 		}
 
 		return new CasesApiInput(null, null,  rowsList.toArray(new CasesApiInputRow[0]));
