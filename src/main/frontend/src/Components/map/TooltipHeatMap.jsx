@@ -10,7 +10,8 @@ import PostCodeForm from '../PostCodeForm';
 
 //utils
 import {getLocationName} from '../../utils/MapUtils'
-import {getCasesData} from '../../utils/APIUtils'
+import { getCasesDataForDate } from '../../utils/APIUtils'
+
 
 class TooltipHeatMap extends React.Component {
 
@@ -23,7 +24,9 @@ class TooltipHeatMap extends React.Component {
 				display: 'none'
 			},
 			casesData:null,
-			casesDataRefreshDate:null,
+			casesDataRefreshDate: null, 
+			casesDataDate: null,
+			casesDataMode:null,
 			casesDataLoaded: false,
 			selectedLocationName:null,
 			selectedLocationCoordinates:null
@@ -36,23 +39,46 @@ class TooltipHeatMap extends React.Component {
 		this.getLocationStyles = this.getLocationStyles.bind(this); 
 		this.setSelectedLocationName = this.setSelectedLocationName.bind(this); 
 		this.isLocationSelected = this.isLocationSelected.bind(this); 
-		this.setSelectedLocationCoordinates=this.setSelectedLocationCoordinates.bind(this);
+		this.setSelectedLocationCoordinates = this.setSelectedLocationCoordinates.bind(this);
+		this.setCasesDataDate=this.setCasesDataDate.bind(this);
 	}
 
 	componentDidMount()
 	{
 		//once map and its subcomponents have rendered 
 
-		//1. fetch data from API and update state 
-		if(!this.state.casesDataLoaded)
+		//fetch data from API and update state for date selected by user (if any)
+		if(!this.state.casesDataLoaded) 
 		{
-			getCasesData().then(res=>
+			getCasesDataForDate(this.state.casesDataDate).then(res=>
 				{
 					console.log(res);
 					this.setState ( {
-						casesDataRefreshDate:res.data.data_last_refreshed,
+						casesDataRefreshDate: res.data.data_last_refreshed,
+						casesDataDate: res.data.date,
 						casesDataLoaded: true,
-						casesData:res.data.cases_data
+						casesData: res.data.cases_data,
+						casesDataMode:res.data.mode
+					});
+			
+				})
+				.catch(err=>console.log(err));
+		}
+	}
+
+	componentDidUpdate()
+	{
+		if(!this.state.casesDataLoaded) 
+		{
+			getCasesDataForDate(this.state.casesDataDate).then(res=>
+				{
+					console.log(res);
+					this.setState ( {
+						casesDataRefreshDate: res.data.data_last_refreshed,
+						casesDataDate: res.data.date,
+						casesDataLoaded: true,
+						casesData: res.data.cases_data,
+						casesDataMode:res.data.mode
 					});
 			
 				})
@@ -110,55 +136,67 @@ class TooltipHeatMap extends React.Component {
 	{
 		var {casesData,casesDataLoaded} = this.state;
 		const LOCATION_NAME= (typeof nameOrEvent)==="string" ? nameOrEvent: getLocationName(nameOrEvent);
-		let CASES_DATA_RECORD={danger_percentage:"Loading",cases_in_past_2_wks:"Loading"};
+		let CASES_DATA_RECORD={relative_danger_percentage:"Loading",cases_in_past_2_wks:"Loading"};
 
 		if(casesDataLoaded)
 			CASES_DATA_RECORD=this.getDataRecordForArea(LOCATION_NAME, casesData);
 
-		return <TooltipText location={LOCATION_NAME} dangerLevel={CASES_DATA_RECORD.danger_percentage} casesInPastTwoWks={CASES_DATA_RECORD.cases_in_past_2_wks}/>;
+		return <TooltipText location={LOCATION_NAME} dangerLevel={CASES_DATA_RECORD.relative_danger_percentage} casesInPastTwoWks={CASES_DATA_RECORD.cases_in_past_2_wks}/>;
 	}
 	
 	getLocationClassName(location, index) 
-	{
-		let CASES_DATA_RECORD;
-		if(!this.state.casesDataLoaded)
-		{
-			CASES_DATA_RECORD={danger_percentage:null,cases_in_past_2_wks:null};
-		}
-		else
-		{
-			CASES_DATA_RECORD=this.getDataRecordForArea(location.id, this.state.casesData);
-		}
+	{	
+		// add code here to make each location class dynamic
 
-		let heatNumber= ((CASES_DATA_RECORD.danger_percentage/100)*4).toFixed(0);
-		heatNumber=(heatNumber==="4")?"3":heatNumber;
-		
-
-		// Generate heat map acc. to danger percentage of area
-		return `svg-map__location svg-map__location--heat${heatNumber}`;
+		return `svg-map__location svg-map__location`;
 	}
 
 	//sets color of heatmap acc. to the danger percentage
 	getLocationStyles(location)
 	{
 		let CASES_DATA_RECORD;
-		if(!this.state.casesDataLoaded)
+		let IS_SELECTED;
+		
+		if (this.state.selectedLocationName === null)
 		{
-			CASES_DATA_RECORD={danger_percentage:null,cases_in_past_2_wks:null};
+			IS_SELECTED = true;
 		}
 		else
 		{
-			CASES_DATA_RECORD=this.getDataRecordForArea(location.id, this.state.casesData);
+			IS_SELECTED = this.state.selectedLocationName.toUpperCase() === location.id.toUpperCase();	
+		}
+		
+		if(!this.state.casesDataLoaded)
+		{
+			CASES_DATA_RECORD = { relative_danger_percentage: null, cases_in_past_2_wks: null };
+		}
+		else
+		{
+			CASES_DATA_RECORD = this.getDataRecordForArea(location.id, this.state.casesData);
 		}
 
-		return { fill: this.heatMapColorforValue(CASES_DATA_RECORD.danger_percentage) };
+		return { fill: this.heatMapColorforValue(IS_SELECTED,CASES_DATA_RECORD.relative_danger_percentage) };
 	}
 
-	heatMapColorforValue(value)
+	/*
+		Returns the RGB color for the location given its danger percentage 
+		and a boolean stating whether its selected by the user
+	*/
+	heatMapColorforValue(isSelected,value)
 	{
-		//const RED = 100-value, GREEN = 100-value, BLUE = 100-value; //B&W
-		const RED = 100, GREEN = 100-value, BLUE = 100-value; //RED
-
+		let RED, GREEN, BLUE;
+		
+		if (!isSelected)
+		{
+			//B&W
+			RED = 100 - value; GREEN = 100 - value; BLUE = 100 - value; 
+		}
+		else
+		{
+			//RED
+			RED = 100; GREEN = 100 - value; BLUE = 100-value; 
+		}
+	
 		return "rgb("+RED+"%,"+GREEN+"%, "+BLUE+"%)";
 	}
 
@@ -168,7 +206,9 @@ class TooltipHeatMap extends React.Component {
 	}
 
 	/*
-		Sets the selectedLocationCoordinates and returns whether location coordinates have been set and if the svg needs to be refit
+		Sets the selectedLocationCoordinates 
+		and returns boolean describing 
+		whether location coordinates have been set and if the svg needs to be refit
 	*/
 	setSelectedLocationCoordinates(el)
 	{
@@ -200,9 +240,17 @@ class TooltipHeatMap extends React.Component {
 		}
 	}
 
+	setCasesDataDate(date)
+	{
+		this.setState({
+			casesDataDate: date,
+			casesDataLoaded: false
+			});
+	}
+
 	render() {
 
-		var {casesDataRefreshDate,casesDataLoaded} = this.state;
+		var {casesDataDate,casesDataMode, casesDataRefreshDate,casesDataLoaded} = this.state;
 
 		return (
 			<>
@@ -212,7 +260,7 @@ class TooltipHeatMap extends React.Component {
 					<h2 className="MapContainer__block__title">
 							London Boroughs
 					</h2>
-					<DatePicker className="MapContainer__block__dateBox" date={casesDataRefreshDate} /><br/>
+						<DatePicker className="MapContainer__block__dateBox" date={casesDataDate} setDate={this.setCasesDataDate} mode={casesDataMode} /><br/>
 				
 				<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }}> {/*TODO make heigh/width proportional*/}
 		

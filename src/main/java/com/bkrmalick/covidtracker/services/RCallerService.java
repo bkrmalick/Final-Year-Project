@@ -1,10 +1,13 @@
 package com.bkrmalick.covidtracker.services;
 
+import com.bkrmalick.covidtracker.Main;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.sexp.*;
 import org.renjin.sexp.ListVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -30,8 +33,9 @@ import java.util.stream.Stream;
 @Service
 public class RCallerService
 {
-	private CasesDataAccessService casesDataAccessService;
+	private static final Logger logger = LoggerFactory.getLogger(RCallerService.class);
 
+	private CasesDataAccessService casesDataAccessService;
 	private String[] BOROUGHS;
 
 	@Autowired
@@ -52,7 +56,7 @@ public class RCallerService
 	{
 		String scriptContent;
 
-		System.out.println("READ FILE");
+		logger.info("READING R SCRIPT FILE");
 		URI rScriptUri = RCallerService.class.getClassLoader().getResource("r-scripts/cases-predictor.R").toURI();
 		Path inputScript = Paths.get(rScriptUri);
 
@@ -74,11 +78,11 @@ public class RCallerService
 	 * @param borough
 	 * @return predicted cases data rows
 	 */
-	//todo add class javadoc, add note to report text file
 	@Cacheable(value="predictedCasesData",key="'data'+#borough")
 	public CasesApiInputRow[] getPredictedDataUntilDate(LocalDate date, String borough) throws IOException, ScriptException, URISyntaxException
 	{
-		System.out.println("PREDICTION"); //todo loggger
+		logger.info("TRAINING MODEL AND PREDICTING DATA FOR ["+borough+"] ON ["+date+"]" );
+
 		RenjinScriptEngine engine = new RenjinScriptEngine();
 		String boroughData= getBoroughDataAsDataFrame(borough);
 
@@ -122,6 +126,8 @@ public class RCallerService
 	@CacheEvict(value="predictedCasesData", condition ="#root.target.isCacheable(#date,#lastRefreshedDate)",allEntries = true, beforeInvocation = true)
 	public CasesApiInput getPredictedCasesDataForDate(LocalDate date, int days, LocalDate lastRefreshedDate) throws IOException, URISyntaxException, ScriptException
 	{
+		logger.info("INCOMING PREDICTION DATA REQUEST FOR ["+date+"]");
+
 		if(isCacheable(date,lastRefreshedDate))
 		{
 			//set these cache variables as we can be sure that @CacheEvict was triggered
@@ -130,6 +136,11 @@ public class RCallerService
 
 			RCallerService.maxDateCache = date;
 			RCallerService.lastRefreshedDateCache=lastRefreshedDate;
+			logger.info("ANY EXISTING CACHE REMOVED, CACHE TO BE UPDATED");
+		}
+		else
+		{
+			logger.info("RETURNING DATA FROM CACHE");
 		}
 
 		ArrayList<CasesApiInputRow> rowsList= new ArrayList<>();
