@@ -1,18 +1,20 @@
 package com.bkrmalick.covidtracker.services;
 
-import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
 import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
+import org.springframework.util.Assert;
 
+import javax.script.ScriptException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -22,46 +24,60 @@ public class CasesProcessingService
 	private final String [] BOROUGHS;
 	private CasesDataAccessService casesDataAccessService;
 	private PopulationDensityDataAccessService populationDensityDataAccessService;
+	private RCallerService rCallerService;
+
 
 	@Autowired
-	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String [] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService)
+	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService, RCallerService rCallerService)
 	{
 		this.casesDataAccessService=casesDataAccessService;
 		this.BOROUGHS=BOROUGHS;
 		this.populationDensityDataAccessService = populationDensityDataAccessService;
+		this.rCallerService = rCallerService;
 	}
 
 	/**
 	 * Called by the controller
-	 * @param LocalDate The user defined date for which the response/output is to be produced. Can be in the future or past.
+	 * @param date The user defined date for which the response/output is to be produced. Can be in the future or past.
 	 * @return CasesApiOutput The final response to be shown to the user
 	 */
 	public CasesApiOutput produceOutputResponse(LocalDate date)
 	{
-		/*GET THE INPUT DATA FROM EXT API*/
+
 		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
 
-		CasesApiInput inputData;
+		CasesApiInput inputData = null;
 		CasesApiOutput outputData;
+
+		LocalDate dateForOutput;
 
 		if(date!=null && date.isAfter(dataLastRefreshedDate))
 		{
 			/*PREDICTION MODE - user asking for data beyond the data available*/
-			outputData=null; //TODO
-			throw new GeneralUserVisibleException("asking for future data - WIP", HttpStatus.INTERNAL_SERVER_ERROR);
+			dateForOutput=date;
+
+			try
+			{
+				inputData=rCallerService.getPredictedCasesDataForDate(date,14, dataLastRefreshedDate);
+			}
+			catch(IOException | ScriptException | URISyntaxException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		else
 		{
 			/*NORMAL MODE - user asking data for historical data*/
-			LocalDate dataForDate = (date == null ? dataLastRefreshedDate : date);
+			dateForOutput = (date == null ? dataLastRefreshedDate : date);
 
-			inputData= casesDataAccessService.getDataForDaysBeforeDate(dataForDate,14);
-
-			outputData = processCasesApiResponse(
-					inputData,
-					dataLastRefreshedDate,
-					dataForDate );
+			//get the data from ext api
+			inputData= casesDataAccessService.getDataForDaysBeforeDate(dateForOutput,14);
 		}
+
+		outputData = processCasesApiResponse(
+				inputData,
+				dataLastRefreshedDate,
+				dateForOutput );
 
 		return outputData;
 	}
@@ -80,8 +96,8 @@ public class CasesProcessingService
 		//populate relative danger percentages
 		for(int i=0;i<BOROUGHS.length;i++)
 		{
-			outputRows[i].setDanger_percentage(
-					calculateDangerPercentage(outputRows,outputRows[i].getDanger_value())
+			outputRows[i].setRelative_danger_percentage(
+					calculateDangerPercentage(outputRows,outputRows[i].getAbsolute_danger_value())
 			);
 		}
 
@@ -101,6 +117,10 @@ public class CasesProcessingService
 				.mapToInt(CasesApiInputRow::getNew_cases)
 				.sum();
 
+		Assert.isTrue(Arrays.stream(inputRows)
+				.filter(row->row.getArea_name().equals(borough))
+				.mapToInt(CasesApiInputRow::getNew_cases).count() == 14); //todo remove
+
 		double populationDensityPerSqKM=getPopulationDensityForBorough(borough);
 
 		double dangerPercentage=0;
@@ -116,9 +136,9 @@ public class CasesProcessingService
 	private double calculateDangerPercentage(CasesApiOutputRow[] outputRows, BigDecimal dangerValueOfBorough)
 	{
 		BigDecimal maxDanger_value=Arrays.stream(outputRows)
-				.max(Comparator.comparing(CasesApiOutputRow::getDanger_value))
+				.max(Comparator.comparing(CasesApiOutputRow::getAbsolute_danger_value))
 				.orElseThrow(()->new IllegalStateException("Cannot find max danger value of boroughs"))
-				.getDanger_value();
+				.getAbsolute_danger_value();
 
 		return dangerValueOfBorough
 				.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)

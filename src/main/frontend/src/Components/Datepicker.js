@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
+import './Datepicker.css'
 
-
-function Datepicker(props) {
-
+function Datepicker(props)
+{
     const [date,setDate] = useState("");
-    const [mode, setMode] = useState("Normal");
+    //const [mode, setMode] = useState("Normal");
 
     //update the date state variable acc. to prop ONLY if it already doesn't have a user selected value
-    if(date==="" && date!==getDataRefreshDateFromProp())
-        setDate(getDataRefreshDateFromProp());
+    if(date==="" && date!==getDateFromProp())
+        setDate(getDateFromProp());
 
-    function getDataRefreshDateFromProp() 
+    function getDateFromProp() 
     {
         const d=props.date;
 
@@ -40,27 +40,28 @@ function Datepicker(props) {
     {
         let newDate =new Date(event.target.value);
 
-        let maxDate= new Date(dateYearAfterRefreshDate());
-        let minDate= new Date(dateYearBeforeRefreshDate());
-        let refreshDate= new Date(getDataRefreshDateFromProp());
+        let maxDate= new Date(dateYearAfterDate());
+        let minDate= new Date(dateYearBeforeDate());
+        //let refreshDate= new Date(getDateFromProp());
    
         //don't accept inputs outside bounds
         if(newDate>maxDate || newDate<minDate)
             return;
         else
         {
-            if(newDate>refreshDate)
+           /* if(newDate>refreshDate)
                 setMode("Prediction");
             else
-                setMode("Normal");
+                setMode("Normal");*/
 
             setDate(event.target.value);
+            props.setDate(event.target.value.split("-").reverse().join("-"));  //Convert YYYY-MM-DD to DD-MM-YYYY format 
         }
     }
 
-    function dateYearBeforeRefreshDate()
+    function dateYearBeforeDate()
     {
-        var d = new Date(getDataRefreshDateFromProp()),
+        var d = new Date(getDateFromProp()),
             month = '' + (d.getMonth() + 1),
             day = '' + d.getDate(),
             year = d.getFullYear()-1;
@@ -73,9 +74,9 @@ function Datepicker(props) {
         return [year, month, day].join('-');
     }
 
-    function dateYearAfterRefreshDate()
+    function dateYearAfterDate()
     {
-        var d = new Date(getDataRefreshDateFromProp()),
+        var d = new Date(getDateFromProp()),
             month = '' + (d.getMonth() + 1),
             day = '' + d.getDate(),
             year = d.getFullYear()+1;
@@ -95,10 +96,10 @@ function Datepicker(props) {
             <input type="date" id="start" name="trip-start"
                 value={date}
                 onChange={handleChange}
-                min={dateYearBeforeRefreshDate()}
-                max={dateYearAfterRefreshDate()}
+                min={dateYearBeforeDate()}
+                max={dateYearAfterDate()}
                 ></input>
-                <p id="mode">Analysis Mode: <span className={mode+"Mode"} >{mode}</span></p>
+                <p id="mode">Analysis Mode: <span className={props.mode+"Mode"} >{props.mode}</span></p>
             </div>
         </>
     );

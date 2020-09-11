@@ -6,20 +6,20 @@ import java.math.RoundingMode;
 public class CasesApiOutputRow
 {
 	private String area_name;
-	private BigDecimal danger_value;
-	private double danger_percentage;
+	private BigDecimal absolute_danger_value;
+	private double relative_danger_percentage;
 	private int total_cases;
 	private int cases_in_past_2_wks;
 	private double population_per_sq_km;
 
-	public CasesApiOutputRow(String area_name, BigDecimal danger_value, double danger_percentage, int total_cases, int cases_in_past_2_wks, double population_per_sq_km)
+	public CasesApiOutputRow(String area_name, BigDecimal absolute_danger_value, double relative_danger_percentage, int total_cases, int cases_in_past_2_wks, double population_per_sq_km)
 	{
 		this.area_name = area_name;
 		this.population_per_sq_km = roundToOneDecimalPlaces(population_per_sq_km);
 		this.total_cases = total_cases;
 		this.cases_in_past_2_wks = cases_in_past_2_wks;
-		this.danger_value = danger_value.setScale(2, RoundingMode.HALF_UP); //set precision to two decimal places
-		this.danger_percentage = danger_percentage;
+		this.absolute_danger_value = absolute_danger_value.setScale(2, RoundingMode.HALF_UP); //set precision to two decimal places
+		this.relative_danger_percentage = relative_danger_percentage;
 	}
 
 	public String getArea_name()
@@ -32,14 +32,14 @@ public class CasesApiOutputRow
 		this.area_name = area_name;
 	}
 
-	public double getDanger_percentage()
+	public double getRelative_danger_percentage()
 	{
-		return danger_percentage;
+		return relative_danger_percentage;
 	}
 
-	public void setDanger_percentage(double danger_percentage)
+	public void setRelative_danger_percentage(double relative_danger_percentage)
 	{
-		this.danger_percentage = danger_percentage;
+		this.relative_danger_percentage = relative_danger_percentage;
 	}
 
 	public int getTotal_cases()
@@ -72,14 +72,14 @@ public class CasesApiOutputRow
 		this.population_per_sq_km = population_per_sq_km;
 	}
 
-	public BigDecimal getDanger_value()
+	public BigDecimal getAbsolute_danger_value()
 	{
-		return danger_value;
+		return absolute_danger_value;
 	}
 
-	public void setDanger_value(BigDecimal danger_value)
+	public void setAbsolute_danger_value(BigDecimal absolute_danger_value)
 	{
-		this.danger_value = danger_value;
+		this.absolute_danger_value = absolute_danger_value;
 	}
 
 	private double roundToOneDecimalPlaces(double value)

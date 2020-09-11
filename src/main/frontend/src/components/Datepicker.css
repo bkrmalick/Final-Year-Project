@@ -1,0 +1,11 @@
+.AnalysisMode
+{
+  font-weight: bold;
+  color: green;
+}
+
+.PredictionMode
+{
+  font-weight: bold;
+  color: blue;
+}
