@@ -40,7 +40,8 @@ class TooltipHeatMap extends React.Component {
 		this.setSelectedLocationName = this.setSelectedLocationName.bind(this); 
 		this.isLocationSelected = this.isLocationSelected.bind(this); 
 		this.setSelectedLocationCoordinates = this.setSelectedLocationCoordinates.bind(this);
-		this.setCasesDataDate=this.setCasesDataDate.bind(this);
+		this.setCasesDataDate = this.setCasesDataDate.bind(this);
+		this.unselectSelectedLocation = this.unselectSelectedLocation.bind(this);
 	}
 
 	componentDidMount()
@@ -110,7 +111,7 @@ class TooltipHeatMap extends React.Component {
 	
 	handleLocationMouseMove(event) 
 	{
-		this.setState({selectedLocationName:null, selectedLocationCoordinates:null}); //unselect any location
+		this.unselectSelectedLocation(); 
 
 		const tooltipStyle = {
 			display: 'block',
@@ -120,6 +121,7 @@ class TooltipHeatMap extends React.Component {
 		this.setState({ tooltipStyle });
 	}
 
+	
 	getDataRecordForArea(LOCATION_NAME, casesData)
 	{
 		return casesData.filter(row=>row.area_name.toUpperCase()===LOCATION_NAME.toUpperCase())[0];
@@ -240,6 +242,18 @@ class TooltipHeatMap extends React.Component {
 		}
 	}
 
+	unselectSelectedLocation()
+	{
+		if (this.state.selectedLocationName !== null)
+		{
+			const tooltipStyle = {
+				display: 'none'
+			};
+
+			this.setState({ selectedLocationName: null, selectedLocationCoordinates: null,tooltipStyle }); //unselect any location
+		}
+	}
+
 	setCasesDataDate(date)
 	{
 		this.setState({
@@ -284,7 +298,7 @@ class TooltipHeatMap extends React.Component {
 					
 				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
 			</article>
-				<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} />
+					<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} unselectSelectedLocation={this.unselectSelectedLocation}/>
 		</section>
 			</>
 		);

@@ -2,10 +2,14 @@ package com.bkrmalick.covidtracker.services;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Repository;
 
 import java.time.Year;
@@ -14,10 +18,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @Cacheable methods MUST
+ * 			+ be public
+ * 			+ only be called through this proxy
+ */
 @Repository
 public class PopulationDensityDataAccessService
 {
+	private static final Logger logger = LoggerFactory.getLogger(PopulationDensityDataAccessService.class);
 	DynamoDBMapper dynamoDBMapper;
+	@Autowired
+	private PopulationDensityDataAccessService proxy;
 
 	@Autowired
 	public PopulationDensityDataAccessService(DynamoDBMapper dynamoDBMapper)
@@ -25,14 +37,16 @@ public class PopulationDensityDataAccessService
 		this.dynamoDBMapper=dynamoDBMapper;
 	}
 
-	PopulationDensityRecord getPopulationDensityRecordForBoroughForCurrentYear(String borough)
+
+	@Cacheable(value="populationDensity", key ="#borough+#year")
+	public PopulationDensityRecord getPopulationDensityRecordForBoroughForYear(String borough, String year)
 	{
-		String currentYear = Year.now().toString();
+		logger.info("Getting Pop. Density From DynamoDB for ["+borough+"] for year ["+year+"]");
 
 		//map for storing values which need to be looked up
 		Map<String, AttributeValue>  eav = new HashMap<>();
 		eav.put(":boroughVal",new AttributeValue().withS(borough));
-		eav.put(":yearVal",new AttributeValue().withN(currentYear));
+		eav.put(":yearVal",new AttributeValue().withN(year));
 
 		//have to alias the table column names since they are reserved keywords
 		Map<String, String> attributeAliases = new HashMap<>();
@@ -53,10 +67,17 @@ public class PopulationDensityDataAccessService
 		//throw exception if no record found
 		if(!itr.hasNext())
 		{
-			throw new IllegalStateException("Population Density Record not found for Borough ["+borough+"] and year ["+currentYear+"]");
+			throw new IllegalStateException("Population Density Record not found for Borough ["+borough+"] and year ["+year+"]");
 		}
 
 		//otherwise return first record from result
 		return itr.next();
+	}
+
+	PopulationDensityRecord getPopulationDensityRecordForBoroughForCurrentYear(String borough)
+	{
+		String currentYear = Year.now().toString();
+
+		return proxy.getPopulationDensityRecordForBoroughForYear(borough, currentYear);
 	}
 }

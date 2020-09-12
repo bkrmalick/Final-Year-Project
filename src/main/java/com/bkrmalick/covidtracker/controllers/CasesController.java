@@ -1,19 +1,12 @@
 package com.bkrmalick.covidtracker.controllers;
 
-import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 import com.bkrmalick.covidtracker.services.CasesProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import javax.script.ScriptException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
 
 @RestController
 @RequestMapping("/api/v1/cases")

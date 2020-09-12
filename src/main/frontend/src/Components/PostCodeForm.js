@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-
+import { Button } from './Button.js';
 import './PostCodeForm.css';
 
 //utils
@@ -17,9 +17,16 @@ function PostCodeForm(props)
 
         setSubmitDisabled(true);
 
-        getBoroughForPostCode(postCode)
-            .then(processPostCode)
-            .catch(handleError);
+        if (postCode.trim().length > 0)
+        {
+            getBoroughForPostCode(postCode)
+                .then(processPostCode)
+                .catch(handleError);
+        }     
+        else
+        {
+            setErrorText("Please enter a Post Code");
+        }
     }
     
     function processPostCode(resp)
@@ -53,15 +60,17 @@ function PostCodeForm(props)
     function changeHandler(event)
     {
         setErrorText("");
+        props.unselectSelectedLocation();
+        //TODO super.casesDataMode = null;
         setPostCode(event.target.value);
     }
-
+//<input type="submit" value="Check" disabled={submitDisabled} />
     return (
         <form id="input" onSubmit={onSubmit}>
           <label htmlFor="fname" id="LabelForPostCode">Post Code</label>
           <input type="text" id="postcode" value={postCode} onChange={changeHandler} /><br /><br />
           <p className="error">{errorText}</p>
-          <input type="submit" value="Check"  disabled={submitDisabled}/>
+            <Button type="submit" disabled={submitDisabled} buttonColor="blue" buttonSize="btn--medium">GO</Button>
         </form>
     ); 
 }

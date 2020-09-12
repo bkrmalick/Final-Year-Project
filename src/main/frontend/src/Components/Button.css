@@ -83,6 +83,12 @@
   border: none;
 }
 
+.blue:hover {
+  background-color: #598bf8;
+  color: #fff;
+  border: none;
+}
+
 .red {
   background-color: #f00946;
   color: #fff;
@@ -90,14 +96,14 @@
 }
 
 .primary {
-  background-color: #242424;
+  background-color: #1c2237;
   color: #fff;
   border: none;
 }
 
 .primary:hover {
-  background-color: #fff;
-  color: #242424;
+  background-color: lightgray;
+  color: #fff;
   border: none;
 }
 
@@ -109,4 +115,6 @@
 
 .green:hover {
   background-color: #242424;
+  color: #fff;
+  border: none;
 }

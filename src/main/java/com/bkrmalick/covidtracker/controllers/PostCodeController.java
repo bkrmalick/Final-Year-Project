@@ -21,7 +21,6 @@ public class PostCodeController
 	@GetMapping(path="{postCode}")
 	public PostCodeApiOutput getPostCodeApiOutput(@PathVariable(value = "postCode") String postCode)
 	{
-		System.out.println("CALL POSTCODE");
 		return postCodeProcessingService.produceOutputResponse(postCode);
 	}
 

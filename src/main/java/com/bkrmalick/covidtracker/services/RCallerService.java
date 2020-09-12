@@ -1,11 +1,10 @@
 package com.bkrmalick.covidtracker.services;
 
-import com.bkrmalick.covidtracker.Main;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import org.renjin.script.RenjinScriptEngine;
-import org.renjin.sexp.*;
 import org.renjin.sexp.ListVector;
+import org.renjin.sexp.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @Cacheable methods MUST
+ * 			+ be public
+ * 			+ only be called through the proxy
+ */
 @Service
 public class RCallerService
 {
@@ -78,7 +82,7 @@ public class RCallerService
 	 * @param borough
 	 * @return predicted cases data rows
 	 */
-	@Cacheable(value="predictedCasesData",key="'data'+#borough")
+	@Cacheable(value="predictedCases",key="#borough")
 	public CasesApiInputRow[] getPredictedDataUntilDate(LocalDate date, String borough) throws IOException, ScriptException, URISyntaxException
 	{
 		logger.info("TRAINING MODEL AND PREDICTING DATA FOR ["+borough+"] ON ["+date+"]" );
@@ -123,7 +127,7 @@ public class RCallerService
 				requestDate.isAfter(RCallerService.maxDateCache); //requestDate > cacheDate
 	}
 
-	@CacheEvict(value="predictedCasesData", condition ="#root.target.isCacheable(#date,#lastRefreshedDate)",allEntries = true, beforeInvocation = true)
+	@CacheEvict(value="predictedCases", condition ="#root.target.isCacheable(#date,#lastRefreshedDate)",allEntries = true, beforeInvocation = true)
 	public CasesApiInput getPredictedCasesDataForDate(LocalDate date, int days, LocalDate lastRefreshedDate) throws IOException, URISyntaxException, ScriptException
 	{
 		logger.info("INCOMING PREDICTION DATA REQUEST FOR ["+date+"]");

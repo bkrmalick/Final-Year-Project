@@ -11,7 +11,12 @@ public class GeneralUserVisibleException extends HttpStatusCodeException
 	}
 	public GeneralUserVisibleException(HttpStatusCodeException e)
 	{
-		super( e.getStatusCode(),e.getResponseBodyAsString());
+		super(e.getResponseBodyAsString(), e.getStatusCode(),"",null,null,null);
 	}
 
+	@Override
+	public String toString()
+	{
+		return this.getResponseBodyAsString();
+	}
 }
