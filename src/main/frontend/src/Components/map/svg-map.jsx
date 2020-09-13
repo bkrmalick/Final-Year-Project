@@ -10,11 +10,11 @@ function SVGMap(props) {
 	const [tool, setTool] = useState(TOOL_NONE);
 	
 	const [value, setValue] = useState({}); //describes position/size of svg inside viewer
-	const viewerRef  = useRef({}); //reference to the viewer
+	const viewerRef = useRef({}); //reference to the viewer
 	const [isFirstRender, setIsFirstRender] = useState(true);
 
-	if(viewerRef.current.fitToViewer!==undefined && isFirstRender) //for first few renders the viewerRef does not have this function
-	{	
+	if (viewerRef.current.fitToViewer !== undefined && isFirstRender) //for first few renders the viewerRef does not have this function
+	{
 		viewerRef.current.fitToViewer("center", "center");
 		setIsFirstRender(false);
 	}

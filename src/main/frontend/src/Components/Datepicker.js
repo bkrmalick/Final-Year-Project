@@ -92,14 +92,14 @@ function Datepicker(props)
     return (
         <>
             <div className={props.className}>
-            <label htmlFor="start">Showing Data from: </label>
+            <label htmlFor="start">Showing Data for: </label>
             <input type="date" id="start" name="trip-start"
                 value={date}
                 onChange={handleChange}
                 min={dateYearBeforeDate()}
                 max={dateYearAfterDate()}
                 ></input>
-                <p id="mode">Analysis Mode: <span className={props.mode+"Mode"} >{props.mode}</span></p>
+                <p id="mode">Mode: <span className={props.mode+"Mode"} >{props.mode}</span></p>
             </div>
         </>
     );

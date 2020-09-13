@@ -13,6 +13,9 @@ import {getLocationName} from '../../utils/MapUtils'
 import { getCasesDataForDate } from '../../utils/APIUtils'
 
 
+import ClipLoader from "react-spinners/ClipLoader";
+
+
 class TooltipHeatMap extends React.Component {
 
 	constructor(props) {
@@ -177,7 +180,20 @@ class TooltipHeatMap extends React.Component {
 			CASES_DATA_RECORD = this.getDataRecordForArea(location.id, this.state.casesData);
 		}
 
-		return { fill: this.heatMapColorforValue(IS_SELECTED,CASES_DATA_RECORD.relative_danger_percentage) };
+		//only display get data has been loaded
+		return {
+			fill: this.heatMapColorforValue(IS_SELECTED, CASES_DATA_RECORD.relative_danger_percentage),
+			display: this.state.casesDataLoaded ? "block" : "none"
+		};
+	}
+
+	getLoadingWheelStyles()
+	{
+		//only display get data is being loaded
+		return {
+			margin: "20%" ,
+			display: this.state.casesDataLoaded ? "none" : "inline-block"
+		};
 	}
 
 	/*
@@ -264,7 +280,9 @@ class TooltipHeatMap extends React.Component {
 
 	render() {
 
-		var {casesDataDate,casesDataMode, casesDataRefreshDate,casesDataLoaded} = this.state;
+		let { casesDataDate, casesDataMode, casesDataRefreshDate, casesDataLoaded } = this.state;
+	
+
 
 		return (
 			<>
@@ -277,20 +295,21 @@ class TooltipHeatMap extends React.Component {
 						<DatePicker className="MapContainer__block__dateBox" date={casesDataDate} setDate={this.setCasesDataDate} mode={casesDataMode} /><br/>
 				
 				<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }}> {/*TODO make heigh/width proportional*/}
-		
-							<SVGMap
-								map={LondonMap}
-								locationClassName={this.getLocationClassName}
-								locationStyles={this.getLocationStyles}
-								onLocationMouseOver={this.handleLocationMouseOver}
-								onLocationMouseOut={this.handleLocationMouseOut}
-								onLocationMouseMove={this.handleLocationMouseMove}
-								isLocationSelected={this.isLocationSelected}
-								setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
-								//onLocationClick={e=>console.log(e.target.id)} 
-								className="svg-map"
-							/>
-						
+							
+								<SVGMap
+									map={LondonMap}
+									locationClassName={this.getLocationClassName}
+									locationStyles={this.getLocationStyles}
+									onLocationMouseOver={this.handleLocationMouseOver}
+									onLocationMouseOut={this.handleLocationMouseOut}
+									onLocationMouseMove={this.handleLocationMouseMove}
+									isLocationSelected={this.isLocationSelected}
+									setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
+									dataLoaded={this.casesDataLoaded}
+									//onLocationClick={e=>console.log(e.target.id)} 
+									className="svg-map" />
+								
+								<ClipLoader css={this.getLoadingWheelStyles()} />
 							<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 								{this.state.pointedLocation}
 							</div>

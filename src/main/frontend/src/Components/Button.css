@@ -61,6 +61,12 @@
   color: #242424;
 }
 
+.btn--medium.blue:hover{
+  background-color: #4f85fa;
+  color: #fff;
+  border: none;
+}
+
 .btn--wide:hover {
   color: #fff;
   background-color: #f00946;
@@ -83,11 +89,12 @@
   border: none;
 }
 
-.blue:hover {
-  background-color: #598bf8;
+.blue {
+  background-color: #276afb;
   color: #fff;
   border: none;
 }
+
 
 .red {
   background-color: #f00946;
