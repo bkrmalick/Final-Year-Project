@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
+import Popup from 'react-popup';
+
 import './Datepicker.css'
 
 function Datepicker(props)
 {
-    const [date,setDate] = useState("");
-    //const [mode, setMode] = useState("Normal");
+    const [selectedDate, setSelectedDate] = useState("");
+    const MAX_MONTHS_PREDICTION = 3;
 
     //update the date state variable acc. to prop ONLY if it already doesn't have a user selected value
-    if(date==="" && date!==getDateFromProp())
-        setDate(getDateFromProp());
+    if(selectedDate!==getDateFromProp())
+        setSelectedDate(getDateFromProp());
 
     function getDateFromProp() 
     {
@@ -38,23 +40,19 @@ function Datepicker(props)
 
     function handleChange(event)
     {
-        let newDate =new Date(event.target.value);
-
-        let maxDate= new Date(dateYearAfterDate());
-        let minDate= new Date(dateYearBeforeDate());
-        //let refreshDate= new Date(getDateFromProp());
-   
-        //don't accept inputs outside bounds
-        if(newDate>maxDate || newDate<minDate)
+        let newDate = new Date(event.target.value);   
+        let maxDate= new Date(props.casesDataRefreshDate);
+        maxDate= new Date(maxDate.setMonth(maxDate.getMonth() + MAX_MONTHS_PREDICTION));
+        
+        //don't accept inputs outside bounds (min date handled by parent component using backend message)
+        if(newDate>maxDate)
+        {
+            Popup.alert("Sorry! Currently only predictions of upto 3 months are allowed.");
             return;
+        }
         else
         {
-           /* if(newDate>refreshDate)
-                setMode("Prediction");
-            else
-                setMode("Normal");*/
-
-            setDate(event.target.value);
+            setSelectedDate(event.target.value);
             props.setDate(event.target.value.split("-").reverse().join("-"));  //Convert YYYY-MM-DD to DD-MM-YYYY format 
         }
     }
@@ -94,7 +92,7 @@ function Datepicker(props)
             <div className={props.className}>
             <label htmlFor="start">Showing Data for: </label>
             <input type="date" id="start" name="trip-start"
-                value={date}
+                value={selectedDate}
                 onChange={handleChange}
                 min={dateYearBeforeDate()}
                 max={dateYearAfterDate()}

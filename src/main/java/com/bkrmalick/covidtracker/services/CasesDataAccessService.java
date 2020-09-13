@@ -36,7 +36,9 @@ public class CasesDataAccessService
 		CasesApiInput responseReceived = restTemplate.getForObject(apiURL + sql, CasesApiInput.class);
 
 		if(responseReceived.getRows().length==0)
+		{
 			throw new GeneralUserVisibleException("No data found for this date", HttpStatus.NOT_FOUND);
+		}
 
 		//not catching the error or throwing a user visible exception here as we do not want to expose the query to the client
 		//TODO logging for exceptions e.g when changing to area_name1

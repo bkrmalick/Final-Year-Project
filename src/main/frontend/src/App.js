@@ -1,7 +1,9 @@
 //other
 import React from 'react';
 import './App.css';
+import './Popup.css';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import Popup from 'react-popup';
 
 //navigation
 import Navbar from './components/pages/nav/Navbar'
@@ -19,6 +21,7 @@ function App() {
 
   return (
     <Router>
+      <Popup />
       <div className="App">
         <Navbar />
         <Switch>

@@ -7,7 +7,7 @@ public class GeneralUserVisibleException extends HttpStatusCodeException
 {
 	public GeneralUserVisibleException(String message, HttpStatus status)
 	{
-		super(status, message);
+		super(message, status,"",null,null,null);
 	}
 	public GeneralUserVisibleException(HttpStatusCodeException e)
 	{

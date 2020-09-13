@@ -7,6 +7,7 @@ import  SVGMap  from "./svg-map";
 import TooltipText from '../TooltipText';
 import DatePicker from '../Datepicker';
 import PostCodeForm from '../PostCodeForm';
+import Popup from 'react-popup';
 
 //utils
 import {getLocationName} from '../../utils/MapUtils'
@@ -66,11 +67,15 @@ class TooltipHeatMap extends React.Component {
 					});
 			
 				})
-				.catch(err=>console.log(err));
+				.catch(err => {
+					console.log(err.response)
+				
+					Popup.alert("Sorry, there was an error while fetching the data from the server. Please contact admin.");
+				}); //TODO popup
 		}
 	}
 
-	componentDidUpdate()
+	componentDidUpdate(prevProps, prevState)
 	{
 		if(!this.state.casesDataLoaded) 
 		{
@@ -84,9 +89,25 @@ class TooltipHeatMap extends React.Component {
 						casesData: res.data.cases_data,
 						casesDataMode:res.data.mode
 					});
+				
+					if (this.state.casesDataMode === "Prediction" && this.state.casesDataMode !== prevState.casesDataMode)
+					{
+						Popup.alert("You have now switched to Prediction Mode. The application will now extrapolate existing data up until the selected date. ");
+					}
 			
 				})
-				.catch(err=>console.log(err));
+				.catch(err =>
+				{
+					console.log(err);
+
+					Popup.alert(err.response.data.message +". Reverting to original selection.");
+
+					//reset to previous state
+					this.setState({
+						casesDataDate: prevState.casesDataDate,
+						casesDataLoaded: prevState.casesDataLoadedd
+						});
+				});
 		}
 	}
 
@@ -273,8 +294,8 @@ class TooltipHeatMap extends React.Component {
 	setCasesDataDate(date)
 	{
 		this.setState({
-			casesDataDate: date,
-			casesDataLoaded: false
+			casesDataLoaded: false,
+			casesDataDate: date
 			});
 	}
 
@@ -282,8 +303,6 @@ class TooltipHeatMap extends React.Component {
 
 		let { casesDataDate, casesDataMode, casesDataRefreshDate, casesDataLoaded } = this.state;
 	
-
-
 		return (
 			<>
       <section className="MapContainer">
@@ -292,7 +311,12 @@ class TooltipHeatMap extends React.Component {
 					<h2 className="MapContainer__block__title">
 							London Boroughs
 					</h2>
-						<DatePicker className="MapContainer__block__dateBox" date={casesDataDate} setDate={this.setCasesDataDate} mode={casesDataMode} /><br/>
+						<DatePicker className="MapContainer__block__dateBox"
+							date={casesDataDate}
+							setDate={this.setCasesDataDate}
+							mode={casesDataMode}
+							casesDataRefreshDate={this.state.casesDataRefreshDate}
+						/><br />
 				
 				<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }}> {/*TODO make heigh/width proportional*/}
 							
