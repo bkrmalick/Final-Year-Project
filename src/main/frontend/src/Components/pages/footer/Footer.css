@@ -6,6 +6,12 @@
     justify-content: center;
     align-items: center;
   }
+
+  @media (max-width: 767px) {
+    .footer-container {
+      padding-bottom: 7rem;
+    }
+  }
   
   .footer-subscription {
     display: flex;

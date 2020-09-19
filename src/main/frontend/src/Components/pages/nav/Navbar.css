@@ -125,7 +125,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      transform: translate(25%, 50%);
+      font-size: 5vh;
+      transform: translate(15%, 50%);
     }
   
     .menu-icon {
@@ -149,5 +150,21 @@
       align-items: center;
       width: 100%;
       height: 120px;
+    }
+  }
+
+
+  @media screen and (max-width: 452px) {
+    .navbar-logo {
+      font-size: 1.2rem;
+      transform: translate(5%, 150%);
+    }
+  }
+
+
+  @media screen and (max-width: 360px) {
+    .navbar-logo {
+      font-size: 1.1rem;
+      transform: translate(5%, 150%);
     }
   }

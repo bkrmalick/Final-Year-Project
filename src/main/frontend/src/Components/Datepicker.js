@@ -7,6 +7,7 @@ function Datepicker(props)
 {
     const [selectedDate, setSelectedDate] = useState("");
     const MAX_MONTHS_PREDICTION = 3;
+    const MIN_DATE = "2020-02-01";
 
     //update the date state variable acc. to prop ONLY if it already doesn't have a user selected value
     if(selectedDate!==getDateFromProp())
@@ -44,6 +45,9 @@ function Datepicker(props)
         let maxDate= new Date(props.casesDataRefreshDate);
         maxDate= new Date(maxDate.setMonth(maxDate.getMonth() + MAX_MONTHS_PREDICTION));
         
+        if (newDate === selectedDate)
+            return;
+            
         //don't accept inputs outside bounds (min date handled by parent component using backend message)
         if(newDate>maxDate)
         {
@@ -57,7 +61,7 @@ function Datepicker(props)
         }
     }
 
-    function dateYearBeforeDate()
+    /*function dateYearBeforeDate()
     {
         var d = new Date(getDateFromProp()),
             month = '' + (d.getMonth() + 1),
@@ -70,7 +74,7 @@ function Datepicker(props)
             day = '0' + day;
     
         return [year, month, day].join('-');
-    }
+    }*/
 
     function dateYearAfterDate()
     {
@@ -93,9 +97,9 @@ function Datepicker(props)
             <label htmlFor="start">Showing Data for: </label>
             <input type="date" id="start" name="trip-start"
                 value={selectedDate}
-                onChange={handleChange}
-                min={dateYearBeforeDate()}
-                max={dateYearAfterDate()}
+                    onChange={handleChange}
+                    min={MIN_DATE}
+                    max={dateYearAfterDate()}
                 ></input>
                 <p id="mode">Mode: <span className={props.mode+"Mode"} >{props.mode}</span></p>
             </div>

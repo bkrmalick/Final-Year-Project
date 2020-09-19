@@ -1,10 +1,14 @@
 package com.bkrmalick.covidtracker.services;
 
+import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
 import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
@@ -21,7 +25,9 @@ import java.util.*;
 @Service
 public class CasesProcessingService
 {
-	private final String [] BOROUGHS;
+	private static final Logger logger = LoggerFactory.getLogger(CasesProcessingService.class);
+
+	private final String[] BOROUGHS;
 	private CasesDataAccessService casesDataAccessService;
 	private PopulationDensityDataAccessService populationDensityDataAccessService;
 	private RCallerService rCallerService;
@@ -30,37 +36,37 @@ public class CasesProcessingService
 	@Autowired
 	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService, RCallerService rCallerService)
 	{
-		this.casesDataAccessService=casesDataAccessService;
-		this.BOROUGHS=BOROUGHS;
+		this.casesDataAccessService = casesDataAccessService;
+		this.BOROUGHS = BOROUGHS;
 		this.populationDensityDataAccessService = populationDensityDataAccessService;
 		this.rCallerService = rCallerService;
 	}
 
 	/**
 	 * Called by the controller
+	 *
 	 * @param date The user defined date for which the response/output is to be produced. Can be in the future or past.
 	 * @return CasesApiOutput The final response to be shown to the user
 	 */
 	public CasesApiOutput produceOutputResponse(LocalDate date)
 	{
 
-		LocalDate dataLastRefreshedDate= casesDataAccessService.getDataLastRefreshedDate();
+		LocalDate dataLastRefreshedDate = casesDataAccessService.getDataLastRefreshedDate();
 
 		CasesApiInput inputData = null;
 		CasesApiOutput outputData;
 
 		LocalDate dateForOutput;
 
-		if(date!=null && date.isAfter(dataLastRefreshedDate))
+		if (date != null && date.isAfter(dataLastRefreshedDate))
 		{
 			/*PREDICTION MODE - user asking for data beyond the data available*/
-			dateForOutput=date;
+			dateForOutput = date;
 
 			try
 			{
-				inputData=rCallerService.getPredictedCasesDataForDate(date,14, dataLastRefreshedDate);
-			}
-			catch(IOException | ScriptException | URISyntaxException e)
+				inputData = rCallerService.getPredictedCasesDataForDate(date, 14, dataLastRefreshedDate);
+			} catch (IOException | ScriptException | URISyntaxException e)
 			{
 				e.printStackTrace();
 			}
@@ -71,33 +77,33 @@ public class CasesProcessingService
 			dateForOutput = (date == null ? dataLastRefreshedDate : date);
 
 			//get the data from ext api
-			inputData= casesDataAccessService.getDataForDaysBeforeDate(dateForOutput,14);
+			inputData = casesDataAccessService.getDataForDaysBeforeDate(dateForOutput, 14);
 		}
 
 		outputData = processCasesApiResponse(
 				inputData,
 				dataLastRefreshedDate,
-				dateForOutput );
+				dateForOutput);
 
 		return outputData;
 	}
 
 	public CasesApiOutput processCasesApiResponse(CasesApiInput input, LocalDate dataLastRefreshedDate, LocalDate date)
 	{
-		CasesApiInputRow[] inputRows= input.getRows();
+		CasesApiInputRow[] inputRows = input.getRows();
 		CasesApiOutputRow[] outputRows = new CasesApiOutputRow[BOROUGHS.length];
 
 		//get the output rows
-		for(int i=0;i<BOROUGHS.length;i++)
+		for (int i = 0; i < BOROUGHS.length; i++)
 		{
-			outputRows[i]=produceOutputRow(inputRows, BOROUGHS[i]);
+			outputRows[i] = produceOutputRow(inputRows, BOROUGHS[i]);
 		}
 
 		//populate relative danger percentages
-		for(int i=0;i<BOROUGHS.length;i++)
+		for (int i = 0; i < BOROUGHS.length; i++)
 		{
 			outputRows[i].setRelative_danger_percentage(
-					calculateDangerPercentage(outputRows,outputRows[i].getAbsolute_danger_value())
+					calculateDangerPercentage(outputRows, outputRows[i].getAbsolute_danger_value())
 			);
 		}
 
@@ -106,28 +112,40 @@ public class CasesProcessingService
 
 	private CasesApiOutputRow produceOutputRow(CasesApiInputRow[] inputRows, String borough)
 	{
-		int totalCases= Arrays.stream(inputRows)
+
+		int totalCases = Arrays.stream(inputRows)
 				.filter(row -> row.getArea_name().equals(borough))
 				.max(Comparator.comparing(CasesApiInputRow::getDate))
-				.orElseThrow(()->new IllegalStateException("Cannot find latest cases input row for borough ["+borough+"]"))
+				.orElseThrow(() -> new IllegalStateException("Cannot find latest cases input row for borough [" + borough + "]"))
 				.getTotal_cases();
 
-		int casesInPastTwoWeeks=Arrays.stream(inputRows)
-				.filter(row->row.getArea_name().equals(borough))
+		int casesInPastTwoWeeks = Arrays.stream(inputRows)
+				.filter(row -> row.getArea_name().equals(borough))
 				.mapToInt(CasesApiInputRow::getNew_cases)
 				.sum();
 
-		Assert.isTrue(Arrays.stream(inputRows)
-				.filter(row->row.getArea_name().equals(borough))
-				.mapToInt(CasesApiInputRow::getNew_cases).count() == 14); //todo remove
+		int recordsCount = Math.toIntExact(
+				Arrays.stream(inputRows)
+						.filter(row -> row.getArea_name().equals(borough))
+						.count()
+		);
 
-		double populationDensityPerSqKM=getPopulationDensityForBorough(borough);
+		if (recordsCount < 14)
+		{
+			//Occurs when user requests too early date e.g 20-02-20 which is not enough to calculate 2 weeks of data
+			throw new GeneralUserVisibleException("Not enough data for this date", HttpStatus.NOT_FOUND);
+		}
+		else if (recordsCount != 14)
+		{
+			throw new IllegalStateException("Record count for Borough [" + borough + "] is not 14 after filtering");
+		}
 
-		double dangerPercentage=0;
+		double populationDensityPerSqKM = getPopulationDensityForBorough(borough);
 
-		BigDecimal dangerValue=calculateAbsoluteDangerValue(casesInPastTwoWeeks,populationDensityPerSqKM);
+		BigDecimal dangerValue = calculateAbsoluteDangerValue(casesInPastTwoWeeks, populationDensityPerSqKM);
 
-		return new CasesApiOutputRow(borough, dangerValue, dangerPercentage,totalCases,casesInPastTwoWeeks, populationDensityPerSqKM);
+		//danger percentage populated after this method called
+		return new CasesApiOutputRow(borough, dangerValue, 0, totalCases, casesInPastTwoWeeks, populationDensityPerSqKM);
 	}
 
 	/**
@@ -135,9 +153,9 @@ public class CasesProcessingService
 	 */
 	private double calculateDangerPercentage(CasesApiOutputRow[] outputRows, BigDecimal dangerValueOfBorough)
 	{
-		BigDecimal maxDanger_value=Arrays.stream(outputRows)
+		BigDecimal maxDanger_value = Arrays.stream(outputRows)
 				.max(Comparator.comparing(CasesApiOutputRow::getAbsolute_danger_value))
-				.orElseThrow(()->new IllegalStateException("Cannot find max danger value of boroughs"))
+				.orElseThrow(() -> new IllegalStateException("Cannot find max danger value of boroughs"))
 				.getAbsolute_danger_value();
 
 		return dangerValueOfBorough
@@ -147,9 +165,9 @@ public class CasesProcessingService
 	}
 
 	/**
-	 *  absolute danger value  = cases in past two weeks * population density
+	 * absolute danger value  = cases in past two weeks * population density
 	 */
-	private BigDecimal calculateAbsoluteDangerValue(int casesPastTwoWeeks,double populationDensity)
+	private BigDecimal calculateAbsoluteDangerValue(int casesPastTwoWeeks, double populationDensity)
 	{
 		BigDecimal bd_cases = BigDecimal.valueOf(casesPastTwoWeeks);
 		BigDecimal bd_populationDensity = BigDecimal.valueOf(populationDensity);
@@ -162,7 +180,7 @@ public class CasesProcessingService
 	{
 		double boroughPopDensity;
 
-		if(borough.equalsIgnoreCase("Hackney and City of London"))
+		if (borough.equalsIgnoreCase("Hackney and City of London"))
 		{
 			PopulationDensityRecord popDensityRecordHackney = populationDensityDataAccessService
 					.getPopulationDensityRecordForBoroughForCurrentYear("Hackney");
@@ -170,15 +188,15 @@ public class CasesProcessingService
 			PopulationDensityRecord popDensityRecordCOL = populationDensityDataAccessService
 					.getPopulationDensityRecordForBoroughForCurrentYear("City of London");
 
-			double areaHackney=popDensityRecordHackney.getSquareKilometres();
-			double areaCOL=popDensityRecordCOL.getSquareKilometres();
-			double combinedArea=areaHackney+areaCOL;
+			double areaHackney = popDensityRecordHackney.getSquareKilometres();
+			double areaCOL = popDensityRecordCOL.getSquareKilometres();
+			double combinedArea = areaHackney + areaCOL;
 
-			double popDensityHackney=popDensityRecordHackney.getPopulationPerSquareKilometre();
-			double popDensityCOL=popDensityRecordCOL.getPopulationPerSquareKilometre();
+			double popDensityHackney = popDensityRecordHackney.getPopulationPerSquareKilometre();
+			double popDensityCOL = popDensityRecordCOL.getPopulationPerSquareKilometre();
 
 			//combine the population densities acc. to area sizes
-			boroughPopDensity=(popDensityHackney*areaHackney/combinedArea) + (popDensityCOL*areaCOL/combinedArea);
+			boroughPopDensity = (popDensityHackney * areaHackney / combinedArea) + (popDensityCOL * areaCOL / combinedArea);
 		}
 		else
 		{

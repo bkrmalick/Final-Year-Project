@@ -159,6 +159,7 @@ public class RCallerService
 					.collect(Collectors.toList());
 
 			Assert.isTrue(dataForBorough.size()==14); //todo remove
+			//todo throwing  exception if multiple subsequent cancelled requests
 
 			rowsList.addAll(dataForBorough);
 		}

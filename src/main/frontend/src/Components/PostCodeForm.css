@@ -12,3 +12,9 @@ input{
     text-align: center;
     padding: 3px;
 }
+
+@media screen and (max-width: 960px){
+    .btn{
+      width:70%;
+    }
+  }

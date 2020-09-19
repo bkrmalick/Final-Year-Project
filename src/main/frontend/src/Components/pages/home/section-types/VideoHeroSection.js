@@ -15,7 +15,7 @@ function VideoHeroSection() {
     //TODO Not displaying on mobile properly
     return (
         <div className="hero-container">
-            <video src="videos/video-2.mp4" autoPlay loop muted /> 
+            <video src="videos/video-2.mp4" autoPlay playsInline loop muted /> 
             <h1 className="fade-in">STAY INFORMED, STAY SAFE</h1> 
             <p className="fade-in">Track recent COVID-19 cases in London</p>
             <div className="hero-btns">

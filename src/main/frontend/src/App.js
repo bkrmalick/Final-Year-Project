@@ -6,11 +6,12 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import Popup from 'react-popup';
 
 //navigation
-import Navbar from './components/pages/nav/Navbar'
+import Navbar from './components/pages/nav/Navbar';
 
 //pages
-import Home from './components/pages/home/Home'
-import Tracker from './components/pages/tracker/Tracker'
+import Home from './components/pages/home/Home';
+import Tracker from './components/pages/tracker/Tracker';
+import NoMatch from './components/pages/nomatch/NoMatch';
 
 function App() {
   
@@ -24,10 +25,11 @@ function App() {
       <Popup />
       <div className="App">
         <Navbar />
-        <Switch>
-          <Route path="/" exact component={Home}/>
-          <Route path="/go" exact component={Tracker}/>
-        </Switch>
+          <Switch>
+            <Route path="/" exact component={Home}/>
+            <Route path="/go" exact component={Tracker} />
+            <Route component={NoMatch}/>
+          </Switch>
       </div>
     </Router>
   );

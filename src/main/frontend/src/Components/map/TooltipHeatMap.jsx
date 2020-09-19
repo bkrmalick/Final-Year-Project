@@ -71,7 +71,7 @@ class TooltipHeatMap extends React.Component {
 					console.log(err.response)
 				
 					Popup.alert("Sorry, there was an error while fetching the data from the server. Please contact admin.");
-				}); //TODO popup
+				}); 
 		}
 	}
 
@@ -124,12 +124,14 @@ class TooltipHeatMap extends React.Component {
 	  }
 	*/
 
-	handleLocationMouseOver(nameOrEvent) {
+	handleLocationMouseOver(nameOrEvent)
+	{
 		const pointedLocation = this.getTooltipText(nameOrEvent);
 		this.setState({ pointedLocation });
 	}
 
-	handleLocationMouseOut() {
+	handleLocationMouseOut()
+	{
 		this.setState({ pointedLocation: null, tooltipStyle: { display: 'none' } });
 	}
 	
@@ -201,7 +203,7 @@ class TooltipHeatMap extends React.Component {
 			CASES_DATA_RECORD = this.getDataRecordForArea(location.id, this.state.casesData);
 		}
 
-		//only display get data has been loaded
+		//only display when data has been loaded
 		return {
 			fill: this.heatMapColorforValue(IS_SELECTED, CASES_DATA_RECORD.relative_danger_percentage),
 			display: this.state.casesDataLoaded ? "block" : "none"
@@ -210,7 +212,7 @@ class TooltipHeatMap extends React.Component {
 
 	getLoadingWheelStyles()
 	{
-		//only display get data is being loaded
+		//only display when data is loading
 		return {
 			margin: "20%" ,
 			display: this.state.casesDataLoaded ? "none" : "inline-block"
@@ -241,6 +243,8 @@ class TooltipHeatMap extends React.Component {
 
 	setSelectedLocationName(LOCATION_NAME)
 	{
+		//this.refs.MapContainerRef.scrollIntoView(false);
+		console.log(this.refs.MapContainerRef);
 		this.setState({selectedLocationName:LOCATION_NAME}); 
 	}
 
@@ -261,7 +265,7 @@ class TooltipHeatMap extends React.Component {
 		{	
 			let newTooltipStyle = {
 				display: 'block',
-				top: (coor.top + (coor.bottom-coor.y)/2 ) ,
+				top: (coor.top + (coor.bottom-coor.top)/2 ) ,
 				left: (coor.left ) //+ (coor.right-coor.x)/2
 			};
 
@@ -300,7 +304,6 @@ class TooltipHeatMap extends React.Component {
 	}
 
 	render() {
-
 		let { casesDataDate, casesDataMode, casesDataRefreshDate, casesDataLoaded } = this.state;
 	
 		return (
@@ -318,7 +321,7 @@ class TooltipHeatMap extends React.Component {
 							casesDataRefreshDate={this.state.casesDataRefreshDate}
 						/><br />
 				
-				<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }}> {/*TODO make heigh/width proportional*/}
+						<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }} /*ref="MapContainerRef"*/> 
 							
 								<SVGMap
 									map={LondonMap}

@@ -5,6 +5,10 @@
   font-family: 'PT Sans', sans-serif;
 }
 
+body {
+  min-width: 377px;
+}
+
 /*
 
 //RESET RULES START
@@ -116,3 +120,16 @@ code {
 
 */
 
+/*Manage overscrolling issues present on mobile*/
+
+html, body {
+  overflow: hidden;
+}
+
+body .App {
+  width: 100vw;
+  height: 100vh;
+  overflow-y: scroll;
+  /* enables “momentum” (smooth) scrolling */
+  -webkit-overflow-scrolling: touch;
+}
