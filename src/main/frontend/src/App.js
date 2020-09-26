@@ -12,6 +12,8 @@ import Navbar from './components/pages/nav/Navbar';
 import Home from './components/pages/home/Home';
 import Tracker from './components/pages/tracker/Tracker';
 import NoMatch from './components/pages/nomatch/NoMatch';
+import HelpUsCollect from './components/pages/helpUsCollect/HelpUsCollect';
+import Footer from './components/pages/footer/Footer';
 
 function App() {
   
@@ -28,8 +30,10 @@ function App() {
           <Switch>
             <Route path="/" exact component={Home}/>
             <Route path="/go" exact component={Tracker} />
+            <Route path="/help-us-collect" exact component={HelpUsCollect} />
             <Route component={NoMatch}/>
-          </Switch>
+        </Switch>
+        <Footer/>
       </div>
     </Router>
   );
