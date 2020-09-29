@@ -1,40 +1,41 @@
-import React from 'react'
+import React, {useState} from 'react'
 import QuestionType from './QuestionType';
 
 function Question(props)
 { 
-    
     let toReturn; 
+    const [ans, setAns] = useState("");
 
-    if (props.type === QuestionType.TEXT)
+    switch (props.type)
     {
-        toReturn = (<>
-            <label onSubmit={props.doneHandler} htmlFor="question" className="question-label">{props.text}</label><br/>
-            <input type="text" id="question" value={props.defaulttext===undefined?"...":props.defaulttext} /><br />
-            <input type="submit" value="OK ✅" />
-            <br />
-            </> );
-    }
-    else if (props.type === QuestionType.STATEMENT)
-    {
-        toReturn = (<>
+        case QuestionType.TEXT:
+            toReturn = (<>
+                <label onSubmit={props.doneHandler} htmlFor="question" className="question-label">{props.text}</label><br />
+                <input type="text" id="question" onChange={(e) => { setAns(e.target.value) }} value={props.defaulttext} /><br />
+                <input type="submit" value="OK ✅" />
+                <br />
+            </>);
+            break;
+        case QuestionType.STATEMENT:
+            toReturn = (<>
                 <label className="question-label">{props.text}</label><br />
-                <label className="question-label">{props.delayText}</label><br />
-        </>);
-
-        /*toReturn = (<>
-            <Typist avgTypingDelay={80} cursor={{ hideWhenDone: true }} onTypingDone={props.doneHandler}>
-                <Typist.Delay ms={500}/>
-                <label className="question-label">{props.text}</label>
-                <Typist.Backspace count={props.text.length} delay={500} />
-                <label className="question-label">{props.delayText}</label><br />
-                <Typist.Backspace count={props.text.length} delay={500} />
-            </Typist>
-            </> );*/
+                <label className="question-label">{props.secondText}</label><br />
+            </>);
+            break;
+        default:
+            toReturn = (<></>);
     }
+    
+    function onSubmit(e)
+    {
+        e.preventDefault();
+        console.log(ans);
+        props.doneHandler();
+    }
+      
 
     return (
-        <form className="question-form">
+        <form className="question-element" key={props.text} onSubmit={onSubmit}>
             {toReturn}
         </form>
     );
