@@ -4,22 +4,22 @@ import QuestionType from './QuestionType';
 function Question(props)
 { 
     let toReturn; 
-    const [ans, setAns] = useState("");
+    const [ans, setAns] = useState(" ");
 
-    switch (props.type)
+    switch (props.question.type)
     {
         case QuestionType.TEXT:
             toReturn = (<>
-                <label onSubmit={props.doneHandler} htmlFor="question" className="question-label">{props.text}</label><br />
-                <input type="text" id="question" onChange={(e) => { setAns(e.target.value) }} value={props.defaulttext} /><br />
+                <label onSubmit={props.question.doneHandler} htmlFor="question" className="question-label">{props.question.text}</label><br />
+                <input type="text" id="question" onChange={(e) => { setAns(e.target.value) }} value={props.question.defaulttext} /><br />
                 <input type="submit" value="OK ✅" />
                 <br />
             </>);
             break;
         case QuestionType.STATEMENT:
             toReturn = (<>
-                <label className="question-label">{props.text}</label><br />
-                <label className="question-label">{props.secondText}</label><br />
+                <label className="question-label">{props.question.text}</label><br />
+                <label className="question-label">{props.question.secondText}</label><br />
             </>);
             break;
         default:
@@ -29,13 +29,12 @@ function Question(props)
     function onSubmit(e)
     {
         e.preventDefault();
-        console.log(ans);
-        props.doneHandler();
+        props.doneHandler(props.question,ans);
     }
       
 
     return (
-        <form className="question-element" key={props.text} onSubmit={onSubmit}>
+        <form className="question-element" onSubmit={onSubmit}>
             {toReturn}
         </form>
     );

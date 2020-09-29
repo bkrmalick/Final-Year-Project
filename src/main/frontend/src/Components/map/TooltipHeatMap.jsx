@@ -13,9 +13,7 @@ import Popup from 'react-popup';
 import {getLocationName} from '../../utils/MapUtils'
 import { getCasesDataForDate } from '../../utils/APIUtils'
 
-
 import ClipLoader from "react-spinners/ClipLoader";
-
 
 class TooltipHeatMap extends React.Component {
 
