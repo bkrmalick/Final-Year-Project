@@ -32,7 +32,7 @@ public class CasesDataAccessService
 				+"order by area_name desc offset 0 limit 500;"; //14*32 will always be lesser than 500
 
 
-		//response will have 14 records * 32 boroughs = 448 TODO add assert for responseReceived.getRows().length
+		//response will have 14 records * 32 boroughs = 448
 		CasesApiInput responseReceived = restTemplate.getForObject(apiURL + sql, CasesApiInput.class);
 
 		if(responseReceived.getRows().length==0)

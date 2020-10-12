@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @Cacheable methods MUST
  * 			+ be public
- * 			+ only be called through this proxy
+ * 			+ only be called through proxy
  */
 @Repository
 public class PopulationDensityDataAccessService

@@ -6,10 +6,11 @@
   justify-content: center;
   align-items: center;
   object-fit: contain;
-  text-align: center;
-  font-size: 3rem;
+  /*text-align: center;*/
+  font-size: 2rem;
   /*3 rem*/
   overflow: hidden;
+  white-space: pre-line;
 }
 
 @media (max-width: 767px) {
@@ -20,4 +21,3 @@
 }
 
 .question-element {}
-
