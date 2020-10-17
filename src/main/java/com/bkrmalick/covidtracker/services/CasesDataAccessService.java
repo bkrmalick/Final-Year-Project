@@ -14,8 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Repository
 public class CasesDataAccessService
 {
-	private String apiURL;
-	private RestTemplate restTemplate;
+	private final String apiURL;
+	private final RestTemplate restTemplate;
 
 	@Autowired
 	public CasesDataAccessService(@Qualifier("casesApiURL") String apiURL, RestTemplate restTemplate)

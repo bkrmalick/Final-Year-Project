@@ -39,10 +39,9 @@ public class RCallerService
 {
 	private static final Logger logger = LoggerFactory.getLogger(RCallerService.class);
 
-	private CasesDataAccessService casesDataAccessService;
-	private String[] BOROUGHS;
+	private final CasesDataAccessService casesDataAccessService;
+	private final String[] BOROUGHS;
 
-	@Autowired
 	private RCallerService proxy; //@Cacheable methods MUST only be called through this proxy
 
 	public static LocalDate maxDateCache; //request Date on data for which cache was generated
@@ -53,6 +52,12 @@ public class RCallerService
 	{
 		this.casesDataAccessService = casesDataAccessService;
 		this.BOROUGHS = BOROUGHS;
+	}
+
+	@Autowired
+	public void setProxy(RCallerService proxy)
+	{
+		this.proxy = proxy;
 	}
 
 	@Cacheable(value="scripts")

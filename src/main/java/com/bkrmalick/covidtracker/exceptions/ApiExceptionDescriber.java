@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
  */
 public class ApiExceptionDescriber
 {
-	private final String message; //actually the external api response - set in ApiExceptionHandler
+	private final String message; //the external api response - set in ApiExceptionHandler
 	private final HttpStatus httpStatus;
 	private final ZonedDateTime timestamp;
 

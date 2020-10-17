@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class PostCodeProcessingService
 {
 	private static final Logger logger = LoggerFactory.getLogger(PostCodeProcessingService.class);
-	private PostCodeDataAccessService postCodeDataAccessService;
+	private final PostCodeDataAccessService postCodeDataAccessService;
 
 	@Autowired
 	public PostCodeProcessingService(PostCodeDataAccessService postCodeDataAccessService)

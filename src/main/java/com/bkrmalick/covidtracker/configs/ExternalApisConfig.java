@@ -15,7 +15,7 @@ public class ExternalApisConfig
 	@Value("${postcode-api-url}")
 	private String postCodeApiURL;
 
-	private static final String [] BOROUGHS={"Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney and City of London","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster"};
+	private static final String [] BOROUGH_NAMES={"Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney and City of London","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster"};
 
 	/*create a single RestTemplate() instance bean to use for external API's ingestion*/
 	@Bean
@@ -45,6 +45,6 @@ public class ExternalApisConfig
 	@Qualifier("BOROUGH_NAMES")
 	public String [] getBoroughNames()
 	{
-		return this.BOROUGHS;
+		return this.BOROUGH_NAMES;
 	}
 }

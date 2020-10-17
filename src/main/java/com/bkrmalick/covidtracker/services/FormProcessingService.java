@@ -9,7 +9,7 @@ import java.util.Map;
 @Service
 public class FormProcessingService
 {
-	FormDataAccessService formDataAccessService;
+	private final FormDataAccessService formDataAccessService;
 
 	@Autowired
 	public FormProcessingService(FormDataAccessService formDataAccessService)
