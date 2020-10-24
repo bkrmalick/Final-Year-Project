@@ -12,7 +12,7 @@ import Navbar from './components/pages/nav/Navbar';
 import Home from './components/pages/home/Home';
 import Tracker from './components/pages/tracker/Tracker';
 import NoMatch from './components/pages/nomatch/NoMatch';
-import HelpUsCollect from './components/pages/helpUsCollect/HelpUsCollect';
+import HelpUsCollect from './components/pages/help-us-collect/HelpUsCollect';
 import Footer from './components/pages/footer/Footer';
 
 function App() {

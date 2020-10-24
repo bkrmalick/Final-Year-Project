@@ -37,7 +37,7 @@ public class FormDataAccessService
 	@Cacheable(value = "formQuestions") //cache expiry defined in CachingConfig
 	public List<FormQuestionRecord> getQuestions()
 	{
-		logger.info("Getting form questions from db");
+		logger.info("Getting form questions from the database");
 		return dynamoDBMapper.scan(FormQuestionRecord.class, new DynamoDBScanExpression());
 	}
 

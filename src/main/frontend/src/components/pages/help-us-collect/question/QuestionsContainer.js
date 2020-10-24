@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useTransition, animated } from 'react-spring'
-import QuestionType from './question/QuestionType';
-import Question from './question/Question'
+import QuestionType from './QuestionType'
+import Question from './Question'
+import { postFormAnswers} from '../../../../utils/APIUtils';
+import Popup from 'react-popup';
 
 //styles
-import './HelpUsCollect.css'
+import './QuestionsContainer.css'
 
-function HelpUsCollect(props)
+
+function QuestionsContainer(props)
 {
+
     const [currentQuestionIndex, setCQI] = useState(0);
     const [answersMap, setAnswersMap] = useState(new Map()); // <questionID,ans>
 
-    //TODO fetch from db
-    const QUESTIONS = [
-        { type: 3, text: "Hello, there.", timeout: 1000 },
-        { type: 3, text:"We'll ask you a few questions regarding your health.", timeout: 2500 },
-        { type: 2, text: "Firstly, lets get the legalities out of the way.\nThis will require us to store some data on you.", trueText:"Sure! Lets Go", falseText:"No thanks", exitOnFalse: true   },
-        { type: 2, text: "Have you ever been tested positively for a COVID-19 test?", trueText:"Yes, I have", falseText:"Nope"   },
-        { type: 2, text: "Has you or anyone in your household had the following syptoms in the past two weeks: \n🔹a high temperature\n🔹a new, continuous cough\n🔹a loss or change to your sense of smell or taste ",trueText:"Yes",falseText:"No"},
-        { type: 1, text: "Where do you live?" },
-        { type: 3, text: "That's all for now!\nThank you for choosing to help us", timeout: 3000 }
-    ];
+    const QUESTIONS = props.questions
 
     const [questionsOnDisplay, setQOD] = useState([QUESTIONS[currentQuestionIndex]]);
 
@@ -67,19 +62,27 @@ function HelpUsCollect(props)
     function storeAnswer(question, answer)
     {
         const answersMap_copy = new Map(answersMap);
-        answersMap_copy.set(question.id+":"+question.text, answer);
+        answersMap_copy.set(question.id+": "+question.text, answer);
         setAnswersMap(answersMap_copy);
     }
 
 
-    //automatically trigger next question if current one is a statement
+    
     useEffect(() =>
     {
-        if (currentQuestionIndex === QUESTIONS.length - 1)
+        //if last questions - post answers to server
+        if (currentQuestionIndex === QUESTIONS.length - 1) 
         {
             console.log(answersMap);
+            console.log("Trying to post...");
+            postFormAnswers(answersMap).catch(err =>
+            {
+                console.log(err.response);
+                Popup.alert("Sorry, there was an error while submitting the answers to the server. Please try again later.");
+            });
         }
 
+        //automatically trigger next question if current one is a statement
         if (QUESTIONS[currentQuestionIndex].type === QuestionType.STATEMENT
             && currentQuestionIndex !== QUESTIONS.length - 1
         )
@@ -99,4 +102,4 @@ function HelpUsCollect(props)
     })
 }
 
-export default HelpUsCollect;
+export default QuestionsContainer;
