@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.dynamo_db.FormQuestionRecord;
+import com.bkrmalick.covidtracker.models.dynamo_db.FormResponseRecord;
 import com.bkrmalick.covidtracker.util.DateTimeUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -24,14 +25,12 @@ import java.util.UUID;
 public class FormDataAccessService
 {
 	private static final Logger logger = LoggerFactory.getLogger(FormDataAccessService.class);
-	private final Table formResponseTable;
 	private final DynamoDBMapper dynamoDBMapper;
 
 	@Autowired
-	public FormDataAccessService(@Qualifier("formResponseTable") Table formResponseTable , DynamoDBMapper dynamoDBMapper)
+	public FormDataAccessService(DynamoDBMapper dynamoDBMapper)
 	{
 		this.dynamoDBMapper = dynamoDBMapper;
-		this.formResponseTable=formResponseTable;
 	}
 
 	@Cacheable(value = "formQuestions") //cache expiry defined in CachingConfig
@@ -41,30 +40,21 @@ public class FormDataAccessService
 		return dynamoDBMapper.scan(FormQuestionRecord.class, new DynamoDBScanExpression());
 	}
 
-	/**
-	 * Saves map of answers to the db as JSON object
-	 * Uses the Table entity directly instead of dynamoDB mapper as it allows saving to JSON data-type.
-	 * @param answers
-	 */
-	public void saveAnswers(Map<String,String> answers)
+	public FormResponseRecord saveAnswers(Map<String,String> answers)
 	{
-		String jsonAnswers= new JSONObject(answers).toString();
-		String id=UUID.randomUUID().toString();
-		String createdDate = DateTimeUtils.getDateTimeNowInUTC().toString();
+		FormResponseRecord item = new FormResponseRecord(answers);
 
-		Item item =new Item()
-				.withPrimaryKey("id", id)
-				.withJSON("answersMap", jsonAnswers)
-				.withString("createdDate", createdDate);
 		try
 		{
-			formResponseTable.putItem(item);
-			logger.info("saved to db response object ["+item.toJSON()+"]");
+			dynamoDBMapper.save(item);
+			logger.info("saved to db response object ["+item+"]");
 		}
 		catch(Exception e)
 		{
-			logger.error("Failed to store response object ["+item.toJSON()+"]",e);
-			throw new GeneralUserVisibleException("There was an error storing the response, please try again later or contact admin! Reference: "+id, HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Failed to store response object ["+item+"]",e);
+			throw new GeneralUserVisibleException("There was an error storing the response, please try again later or contact admin! Response Reference: "+item.getId(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+
+		return item;
 	}
 }

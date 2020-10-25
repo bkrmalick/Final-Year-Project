@@ -1,5 +1,6 @@
 package com.bkrmalick.covidtracker.controllers;
 
+import com.bkrmalick.covidtracker.models.dynamo_db.FormResponseRecord;
 import com.bkrmalick.covidtracker.models.form_api.FormQuestionApiOutput;
 import com.bkrmalick.covidtracker.services.FormProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class FormController
 	}
 
 	@RequestMapping(value = "/answers", method = RequestMethod.POST, consumes = "application/json")
-	public void saveAnswer(@RequestBody Map<String, String> answers) //<Question,Answer>
+	public FormResponseRecord saveAnswer(@RequestBody Map<String, String> answers) //<Question,Answer>
 	{
-		formProcessingService.saveAnswers(answers);
+		return formProcessingService.saveAnswers(answers);
 	}
 }

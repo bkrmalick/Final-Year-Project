@@ -46,15 +46,5 @@ public class DynamoDBConfig
 	{
 		return new DynamoDBMapper(amazonDynamoDBClient());
 	}
-
-	@Bean
-	@Qualifier("formResponseTable")
-	public Table formResponseTable()
-	{
-		DynamoDB dynamoDB = new DynamoDB(amazonDynamoDBClient());
-
-		return dynamoDB.getTable("covidtracker.form-response");
-	}
-
 }
 
