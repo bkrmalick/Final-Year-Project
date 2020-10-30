@@ -14,8 +14,8 @@ import java.util.LinkedHashMap;
 @Repository
 public class PostCodeDataAccessService
 {
-	private String postCodeApiURL;
-	private RestTemplate restTemplate;
+	private final String postCodeApiURL;
+	private final RestTemplate restTemplate;
 	private final String[] BOROUGHS;
 
 	@Autowired

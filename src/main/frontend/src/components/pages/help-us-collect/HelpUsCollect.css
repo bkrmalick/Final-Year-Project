@@ -1,0 +1,14 @@
+.HelpUsCollect-container {
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    object-fit: contain;
+    /*text-align: center;*/
+    font-size: 2rem;
+    /*3 rem*/
+    overflow: hidden;
+    white-space: pre-line;
+  }

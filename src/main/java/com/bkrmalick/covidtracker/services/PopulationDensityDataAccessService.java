@@ -21,14 +21,13 @@ import java.util.Map;
 /**
  * @Cacheable methods MUST
  * 			+ be public
- * 			+ only be called through this proxy
+ * 			+ only be called through proxy
  */
 @Repository
 public class PopulationDensityDataAccessService
 {
 	private static final Logger logger = LoggerFactory.getLogger(PopulationDensityDataAccessService.class);
-	DynamoDBMapper dynamoDBMapper;
-	@Autowired
+	private final DynamoDBMapper dynamoDBMapper;
 	private PopulationDensityDataAccessService proxy;
 
 	@Autowired
@@ -37,6 +36,11 @@ public class PopulationDensityDataAccessService
 		this.dynamoDBMapper=dynamoDBMapper;
 	}
 
+	@Autowired
+	public void setProxy(PopulationDensityDataAccessService proxy)
+	{
+		this.proxy = proxy;
+	}
 
 	@Cacheable(value="populationDensity", key ="#borough+#year")
 	public PopulationDensityRecord getPopulationDensityRecordForBoroughForYear(String borough, String year)

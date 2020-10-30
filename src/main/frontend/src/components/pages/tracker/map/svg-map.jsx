@@ -1,9 +1,9 @@
-import React,{useRef}  from 'react';
-import PropTypes from 'prop-types';
-import { ReactSVGPanZoom, TOOL_NONE  } from 'react-svg-pan-zoom';
-import { useState } from 'react';
-import {AutoSizer} from 'react-virtualized';
-import Miniature from './ui-miniature/miniature.jsx';
+import React,{useRef}  from 'react'
+import PropTypes from 'prop-types'
+import { ReactSVGPanZoom, TOOL_NONE  } from 'react-svg-pan-zoom'
+import { useState } from 'react'
+import {AutoSizer} from 'react-virtualized'
+import Miniature from './ui-miniature/miniature.jsx'
 
 function SVGMap(props) {
 
@@ -69,8 +69,6 @@ return (
 		<AutoSizer>
 		  {(({width, height}) => width === 0 || height === 0 ? null : (
 
-		
-
 			<ReactSVGPanZoom
 			width={width-5} height={height-5} //sets the dimensions of the viewer and not the svg map (will increase itself to fit intial value)  //TODO make this padded/margin instead of 5
 				//onClick={event => { console.log(event.x, event.y, event.originalEvent); zoom(472, 128, 1.5); }} //TODO zoom not working?? ? 
@@ -80,7 +78,7 @@ return (
 				onChangeValue={v => setValue(v) }
 				detectAutoPan={false}
 				preventPanOutside={true}
-				background="white" //TODO change to white
+				background="white" 
 				className="MapContainer__block__map MapContainer__block__map__ViewerBox"
 				toolbarProps={{	activeToolColor: "LightCoral"}}
 				ref={viewerRef}

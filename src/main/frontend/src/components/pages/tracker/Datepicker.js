@@ -7,7 +7,7 @@ function Datepicker(props)
 {
     const [selectedDate, setSelectedDate] = useState("");
     const MAX_MONTHS_PREDICTION = 3;
-    const MIN_DATE = "2020-02-01";
+    const MIN_DATE = "2020-02-01"; //min time for which we have data
 
     //update the date state variable acc. to prop ONLY if it already doesn't have a user selected value
     if(selectedDate!==getDateFromProp())

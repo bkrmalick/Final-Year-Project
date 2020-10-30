@@ -21,3 +21,21 @@ export function getBoroughForPostCode(postCode)
 {
      return axios.get(API_URL +`api/v1/postcode/`+postCode);
 }
+
+export function getFormQuestions()
+{
+     return axios.get(API_URL +`api/v1/form/questions`);
+}
+
+export function postFormAnswers(answersMap)
+{
+     return axios.post(API_URL + `api/v1/form/answers`, convertMapToJSON(answersMap)) ;
+}
+
+function convertMapToJSON(map)
+{
+     let toReturn = {}
+
+     map.forEach((v,k ) => toReturn[k] = v)
+     return toReturn;
+}

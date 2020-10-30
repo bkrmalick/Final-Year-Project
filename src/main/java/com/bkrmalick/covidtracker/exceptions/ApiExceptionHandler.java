@@ -1,6 +1,7 @@
 package com.bkrmalick.covidtracker.exceptions;
 
 
+import com.bkrmalick.covidtracker.util.DateTimeUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,7 +30,7 @@ public class ApiExceptionHandler
 		ApiExceptionDescriber z= new ApiExceptionDescriber(
 				e.getMessage(),
 				e.getStatusCode(),
-				ZonedDateTime.now(ZoneId.of("Europe/London")));
+				DateTimeUtils.getDateTimeNowInUTC());
 
 		//2. Return response entity
 		return new ResponseEntity<>(z,e.getStatusCode());
@@ -42,7 +43,7 @@ public class ApiExceptionHandler
 		ApiExceptionDescriber z= new ApiExceptionDescriber(
 				"Please ensure input is a valid "+e.getRequiredType().getSimpleName(),
 				HttpStatus.BAD_REQUEST,
-				ZonedDateTime.now(ZoneId.of("Europe/London")));
+				DateTimeUtils.getDateTimeNowInUTC());
 
 		//2. Return response entity
 		return new ResponseEntity<>(z,HttpStatus.BAD_REQUEST);

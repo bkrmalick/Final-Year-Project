@@ -28,9 +28,9 @@ public class CasesProcessingService
 	private static final Logger logger = LoggerFactory.getLogger(CasesProcessingService.class);
 
 	private final String[] BOROUGHS;
-	private CasesDataAccessService casesDataAccessService;
-	private PopulationDensityDataAccessService populationDensityDataAccessService;
-	private RCallerService rCallerService;
+	private final CasesDataAccessService casesDataAccessService;
+	private final PopulationDensityDataAccessService populationDensityDataAccessService;
+	private final RCallerService rCallerService;
 
 
 	@Autowired
