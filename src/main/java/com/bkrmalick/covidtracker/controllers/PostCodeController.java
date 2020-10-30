@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/postcode")
-@CrossOrigin("localhost")
 public class PostCodeController
 {
-	private PostCodeProcessingService postCodeProcessingService;
+	private final PostCodeProcessingService postCodeProcessingService;
 
 	@Autowired
 	public PostCodeController(PostCodeProcessingService postCodeProcessingService)

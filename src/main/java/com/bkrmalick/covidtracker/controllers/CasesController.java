@@ -2,22 +2,22 @@ package com.bkrmalick.covidtracker.controllers;
 
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 import com.bkrmalick.covidtracker.services.CasesProcessingService;
-import com.bkrmalick.covidtracker.services.PopulationDensityDataAccessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import java.time.LocalDate;
 
 
 @RestController
 @RequestMapping("/api/v1/cases")
-@CrossOrigin("localhost")
 public class CasesController
 {
 	private static final Logger logger = LoggerFactory.getLogger(CasesController.class);
-	private CasesProcessingService casesProcessingService;
+	private final CasesProcessingService casesProcessingService;
 
 	@Autowired
 	public CasesController( CasesProcessingService casesProcessingService)

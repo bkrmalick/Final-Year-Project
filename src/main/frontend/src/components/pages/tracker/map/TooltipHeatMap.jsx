@@ -1,19 +1,20 @@
-import React from 'react';
-import LondonMap from "../../map files";
-import './TooltipHeatMap.scss';
+import React from 'react'
+import LondonMap from "../../../../map files"
+import './TooltipHeatMap.scss'
 
 //other components
-import  SVGMap  from "./svg-map";
-import TooltipText from '../TooltipText';
-import DatePicker from '../Datepicker';
-import PostCodeForm from '../PostCodeForm';
-import Popup from 'react-popup';
+import  SVGMap  from "./svg-map"
+import TooltipText from '../TooltipText'
+import DatePicker from '../Datepicker'
+import PostCodeForm from '../PostCodeForm'
+import Popup from 'react-popup'
+import ErrorIcon from '../../../ErrorIcon'
 
 //utils
-import {getLocationName} from '../../utils/MapUtils'
-import { getCasesDataForDate } from '../../utils/APIUtils'
+import {getLocationName} from '../../../../utils/MapUtils'
+import { getCasesDataForDate } from '../../../../utils/APIUtils'
 
-import ClipLoader from "react-spinners/ClipLoader";
+import ClipLoader from "react-spinners/ClipLoader"
 
 class TooltipHeatMap extends React.Component {
 
@@ -29,7 +30,7 @@ class TooltipHeatMap extends React.Component {
 			casesDataRefreshDate: null, 
 			casesDataDate: null,
 			casesDataMode:null,
-			casesDataLoaded: false,
+			casesDataLoaded: false, //false: not loaded, true: loaded, null: error while fetching data
 			selectedLocationName:null,
 			selectedLocationCoordinates:null
 		};
@@ -69,6 +70,10 @@ class TooltipHeatMap extends React.Component {
 					console.log(err.response)
 				
 					Popup.alert("Sorry, there was an error while fetching the data from the server. Please contact admin.");
+
+					this.setState({
+							casesDataLoaded:null //error
+					});
 				}); 
 		}
 	}
@@ -98,13 +103,17 @@ class TooltipHeatMap extends React.Component {
 				{
 					console.log(err);
 
-					Popup.alert(err.response.data.message +". Reverting to original selection.");
+					const errorDuringIntialLoad = (this.state.casesDataLoaded === null);
+					if (!errorDuringIntialLoad)
+					{
+						Popup.alert(err.response.data.message + ". Reverting to original selection.");
 
-					//reset to previous state
-					this.setState({
-						casesDataDate: prevState.casesDataDate,
-						casesDataLoaded: prevState.casesDataLoadedd
+						//reset to previous state
+						this.setState({
+							casesDataDate: prevState.casesDataDate,
+							casesDataLoaded: prevState.casesDataLoadedd
 						});
+					}
 				});
 		}
 	}
@@ -182,6 +191,8 @@ class TooltipHeatMap extends React.Component {
 	{
 		let CASES_DATA_RECORD;
 		let IS_SELECTED;
+		const hasCasesDataLoaded = (this.state.casesDataLoaded);
+		const hasCasesDataLoadErrored = (this.state.casesDataLoadedd===null);
 		
 		if (this.state.selectedLocationName === null)
 		{
@@ -192,7 +203,7 @@ class TooltipHeatMap extends React.Component {
 			IS_SELECTED = this.state.selectedLocationName.toUpperCase() === location.id.toUpperCase();	
 		}
 		
-		if(!this.state.casesDataLoaded)
+		if(!hasCasesDataLoaded)
 		{
 			CASES_DATA_RECORD = { relative_danger_percentage: null, cases_in_past_2_wks: null };
 		}
@@ -204,16 +215,29 @@ class TooltipHeatMap extends React.Component {
 		//only display when data has been loaded
 		return {
 			fill: this.heatMapColorforValue(IS_SELECTED, CASES_DATA_RECORD.relative_danger_percentage),
-			display: this.state.casesDataLoaded ? "block" : "none"
+			display: !hasCasesDataLoaded || hasCasesDataLoadErrored  ? "none" : "block"
 		};
 	}
 
-	getLoadingWheelStyles()
+ 	getLoadingWheelStyles()
 	{
+		let {casesDataLoaded} = this.state;
 		//only display when data is loading
 		return {
 			margin: "20%" ,
-			display: this.state.casesDataLoaded ? "none" : "inline-block"
+			display: casesDataLoaded || casesDataLoaded ===null ? "none" : "inline-block"
+		};
+	}
+
+	getErrorIconStyles()
+	{
+		let {casesDataLoaded} = this.state;
+		
+		return {
+			Zposition: 4, //high z-index so errorIcon appears infront of svg
+			position: 'relative',
+			display: casesDataLoaded === null ? "inline-block" : "none", //only display when data load has errored
+			margin: "23%"
 		};
 	}
 
@@ -319,8 +343,7 @@ class TooltipHeatMap extends React.Component {
 							casesDataRefreshDate={this.state.casesDataRefreshDate}
 						/><br />
 				
-						<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }} /*ref="MapContainerRef"*/> 
-							
+						<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }} > 
 								<SVGMap
 									map={LondonMap}
 									locationClassName={this.getLocationClassName}
@@ -332,15 +355,16 @@ class TooltipHeatMap extends React.Component {
 									setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
 									dataLoaded={this.casesDataLoaded}
 									//onLocationClick={e=>console.log(e.target.id)} 
-									className="svg-map" />
-								
-								<ClipLoader css={this.getLoadingWheelStyles()} />
+											className="svg-map" />	
+									<ClipLoader css={this.getLoadingWheelStyles()} />
+									<ErrorIcon css={this.getErrorIconStyles()} />
+						
 							<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
 								{this.state.pointedLocation}
 							</div>
 				</div>
 					
-				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate:"Loading..."} </p>
+				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate: casesDataLoaded===null?"⚠":"Loading..."} </p>
 			</article>
 					<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} unselectSelectedLocation={this.unselectSelectedLocation}/>
 		</section>

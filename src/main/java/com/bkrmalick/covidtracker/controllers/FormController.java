@@ -10,10 +10,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/form")
-@CrossOrigin("localhost")
 public class FormController
 {
-	FormProcessingService formProcessingService;
+	private final FormProcessingService formProcessingService;
 
 	@Autowired
 	public FormController(FormProcessingService formProcessingService)

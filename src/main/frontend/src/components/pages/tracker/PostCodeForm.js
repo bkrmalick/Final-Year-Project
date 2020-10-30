@@ -1,9 +1,9 @@
-import React,{useState} from 'react';
-import { Button } from './Button.js';
-import './PostCodeForm.css';
+import React,{useState} from 'react'
+import { Button } from '../../Button'
+import './PostCodeForm.css'
 
 //utils
-import {getBoroughForPostCode} from '../utils/APIUtils'
+import {getBoroughForPostCode} from '../../../utils/APIUtils'
 
 function PostCodeForm(props)
 {

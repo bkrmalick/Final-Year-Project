@@ -1,9 +1,9 @@
 import React, {useEffect, useState } from 'react'
-import QuestionsContainer from './question/QuestionsContainer';
-import { getFormQuestions } from '../../../utils/APIUtils';
-import ClipLoader from "react-spinners/ClipLoader";
+import QuestionsContainer from './question/QuestionsContainer'
+import { getFormQuestions } from '../../../utils/APIUtils'
+import ClipLoader from "react-spinners/ClipLoader"
 import Popup from 'react-popup';
-
+import ErrorIcon from '../../ErrorIcon'
 //styles
 import './HelpUsCollect.css'
 
@@ -49,7 +49,7 @@ function HelpUsCollect()
     
 
     if (errorFlag===true)
-        toReturn =<div className="HelpUsCollect-container"><span role="img" aria-label="error">❌</span></div>;
+        toReturn = <div className="HelpUsCollect-container"><ErrorIcon/></div >;
     else if (!questionsLoaded)
         toReturn = <div className="HelpUsCollect-container"><ClipLoader /></div>;
     else
