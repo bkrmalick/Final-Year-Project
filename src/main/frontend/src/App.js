@@ -14,6 +14,7 @@ import Tracker from './components/pages/tracker/Tracker';
 import NoMatch from './components/pages/nomatch/NoMatch';
 import HelpUsCollect from './components/pages/help-us-collect/HelpUsCollect';
 import Footer from './components/pages/footer/Footer';
+import About from './components/pages/about/About';
 
 function App()
 {
@@ -31,6 +32,7 @@ function App()
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/go" exact component={Tracker} />
+          <Route path="/about" exact component={About} />
           <Route path="/help-us-collect" exact component={HelpUsCollect} />
           <Route component={NoMatch} />
         </Switch>

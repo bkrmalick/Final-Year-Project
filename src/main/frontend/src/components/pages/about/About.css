@@ -1,0 +1,90 @@
+.center{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+}
+
+.FAQ-container{
+    margin: 5% auto;
+    width: 50%;
+    padding: 10px;
+
+}
+
+@media screen and (max-width: 563px) {
+    .FAQ-container{
+        margin-left: 5%;
+        width: 50%;
+        padding: 10px;
+    }
+}
+
+.avatar-img{
+    flex-direction: column;
+  }
+
+.down-arrow {
+    font-size: 80px;
+    padding: 1%;
+    display: block;
+}
+
+
+.answer-box-link{
+    color: white;
+}
+
+/*
+.avatar{
+     width: 200px;
+     height: 200px;
+     background-size: cover;
+     background-position: top center;
+     border: 3px solid purple;
+}
+
+*/
+
+/*https://codepen.io/Huhtamaki/full/GPzwPY
+
+.avatar {
+	position: relative;
+	margin:auto;
+	width: 200px;
+    height: 200px;
+    background: linear-gradient(0deg, #000, #272727);
+    background-size: cover;
+
+    
+}
+
+.avatar:before, .avatar:after {
+	content: '';
+	position: absolute;
+	left: -2px;
+	top: -2px;
+	background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094, 
+		#0000ff, #00ff00,#ffff00, #ff0000);
+    background-size: 400%;
+	width: calc(100% + 4px);
+	height: calc(100% + 4px);
+	z-index: -1;
+	animation: steam 20s linear infinite;
+}
+
+@keyframes steam {
+	0% {
+		background-position: 0 0;
+	}
+	50% {
+		background-position: 400% 0;
+	}
+	100% {
+		background-position: 0 0;
+	}
+}
+
+.avatar:after {
+	filter: blur(50px);
+}*/

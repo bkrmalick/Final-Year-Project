@@ -18,7 +18,8 @@
     "react-spring": "^8.0.27",
     "react-svg-map": "^2.1.2",
     "react-svg-pan-zoom": "^3.8.0",
-    "react-virtualized": "^9.22.0"
+    "react-virtualized": "^9.22.0",
+    "styled-components": "^5.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

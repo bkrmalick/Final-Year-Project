@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../Button';
 
 import { FcMindMap } from 'react-icons/fc'
-import { FaBars, FaTimes, FaHome,FaMapMarkedAlt } from 'react-icons/fa';
+import { FaBars, FaTimes, FaHome,FaMapMarkedAlt, FaInfoCircle } from 'react-icons/fa';
 
 import { IconContext } from 'react-icons/lib';
 
@@ -59,6 +59,12 @@ function Nav() {
               <Link to="/go" className="nav-links" onClick={closeMobileMenu}>
               <FaMapMarkedAlt className="navbar-icon" />
                 Tracker   
+              </Link>
+              </li>
+            <li className="nav-item">
+              <Link to="/about" className="nav-links" onClick={closeMobileMenu}>
+              <FaInfoCircle className="navbar-icon" />
+                About   
               </Link>
             </li>
             <li className='nav-btn'>
