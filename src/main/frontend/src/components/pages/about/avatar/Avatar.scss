@@ -1,7 +1,10 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
 	box-sizing: border-box;
 }
 /*Credits for below animation: https://codepen.io/Chester/pen/QPoyjN */
+
 @keyframes rotate {
 	100% {
 		transform: rotate(0.5turn);
@@ -13,39 +16,34 @@
 	position: relative;
 	z-index: 0;
 	width: 200px;
-    height: 200px;
+	height: 200px;
 	border-radius: 100%;
 	overflow: hidden;
-    padding: 5%;
+	padding: 5%;
 	margin: auto;
-	
-    img{
-        border-radius: 50%;
-    }
+
+	img {
+		border-radius: 50%;
+	}
 }
 
 /*then change to this to add rings around image once loaded*/
-.avatar-img-ring{
-
+.avatar-img-ring {
 	position: relative;
 	z-index: 0;
 	width: 200px;
-    height: 200px;
+	height: 200px;
 	border-radius: 100%;
 	overflow: hidden;
-    padding: 5%;
+	padding: 5%;
 	margin: auto;
-	
 
-
-	
-
-    img{
-        border-radius: 50%;
-    }
+	img {
+		border-radius: 50%;
+	}
 
 	&::before {
-		content: '';
+		content: "";
 		position: absolute;
 		z-index: -2;
 		left: -50%;
@@ -55,18 +53,18 @@
 		background-repeat: no-repeat;
 		background-size: 50% 50%, 50% 50%;
 		background-position: 0 0, 100% 0, 100% 100%, 0 100%;
-		background-image: linear-gradient(#1c2237, #1c2237), linear-gradient(white, white),linear-gradient(#1c2237, #1c2237), linear-gradient(white, white);
+		background-image: linear-gradient(#1c2237, #1c2237), linear-gradient(white, white),
+			linear-gradient(#1c2237, #1c2237), linear-gradient(white, white);
 		-webkit-animation: fadeIn ease 3s, rotate 20s linear infinite;
 		animation: fadeIn ease 3s, rotate 20s linear infinite;
 		-webkit-animation: fadeIn ease 3s, rotate 20s linear infinite;
 		-moz-animation: fadeIn ease 3s, rotate 20s linear infinite;
 		-o-animation: fadeIn ease 3s, rotate 20s linear infinite;
 		-ms-animation: fadeIn ease 3s, rotate 20s linear infinite;
-		
 	}
-	
+
 	&::after {
-		content: '';
+		content: "";
 		position: absolute;
 		z-index: -1;
 		left: 6px;
@@ -74,16 +72,17 @@
 		width: calc(100% - 12px);
 		height: calc(100% - 12px);
 		border-radius: 10px;
-    }
-    
+	}
 }
 
 @keyframes fadeIn {
-	0% {opacity:0;}
-	100% {opacity:1;}
+	0% {
+		opacity: 0;
 	}
-
-
+	100% {
+		opacity: 1;
+	}
+}
 
 /*https://codepen.io/Ninaiskel/pen/MWWgMwL
 
