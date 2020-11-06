@@ -69,11 +69,11 @@ function Nav() {
             </li>
             <li className='nav-btn'>
                 {button ? (
-                  <Link to='/api' className='btn-link'>
+                  <Link to='/about/4' className='btn-link'>
                     <Button buttonStyle='btn--outline'>API</Button>
                   </Link>
                 ) : (
-                  <Link to='/' className='btn-link' onClick={closeMobileMenu}>
+                  <Link to='/about/4' className='btn-link' onClick={closeMobileMenu}>
                     <Button
                       buttonStyle='btn--outline'
                       buttonSize='btn--mobile'

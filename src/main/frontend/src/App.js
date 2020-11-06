@@ -33,6 +33,7 @@ function App()
           <Route path="/" exact component={Home} />
           <Route path="/go" exact component={Tracker} />
           <Route path="/about" exact component={About} />
+          <Route path="/about/:id" exact component={About} />
           <Route path="/help-us-collect" exact component={HelpUsCollect} />
           <Route component={NoMatch} />
         </Switch>

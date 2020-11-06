@@ -53,12 +53,12 @@ const Tree = memo(({ children, name, style, defaultOpen = false, link=undefined 
   )
 })
 
-function FAQ() 
+function FAQ(props) 
 {
   return <>
 
     <Tree name="🦠 FAQs" defaultOpen>
-      <Tree name="What's this app for? 🤔">
+      <Tree name="What's this app for? 🤔" defaultOpen={props.defaultOpen === "1" || props.defaultOpen === undefined}>
         <AnswerBox>
           <TextContainingDiv >
             <Text>To help you understand and visualise official COVID data from <a className= "answer-box-link" target="_blank" rel="noopener noreferrer" href="https://data.london.gov.uk/dataset/coronavirus--covid-19--cases">the UK government itself!</a> </Text>
@@ -81,7 +81,7 @@ function FAQ()
         </AnswerBox>
       </Tree>
 
-      <Tree name="Can I use your API for my project? 🤓">
+      <Tree name="Can I use your API for my project? 🤓" defaultOpen={props.defaultOpen === "4" }>
       <AnswerBox>
           <TextContainingDiv >
             <Text>Please get in touch with details of your project.</Text>
