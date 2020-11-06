@@ -8,6 +8,7 @@
 	}
 }
 
+/*intial class used when imge hasn't loaded*/
 .avatar-img {
 	position: relative;
 	z-index: 0;
@@ -16,7 +17,32 @@
 	border-radius: 100%;
 	overflow: hidden;
     padding: 5%;
-    margin: auto;
+	margin: auto;
+	
+    img{
+        border-radius: 50%;
+    }
+}
+
+/*then change to this to add rings around image once loaded*/
+.avatar-img-ring{
+
+	position: relative;
+	z-index: 0;
+	width: 200px;
+    height: 200px;
+	border-radius: 100%;
+	overflow: hidden;
+    padding: 5%;
+	margin: auto;
+	
+
+
+	
+
+    img{
+        border-radius: 50%;
+    }
 
 	&::before {
 		content: '';
@@ -26,12 +52,17 @@
 		top: -50%;
 		width: 200%;
 		height: 200%;
-		background-color: #399953;
 		background-repeat: no-repeat;
 		background-size: 50% 50%, 50% 50%;
 		background-position: 0 0, 100% 0, 100% 100%, 0 100%;
 		background-image: linear-gradient(#1c2237, #1c2237), linear-gradient(white, white),linear-gradient(#1c2237, #1c2237), linear-gradient(white, white);
-		animation: rotate 20s linear infinite;
+		-webkit-animation: fadeIn ease 3s, rotate 20s linear infinite;
+		animation: fadeIn ease 3s, rotate 20s linear infinite;
+		-webkit-animation: fadeIn ease 3s, rotate 20s linear infinite;
+		-moz-animation: fadeIn ease 3s, rotate 20s linear infinite;
+		-o-animation: fadeIn ease 3s, rotate 20s linear infinite;
+		-ms-animation: fadeIn ease 3s, rotate 20s linear infinite;
+		
 	}
 	
 	&::after {
@@ -42,15 +73,15 @@
 		top: 6px;
 		width: calc(100% - 12px);
 		height: calc(100% - 12px);
-		//background: white;
 		border-radius: 10px;
     }
     
-
-    img{
-        border-radius: 50%;
-    }
 }
+
+@keyframes fadeIn {
+	0% {opacity:0;}
+	100% {opacity:1;}
+	}
 
 
 

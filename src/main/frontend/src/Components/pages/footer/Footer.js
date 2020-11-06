@@ -7,7 +7,6 @@ import { FcMindMap } from 'react-icons/fc';
 function Footer() {
   return (
     <div className='footer-container'>
-  
       <div className='footer-links'>
         <div className='footer-link-wrapper'>
           <div className='footer-link-items'>
@@ -50,7 +49,7 @@ function Footer() {
             </a>
             <a
               className='social-icon-link'
-              href='https://github.com/bkrmalick/Final-Year-Project'
+              href='https://github.com/bkrmalick/'
               target='_blank'
               rel="noopener noreferrer"
               aria-label='Github'

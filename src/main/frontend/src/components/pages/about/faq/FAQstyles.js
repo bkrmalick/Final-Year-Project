@@ -11,6 +11,10 @@ const Frame = styled('div')`
   vertical-align: middle;
   color: black;
   fill: black;
+
+  @media (min-width: 960px){
+    font-size: 20px;
+  }
 `
 
 const Title = styled('span')`
@@ -18,9 +22,11 @@ const Title = styled('span')`
 `
 
 const Text = styled('p')`
+  height:100%;
   color:white;
   border-radius: 5;
   padding:3%;
+  
 `
 
 const Content = styled(animated.div)`
@@ -33,9 +39,17 @@ const Content = styled(animated.div)`
 
 const AnswerBox = styled('div')`
       position: relative; 
-      width: 100%; 
-      height: 100px;
+      width: 90%; 
+      /*height: 100px;*/
       padding: 10px;
+`
+
+const TextContainingDiv = styled('div')`
+      width: 100%; 
+      height: 100%; 
+      background: black;
+      border-radius: 5px;
+     
 `
 
 const toggle = {
@@ -46,4 +60,4 @@ const toggle = {
   verticalAlign: 'middle'
 }
 
-export { AnswerBox, Frame, Content, toggle, Title, Text }
+export { AnswerBox, Frame, Content, toggle, Title, Text,TextContainingDiv }

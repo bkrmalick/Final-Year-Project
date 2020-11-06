@@ -2,7 +2,7 @@
 
 import React, { memo, useState, useRef, useEffect } from 'react'
 import { useSpring, a } from 'react-spring'
-import { Text, Frame, Title, Content, toggle, AnswerBox } from './FAQstyles'
+import { Text,TextContainingDiv, Frame, Title, Content, toggle, AnswerBox } from './FAQstyles'
 import * as Icons from './FAQicons'
 
 function usePrevious(value)
@@ -26,7 +26,7 @@ function useMeasure()
   return [{ ref }, bounds]
 }
 
-const Tree = memo(({ children, name, style, defaultOpen = false }) =>
+const Tree = memo(({ children, name, style, defaultOpen = false, link=undefined }) =>
 {
   const [isOpen, setOpen] = useState(defaultOpen)
   const previous = usePrevious(isOpen)
@@ -39,7 +39,13 @@ const Tree = memo(({ children, name, style, defaultOpen = false }) =>
   return (
     <Frame>
       <Icon style={{ ...toggle, opacity: children ? 1 : 0.3 }} onClick={() => setOpen(!isOpen)} />
-      <Title style={style}>{name}</Title>
+      {
+        link ?
+          <Title style={style}><a className= "tree-link"  href={link}>{name}</a></Title>
+          :
+        <Title style={style}>{name}</Title>
+      }
+      
       <Content style={{ opacity, height: isOpen && previous === isOpen ? 'auto' : height }}>
         <a.div style={{ transform }} {...bind} children={children} />
       </Content>
@@ -51,52 +57,50 @@ function FAQ()
 {
   return <>
 
-    <Tree name="🎈FAQs" defaultOpen>
+    <Tree name="🦠 FAQs" defaultOpen>
       <Tree name="What's this app for? 🤔">
         <AnswerBox>
-          <div style={{ width: '100%', height: '100%', background: 'black', borderRadius: 5 }} >
+          <TextContainingDiv >
             <Text>To help you understand and visualise official COVID data from <a className= "answer-box-link" target="_blank" rel="noopener noreferrer" href="https://data.london.gov.uk/dataset/coronavirus--covid-19--cases">the UK government itself!</a> </Text>
-          </div>
+          </TextContainingDiv>
         </AnswerBox>
       </Tree>
       <Tree name="Who can use this?">
       <AnswerBox>
-          <div style={{ width: '100%', height: '100%', background: 'black', borderRadius: 5 }} >
-            <Text>Anyone! From people that are curious about visualisation of API's to people wanting to see and predict the cases counts in London.</Text>
-          </div>
+          <TextContainingDiv>
+            <Text>Anyone! From people that are wanting to see and predict the cases counts in London to people curious about visualisation of API's</Text>
+          </TextContainingDiv>
         </AnswerBox>
       </Tree>
 
       <Tree name="Why did you make this?">
       <AnswerBox>
-          <div style={{ width: '100%', height: '100%', background: 'black', borderRadius: 5 }} >
-            <Text>It was a part of my Final Year Project at Birkbeck, University of London <span role="img" aria-label="owl">🦉</span></Text>
-          </div>
+          <TextContainingDiv >
+            <Text>It's a part of my Final Year Project at Birkbeck, University of London <span role="img" aria-label="owl">🦉</span></Text>
+          </TextContainingDiv>
         </AnswerBox>
       </Tree>
 
-      <Tree name="Can I use your API for my project?🤓">
+      <Tree name="Can I use your API for my project? 🤓">
       <AnswerBox>
-          <div style={{ width: '100%', height: '100%', background: 'black', borderRadius: 5 }} >
+          <TextContainingDiv >
             <Text>Please get in touch with details of your project.</Text>
-          </div>
+          </TextContainingDiv>
         </AnswerBox>
       </Tree>
       <Tree name="Where can I reach you?">
-        <Tree name="📧 bkrmalick@hotmail.com" />
-        <Tree name="sub-subtree with children">
+        <Tree name="📧 bkrmalick@hotmail.com" link={"mailto:bkrmalick@hotmail.com?subject=Regarding COVIDTRACKER Web App"}/>
+        {/*<Tree name="sub-subtree with children">
           <Tree name="child 1" style={{ color: '#37ceff' }} />
           <Tree name="child 2" style={{ color: '#37ceff' }} />
           <Tree name="child 3" style={{ color: '#37ceff' }} />
           <Tree name="custom content">
-            <div style={{ position: 'relative', width: '100%', height: 200, padding: 10 }}>
+            <TextContainingDiv>
               <div style={{ width: '100%', height: '100%', background: 'black', borderRadius: 5 }} />
-            </div>
+            </TextContainingDiv>
           </Tree>
-        </Tree>
-        <Tree name="hello" />
+        </Tree>*/}
       </Tree>
-      <Tree name={<span><span role="img" aria-label="emoji">🙀</span> something something</span>} />
     </Tree>
   </>
 }
