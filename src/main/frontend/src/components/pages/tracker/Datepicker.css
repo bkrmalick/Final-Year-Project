@@ -1,11 +1,17 @@
 .AnalysisMode
 {
-  font-weight: bold;
-  color: #2968f0;
+    font-weight: bold;
+    color: #2968f0;
 }
 
+            
 .PredictionMode
 {
-  font-weight: bold;
-  color: #f00946;
+font-weight: bold;
+color: #f00946;
+}
+
+#mode
+{
+margin-top: 10px;
 }

@@ -70,8 +70,10 @@ function QuestionsContainer(props)
     
     useEffect(() =>
     {
+        let mounted = true;
+
         //if last questions - post answers to server
-        if (currentQuestionIndex === QUESTIONS.length - 1) 
+        if (currentQuestionIndex === QUESTIONS.length - 1 && mounted) 
         {
             console.log(answersMap);
             console.log("Trying to post...");
@@ -85,10 +87,13 @@ function QuestionsContainer(props)
         //automatically trigger next question if current one is a statement
         if (QUESTIONS[currentQuestionIndex].type === QuestionType.STATEMENT
             && currentQuestionIndex !== QUESTIONS.length - 1
+            && mounted
         )
         {
             setTimeout(() => { removeQuestionFromDisplay(QUESTIONS[currentQuestionIndex]); }, QUESTIONS[currentQuestionIndex].timeout);
         }
+
+        return () => { mounted = false };
         // eslint-disable-next-line
     }, [currentQuestionIndex])
 

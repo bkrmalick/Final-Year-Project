@@ -95,7 +95,7 @@ class TooltipHeatMap extends React.Component {
 				
 					if (this.state.casesDataMode === "Prediction" && this.state.casesDataMode !== prevState.casesDataMode)
 					{
-						Popup.alert("You have now switched to Prediction Mode. The application will now extrapolate existing data up until the selected date. ");
+						Popup.alert("The application will now extrapolate existing data up until the selected date. ", "Switched to Prediction Mode");
 					}
 			
 				})
@@ -336,13 +336,15 @@ class TooltipHeatMap extends React.Component {
 					<h2 className="MapContainer__block__title">
 							London Boroughs
 					</h2>
+						
 						<DatePicker className="MapContainer__block__dateBox"
 							date={casesDataDate}
 							setDate={this.setCasesDataDate}
 							mode={casesDataMode}
 							casesDataRefreshDate={this.state.casesDataRefreshDate}
-						/><br />
-				
+						/>
+						<p className="MapContainer__block__headline">Hover over a Borough to view its COVID case counts</p>
+						
 						<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }} > 
 								<SVGMap
 									map={LondonMap}
@@ -355,7 +357,7 @@ class TooltipHeatMap extends React.Component {
 									setSelectedLocationCoordinates={this.setSelectedLocationCoordinates}
 									dataLoaded={this.casesDataLoaded}
 									//onLocationClick={e=>console.log(e.target.id)} 
-											className="svg-map" />	
+									className="svg-map" />	
 									<ClipLoader css={this.getLoadingWheelStyles()} />
 									<ErrorIcon css={this.getErrorIconStyles()} />
 						

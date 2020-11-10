@@ -26,7 +26,7 @@ function App()
 
   return (
     <Router>
-      <Popup />
+      <Popup defaultOk="OK" closeBtn={false}/>
       <div className="App">
         <Navbar />
         <Switch>

@@ -18,8 +18,8 @@ function HeroSection({lightBg, topLine, lightText,lightTextDesc, headLine,descri
                             <div className="top-line">{topLine}</div>
                             <h1 className={lightText ? "heading" : "heading dark"}>{headLine}</h1>
                             <p className={lightTextDesc ? "home__hero-subtitle" : "home__hero-subtitle dark"}>{description}</p>
-                                {buttonLabel !== "" ?
-                                <Link to="/go" >
+                                {buttonLabel === "Sources" ?
+                                <Link to="/about/1" >
                                     <Button buttonColor="blue" buttonSize="btn--wide">{buttonLabel}</Button>
                                 </Link>
                                 : ""}

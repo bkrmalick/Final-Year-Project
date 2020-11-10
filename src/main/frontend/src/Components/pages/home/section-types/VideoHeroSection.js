@@ -23,7 +23,7 @@ function VideoHeroSection() {
                         <Button className="btns" buttonStyle="btn--outline" buttonSize="btn--large">GO</Button>
                 </Link>
 
-                <Link to="/" >
+                <Link to="/about" >
                     <Button className="btns" buttonStyle="btn--primary" buttonSize="btn--large"><FaInfoCircle className="navbar-icon" /> MORE INFO</Button>
                 </Link>
             </div>

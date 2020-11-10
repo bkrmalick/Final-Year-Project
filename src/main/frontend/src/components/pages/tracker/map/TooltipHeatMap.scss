@@ -9,6 +9,7 @@
   .MapContainer {
       //width: $width;
       margin: 3% auto;
+      height:100vh;
       font-family: Arial, sans-serif;
       text-align: center;
 
@@ -32,12 +33,23 @@
             padding-left: 15px;
         }
 
+        &__headline{
+            font-size: 20px;
+            padding-right: 15px;
+            padding-left: 15px;
+            padding-bottom: 1px;
+            
+            @media screen and (max-width: 960px) {
+                display: none;
+            }
+        }
+
          &__dateBox{
             margin-left: 75%;
-            text-align: left;                  
+            text-align: left;               
 
             @media screen and (max-width: 960px) {
-                margin: 20px auto;
+                margin: 30px auto;
                 text-align: center;    
             }
          }
@@ -63,12 +75,10 @@
               
               &--london {
                   text-align: center;
-                  min-width: 321px;
-                  min-height: 158px;
+                  min-width: 400px;
+                  min-height: 200px;
                   border: 1px solid black;
 
-                  
-                  
                   .svg-map__location {
                       stroke:black;
                       stroke-width: 0.5;
