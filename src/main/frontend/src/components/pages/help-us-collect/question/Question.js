@@ -6,7 +6,6 @@ function Question(props)
     let toReturn; 
     const [ans, setAns] = useState(" ");
     
-
     switch (props.question.type)
     {
         case QuestionType.TEXT:
@@ -30,6 +29,19 @@ function Question(props)
                 <input type="submit" value={props.question.falseText} onClick={e=>setAns(props.question.falseText)}/>
             </>);
             break;
+        
+        case QuestionType.DDM:
+                toReturn = (<>
+                    <label onSubmit={props.question.doneHandler} htmlFor="question" className="question-label">{props.question.text}</label><br />
+                    <select id="question" className="select-css" onChange={(e) => { setAns(e.target.value) }} value={props.question.defaulttext}>
+                    {
+                            sortAlphabetically(props.question.options)
+                                .map((v, k) => <option key={k} value={v} >{v}</option>)    
+                    }
+                    </select><br />
+                    <input type="submit" value="⏩"/>     
+                </>);
+                break;
         default:
             toReturn = (<></>);
     }
@@ -38,6 +50,19 @@ function Question(props)
     {
         e.preventDefault();
         props.doneHandler(props.question,ans);
+    }
+
+    function sortAlphabetically(arr)
+    {
+        return arr.sort((s1, s2) =>
+        {
+            if (s1.toUpperCase() > s2.toUpperCase())
+                return 1;
+            else if (s1.toUpperCase() < s2.toUpperCase())
+                return -1;
+            else
+                return 0;
+        });
     }
       
 

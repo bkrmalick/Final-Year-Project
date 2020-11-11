@@ -3,6 +3,7 @@ package com.bkrmalick.covidtracker.models.dynamo_db;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @DynamoDBTable(tableName = "covidtracker.form-question")
 public class FormQuestionRecord implements Serializable
@@ -12,13 +13,16 @@ public class FormQuestionRecord implements Serializable
 	private String text, falseText, trueText;
 	private double timeout;
 	private boolean exitOnFalse;
+	private List<String> options;
 
 	public FormQuestionRecord()
 	{
 
 	}
 
-	public FormQuestionRecord(int id, int type, String text, String falseText, String trueText, double timeout, boolean exitOnFalse)
+	public FormQuestionRecord(int id, int type, String text,
+							  String falseText, String trueText, double timeout,
+							  boolean exitOnFalse, List<String> options)
 	{
 		this.id = id;
 		this.type = type;
@@ -27,6 +31,7 @@ public class FormQuestionRecord implements Serializable
 		this.trueText = trueText;
 		this.timeout = timeout;
 		this.exitOnFalse = exitOnFalse;
+		this.options = options;
 	}
 
 	@DynamoDBHashKey
@@ -104,5 +109,16 @@ public class FormQuestionRecord implements Serializable
 	public void setExitOnFalse(boolean exitOnFalse)
 	{
 		this.exitOnFalse = exitOnFalse;
+	}
+
+	@DynamoDBAttribute
+	public List<String> getOptions()
+	{
+		return options;
+	}
+
+	public void setOptions(List<String> options)
+	{
+		this.options = options;
 	}
 }

@@ -11,14 +11,12 @@ import './QuestionsContainer.css'
 
 function QuestionsContainer(props)
 {
-
     const [currentQuestionIndex, setCQI] = useState(0);
     const [answersMap, setAnswersMap] = useState(new Map()); // <questionID,ans>
 
     const QUESTIONS = props.questions
 
     const [questionsOnDisplay, setQOD] = useState([QUESTIONS[currentQuestionIndex]]);
-
 
     const transitions = useTransition(questionsOnDisplay, q => q.text, {
         from: { transform: 'translate3d(0,500px,0)' },
@@ -35,7 +33,7 @@ function QuestionsContainer(props)
 
     function removeQuestionFromDisplay(question, ans)
     {
-        console.log("remove: "+question.text+"\n "+ans)
+        console.log("removing question: "+question.text+"\n Answer: "+ ans)
         if (question.type !== QuestionType.STATEMENT)
         {
             //store answer in state 
@@ -66,16 +64,14 @@ function QuestionsContainer(props)
         setAnswersMap(answersMap_copy);
     }
 
-
-    
     useEffect(() =>
     {
-        let mounted = true;
-
+        let mounted = true, timeout; 
+        
         //if last questions - post answers to server
         if (currentQuestionIndex === QUESTIONS.length - 1 && mounted) 
         {
-            console.log(answersMap);
+            console.log("Answers: "+answersMap);
             console.log("Trying to post...");
             postFormAnswers(answersMap).catch(err =>
             {
@@ -90,10 +86,10 @@ function QuestionsContainer(props)
             && mounted
         )
         {
-            setTimeout(() => { removeQuestionFromDisplay(QUESTIONS[currentQuestionIndex]); }, QUESTIONS[currentQuestionIndex].timeout);
+            timeout=setTimeout(() => { removeQuestionFromDisplay(QUESTIONS[currentQuestionIndex]); }, QUESTIONS[currentQuestionIndex].timeout);
         }
 
-        return () => { mounted = false };
+        return () => { mounted = false; clearTimeout(timeout); };
         // eslint-disable-next-line
     }, [currentQuestionIndex])
 
