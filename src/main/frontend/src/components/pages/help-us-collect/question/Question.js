@@ -1,18 +1,18 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import QuestionType from './QuestionType';
 
 function Question(props)
-{ 
-    let toReturn; 
+{
+    let toReturn;
     const [ans, setAns] = useState(" ");
-    
+
     switch (props.question.type)
     {
         case QuestionType.TEXT:
             toReturn = (<>
                 <label onSubmit={props.question.doneHandler} htmlFor="question" className="question-label">{props.question.text}</label><br />
-                <input type="text" id="question" onChange={(e) => { setAns(e.target.value) }} value={props.question.defaulttext} /><br />
-                <input type="submit" value="⏩" style={ ans.trim().length === 0  ? { display: "none" } : {}}/> 
+                <input type="text" id="question" onChange={(e) => { setAns(e.target.value) }} /><br />
+                <input type="submit" value="⏩" style={ans.trim().length === 0 ? { display: "none" } : {}} />
                 <br />
             </>);
             break;
@@ -25,31 +25,31 @@ function Question(props)
             toReturn = (<>
                 <label className="question-label">{props.question.text}</label><br />
                 <label className="question-label">{props.question.secondText}</label><br />
-                <input type="submit" value={props.question.trueText} onClick={e=>setAns(props.question.trueText)}/>
-                <input type="submit" value={props.question.falseText} onClick={e=>setAns(props.question.falseText)}/>
+                <input type="submit" value={props.question.trueText} onClick={e => setAns(props.question.trueText)} />
+                <input type="submit" value={props.question.falseText} onClick={e => setAns(props.question.falseText)} />
             </>);
             break;
-        
         case QuestionType.DDM:
-                toReturn = (<>
-                    <label onSubmit={props.question.doneHandler} htmlFor="question" className="question-label">{props.question.text}</label><br />
-                    <select id="question" className="select-css" onChange={(e) => { setAns(e.target.value) }} value={props.question.defaulttext}>
+            toReturn = (<>
+                <label onSubmit={props.question.doneHandler} htmlFor="question" className="question-label">{props.question.text}</label><br />
+                <select id="question" className="select-css" onChange={(e) => { setAns(e.target.value) }} onLoad={(e) => { setAns(e.target.value) }}>
+                    <option selected="selected" value={"default"} >...</option>
                     {
-                            sortAlphabetically(props.question.options)
-                                .map((v, k) => <option key={k} value={v} >{v}</option>)    
+                        sortAlphabetically(props.question.options)
+                            .map((v, k) => <option key={k} value={v} >{v}</option>)
                     }
-                    </select><br />
-                    <input type="submit" value="⏩"/>     
-                </>);
-                break;
+                </select><br />
+                <input type="submit" value="⏩" style={ans.trim().length === 0 || !props.question.options.includes(ans) ? { display: "none" } : {}}/>
+            </>);
+            break;
         default:
             toReturn = (<></>);
     }
-    
+
     function onSubmit(e)
     {
         e.preventDefault();
-        props.doneHandler(props.question,ans);
+        props.doneHandler(props.question, ans);
     }
 
     function sortAlphabetically(arr)
@@ -64,7 +64,7 @@ function Question(props)
                 return 0;
         });
     }
-      
+
 
     return (
         <form className="question-element" onSubmit={onSubmit} >
