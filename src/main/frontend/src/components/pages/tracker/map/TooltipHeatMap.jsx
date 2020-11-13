@@ -265,8 +265,6 @@ class TooltipHeatMap extends React.Component {
 
 	setSelectedLocationName(LOCATION_NAME)
 	{
-		//this.refs.MapContainerRef.scrollIntoView(false);
-		console.log(this.refs.MapContainerRef);
 		this.setState({selectedLocationName:LOCATION_NAME}); 
 	}
 
