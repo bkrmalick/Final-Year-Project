@@ -10,6 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/form")
+@CrossOrigin("localhost")
 public class FormController
 {
 	private final FormProcessingService formProcessingService;
