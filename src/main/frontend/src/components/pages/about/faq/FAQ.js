@@ -65,7 +65,7 @@ function FAQ(props)
           </TextContainingDiv>
         </AnswerBox>
       </Tree>
-      <Tree name="Who can use this?">
+      <Tree name="Who can use this?" defaultOpen={props.defaultOpen === "2" }>
       <AnswerBox>
           <TextContainingDiv>
             <Text>Anyone! From people that are wanting to see and predict the cases counts in London to people curious about visualisation of API's</Text>
@@ -73,7 +73,7 @@ function FAQ(props)
         </AnswerBox>
       </Tree>
 
-      <Tree name="Why did you make this?">
+      <Tree name="Why did you make this?" defaultOpen={props.defaultOpen === "3" }>
       <AnswerBox>
           <TextContainingDiv >
             <Text>It's a part of my Final Year Project at Birkbeck, University of London <span role="img" aria-label="owl">🦉</span></Text>
@@ -88,18 +88,8 @@ function FAQ(props)
           </TextContainingDiv>
         </AnswerBox>
       </Tree>
-      <Tree name="Where can I reach you?">
+      <Tree name="Where can I reach you?" defaultOpen={props.defaultOpen === "5" }>
         <Tree name="📧 bkrmalick@hotmail.com" link={"mailto:bkrmalick@hotmail.com?subject=Regarding COVIDTRACKER Web App"}/>
-        {/*<Tree name="sub-subtree with children">
-          <Tree name="child 1" style={{ color: '#37ceff' }} />
-          <Tree name="child 2" style={{ color: '#37ceff' }} />
-          <Tree name="child 3" style={{ color: '#37ceff' }} />
-          <Tree name="custom content">
-            <TextContainingDiv>
-              <div style={{ width: '100%', height: '100%', background: 'black', borderRadius: 5 }} />
-            </TextContainingDiv>
-          </Tree>
-        </Tree>*/}
       </Tree>
     </Tree>
   </>

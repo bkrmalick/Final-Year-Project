@@ -11,16 +11,16 @@ function Footer() {
         <div className='footer-link-wrapper'>
           <div className='footer-link-items'>
             <h2>Info</h2>
-            <Link to='/'>About</Link>
+            <Link to='/about'>About</Link>
           </div>
           <div className='footer-link-items'>
             <h2>Data</h2>
-            <Link to='/'>Sources</Link>
+            <a target="_blank" rel="noopener noreferrer" aria-label="data-source" href='https://data.london.gov.uk/dataset/coronavirus--covid-19--cases'>Source</a>
             <Link to='/help-us-collect'>Help Us Collect</Link>
                   </div>
                   <div className='footer-link-items'>
             <h2>Contact</h2>
-            <Link to='/'>Contact</Link>
+            <Link to='/about/5'>Email</Link>
             <a href='https://www.linkedin.com/in/bkrmalick/'
               target='_blank'
               rel="noopener noreferrer"

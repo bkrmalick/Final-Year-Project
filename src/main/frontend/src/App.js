@@ -21,7 +21,7 @@ function App()
 
   if (process.env.NODE_ENV !== "development") //don't console log in production as affects performance
   {
-    console.log = () => { };
+    //console.log = () => { };
   }
 
   return (

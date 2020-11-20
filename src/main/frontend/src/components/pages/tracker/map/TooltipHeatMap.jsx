@@ -103,16 +103,32 @@ class TooltipHeatMap extends React.Component {
 				{
 					console.log(err);
 
-					const errorDuringIntialLoad = (this.state.casesDataLoaded === null);
-					if (!errorDuringIntialLoad)
+					const errorDuringLoad = (this.state.casesDataLoaded === null);
+					if (!errorDuringLoad)
 					{
-						Popup.alert(err.response.data.message + ". Reverting to original selection.");
+						console.log(err.response.status )
+						console.log(typeof err.response.status )
 
-						//reset to previous state
-						this.setState({
-							casesDataDate: prevState.casesDataDate,
-							casesDataLoaded: prevState.casesDataLoadedd
-						});
+						if (err.response.status === 500)
+						{
+							//server error
+							Popup.alert("Sorry, there was an error while fetching the data from the server. Please contact admin.");
+
+							this.setState({
+								casesDataLoaded:null //error flag
+							});
+						}
+						else
+						{
+							//validation error (still a success)
+							Popup.alert(err.response.data.message + ". Reverting to original selection.");
+							
+							//reset to previous state
+							this.setState({
+								casesDataDate: prevState.casesDataDate,
+								casesDataLoaded: prevState.casesDataLoadedd
+							});
+						}
 					}
 				});
 		}
@@ -265,8 +281,6 @@ class TooltipHeatMap extends React.Component {
 
 	setSelectedLocationName(LOCATION_NAME)
 	{
-		//this.refs.MapContainerRef.scrollIntoView(false);
-		console.log(this.refs.MapContainerRef);
 		this.setState({selectedLocationName:LOCATION_NAME}); 
 	}
 

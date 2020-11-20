@@ -14,6 +14,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/cases")
+@CrossOrigin("localhost")
 public class CasesController
 {
 	private static final Logger logger = LoggerFactory.getLogger(CasesController.class);

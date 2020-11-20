@@ -1,7 +1,9 @@
 package com.bkrmalick.covidtracker.services;
 
+
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
+import org.apache.commons.io.IOUtils;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.sexp.ListVector;
 import org.renjin.sexp.Vector;
@@ -13,11 +15,14 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.script.ScriptException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,13 +72,11 @@ public class RCallerService
 		String scriptContent;
 
 		logger.info("READING R SCRIPT FILE");
-		URI rScriptUri = RCallerService.class.getClassLoader().getResource("r-scripts/cases-predictor.R").toURI();
-		Path inputScript = Paths.get(rScriptUri);
 
-		//try block will automatically close file
-		try(Stream<String> lines = Files.lines(inputScript))
+		//try-with-resources block for closing stream
+		try(InputStream in = getClass().getResourceAsStream("/r-scripts/cases-predictor.R"))
 		{
-			scriptContent = lines.collect(Collectors.joining("\n"));
+			scriptContent = IOUtils.toString(in, StandardCharsets.UTF_8);
 		}
 
 		return scriptContent;
