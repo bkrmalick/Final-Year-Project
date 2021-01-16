@@ -4,6 +4,7 @@ import './App.css';
 import './Popup.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Popup from 'react-popup';
+import ScrollToTop from './components/ScrollToTop'
 
 //navigation
 import Navbar from './components/pages/nav/Navbar';
@@ -21,12 +22,13 @@ function App()
 
   if (process.env.NODE_ENV !== "development") //don't console log in production as affects performance
   {
-    //console.log = () => { };
+    console.log = () => { };
   }
 
   return (
     <Router>
-      <Popup defaultOk="OK" closeBtn={false}/>
+      <Popup defaultOk="OK" closeBtn={false} />
+      <ScrollToTop />
       <div className="App">
         <Navbar />
         <Switch>
@@ -38,7 +40,7 @@ function App()
           <Route component={NoMatch} />
         </Switch>
         <Footer />
-      </div>
+        </div>
     </Router>
   );
 }

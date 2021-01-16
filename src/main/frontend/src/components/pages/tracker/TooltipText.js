@@ -5,7 +5,7 @@ function App(props) {
         <>
 		<h1>{props.location}</h1><br/>
 		<p>{String(props.dangerLevel)+"%"}</p> <br/>
-        <p className="dangerPercentage">{"cases in past two wks: "+String(props.casesInPastTwoWks)}</p>
+        <p className="dangerPercentage">{"cases in past two wks: "+Number(props.casesInPastTwoWks).toLocaleString()}</p>
 		</>
     );
   }
