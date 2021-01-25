@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/cases")
-@CrossOrigin("localhost")
+@CrossOrigin(origins= {"localhost","https://covidtracker.london"})
 public class CasesController
 {
 	private static final Logger logger = LoggerFactory.getLogger(CasesController.class);

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/postcode")
-@CrossOrigin("localhost")
+@CrossOrigin(origins= {"localhost","https://covidtracker.london"})
 public class PostCodeController
 {
 	private final PostCodeProcessingService postCodeProcessingService;

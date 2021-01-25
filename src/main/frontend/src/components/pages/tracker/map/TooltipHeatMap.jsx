@@ -380,7 +380,7 @@ class TooltipHeatMap extends React.Component {
 							</div>
 				</div>
 					
-				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate: casesDataLoaded===null?"⚠":"Loading..."} </p>
+				<p className="MapContainer__block__refreshDate">Last Updated   { casesDataLoaded?casesDataRefreshDate: casesDataLoaded===null?"⚠":"Loading..."} </p>
 			</article>
 					<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} unselectSelectedLocation={this.unselectSelectedLocation}/>
 		</section>
