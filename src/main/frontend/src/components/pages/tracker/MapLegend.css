@@ -1,0 +1,21 @@
+.map-legend {
+    text-align: left;
+    line-height: 18px;
+    color: #555;
+    background: rgba(216, 210, 210, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.map-legend-item i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.map-legend-item{
+    margin: 5px;
+}
+
+
