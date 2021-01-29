@@ -1,125 +1,142 @@
-
 * {
     box-sizing: border-box;
-  }
-  
-  /*$width: 75%;*/
-  
+}
 
-  .MapContainer {
-      //width: $width;
-      margin: 3% auto;
-      height:100vh;
-      font-family: Arial, sans-serif;
-      text-align: center;
+/*$width: 75%;*/
 
-      &__title {
-          margin-bottom: 80px;
-          padding-bottom: 40px;
-          border-bottom: 1px dotted black;
-          font-size: 24px;
-      }
-  
-      &__block {
-          width: 100%;
-          margin-bottom: 20px;
-          padding-bottom: 20px;
-          //border-bottom: 1px dotted black;
-  
-         
-        &__title{
+.MapContainer {
+    //width: $width;
+    margin: 3% auto;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    min-height: 650px;
+
+    &__title {
+        margin-bottom: 80px;
+        padding-bottom: 40px;
+        border-bottom: 1px dotted black;
+        font-size: 24px;
+    }
+
+    &__block {
+        width: 100%;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+
+        &__MapLegendContainer {
+            display: flex;
+            align-items: center;
+
+            @media only screen and (max-width: 690px) {
+                //accompanying media rules are also defined in MapLegend.css
+                display: block;
+                text-align: center;
+
+                &__map {
+                    margin: auto;
+                }
+            }
+
+            &__LegendWrapper {
+                display: flex;
+                flex: 1;
+                justify-content: center;
+            }
+
+            &__PlaceHolderRight {
+                display: flex;
+                flex: 1;
+                visibility: hidden;
+            }
+
+            &__map {
+                display: flex;
+
+                &--london {
+                    min-width: 400px;
+                    min-height: 200px;
+                    border: 1px solid black;
+
+                    .svg-map__location {
+                        stroke: black;
+                        stroke-width: 0.5;
+
+                        &[aria-checked="false"] {
+                            opacity: 0.3;
+                        }
+
+                        &:focus,
+                        &:hover {
+                            opacity: 0.5;
+                        }
+                    }
+                }
+
+                &__tooltip {
+                    position: fixed;
+                    width: 200px;
+                    margin-top: 20px;
+                    padding: 10px;
+                    border: 1px solid darkgray;
+                    background-color: white;
+                    opacity: 0.9;
+                }
+            }
+        }
+
+        &__title {
             font-size: 20px;
             padding-right: 15px;
             padding-left: 15px;
         }
 
-        &__headline{
+        &__headline {
             font-size: 20px;
             padding-right: 15px;
             padding-left: 15px;
             padding-bottom: 1px;
-            
+
             @media screen and (max-width: 960px) {
                 display: none;
             }
         }
 
-         &__dateBox{
+        &__dateBox {
             margin-left: 75%;
-            text-align: left;               
+            text-align: left;
 
             @media screen and (max-width: 960px) {
                 margin: 30px auto;
-                text-align: center;    
+                text-align: center;
             }
-         }
-         
-          &__refreshDate {
-            margin: 50px 0 0 0;
+        }
+
+        &__refreshDate {
+            margin: 2% 0 0 0;
+        }
+
+        &__info {
+            display: inline-block;
+            vertical-align: top;
+            width: 450px;
+            text-align: left;
+
+            &__item {
+                margin-bottom: 20px;
             }
-  
-          &__info {
-              display: inline-block;
-              vertical-align: top;
-              width: 450px;
-              text-align: left;
-  
-              &__item {
-                  margin-bottom: 20px;
-              }
-          }
-  
-          &__map {
-              display: inline-block;
-              clear:both;
-              
-              &--london {
-                  text-align: center;
-                  min-width: 400px;
-                  min-height: 200px;
-                  border: 1px solid black;
-
-                  .svg-map__location {
-                      stroke:black;
-                      stroke-width: 0.5;
-
-                      &[aria-checked="false"]{
-                          opacity: 0.3;
-                      }
-   
-                      &:focus,
-                      &:hover {
-                          opacity: 0.5;
-                          
-                      }
-                  }
-              }
-  
-              &__tooltip {
-                  position: fixed;
-                  width: 200px;
-                  margin-top: 20px;
-                  padding: 10px;
-                  border: 1px solid darkgray;
-                  background-color: white;
-                  opacity: 0.9;
-              }
-          }
-
-
-
-      }
-  }
+        }
+    }
+}
 
 //TODO check if this is even being used? Find tool to remove unused css!
 
 svg {
-    
     &__location // borough
     {
         //fill: navy;
         //cursor: pointer;
-        
+
         &:focus,
         &:hover {
             outline: 0;
@@ -128,13 +145,12 @@ svg {
     }
 }
 
-div[role="toolbar"]
-{
-    transform: scale(1.15)!important;
-    position: absolute!important;
-    top: 3%!important;
-    right: 0.1%!important;
-    background-color: rgba(19, 20, 22, 0.9)!important;
-    border-radius: 2px!important;
-    padding: 2px 1px!important;
+div[role="toolbar"] {
+    transform: scale(1.15) !important;
+    position: absolute !important;
+    top: 3% !important;
+    right: 0.1% !important;
+    background-color: rgba(19, 20, 22, 0.9) !important;
+    border-radius: 2px !important;
+    padding: 2px 1px !important;
 }

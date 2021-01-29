@@ -4,6 +4,7 @@ import './App.css';
 import './Popup.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Popup from 'react-popup';
+import ScrollToTop from './components/ScrollToTop'
 
 //navigation
 import Navbar from './components/pages/nav/Navbar';
@@ -26,7 +27,8 @@ function App()
 
   return (
     <Router>
-      <Popup defaultOk="OK" closeBtn={false}/>
+      <Popup defaultOk="OK" closeBtn={false} />
+      <ScrollToTop />
       <div className="App">
         <Navbar />
         <Switch>

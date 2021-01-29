@@ -14,20 +14,23 @@ function Tracker()
   {
     let mounted = true;
 
-    setTimeout(() =>
-    {
-      if (mounted)
-      {
-        binaryPopup('Enjoying the app?',
-          'Help expand the data by answering a couple of questions.',
-          'Back', 'Sure!', undefined, () => { Popup.close(); setRF(true); }
-        );
-      }
-    }
-      , POPUP_DELAY_IN_MS)
-    
-    return () => { mounted = false };
-  }, []);
+setTimeout(() =>
+            {
+              if (mounted)
+              {
+                binaryPopup('Enjoying the app?',
+                  'Help expand the data by answering a couple of questions.'
+                  , 'Back'
+                  , 'Sure!'
+                  , undefined
+                  , () => { Popup.close(); setRF(true); }
+                );
+              }
+            }
+              , POPUP_DELAY_IN_MS)
+            
+            return () => { mounted = false };
+          }, []);
 
   return (redirectFlag ? <Redirect to="/help-us-collect" /> : <TooltipHeatMap />);
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/form")
-@CrossOrigin("localhost")
+@CrossOrigin(origins= {"localhost","https://covidtracker.london"})
 public class FormController
 {
 	private final FormProcessingService formProcessingService;

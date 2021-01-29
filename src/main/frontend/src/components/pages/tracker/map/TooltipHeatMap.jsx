@@ -9,6 +9,7 @@ import DatePicker from '../Datepicker'
 import PostCodeForm from '../PostCodeForm'
 import Popup from 'react-popup'
 import ErrorIcon from '../../../ErrorIcon'
+import MapLegend from '../legend/MapLegend'
 
 //utils
 import {getLocationName} from '../../../../utils/MapUtils'
@@ -240,7 +241,7 @@ class TooltipHeatMap extends React.Component {
 		let {casesDataLoaded} = this.state;
 		//only display when data is loading
 		return {
-			margin: "20%" ,
+			margin: "auto",
 			display: casesDataLoaded || casesDataLoaded ===null ? "none" : "inline-block"
 		};
 	}
@@ -253,7 +254,7 @@ class TooltipHeatMap extends React.Component {
 			Zposition: 4, //high z-index so errorIcon appears infront of svg
 			position: 'relative',
 			display: casesDataLoaded === null ? "inline-block" : "none", //only display when data load has errored
-			margin: "23%"
+			margin: "auto"
 		};
 	}
 
@@ -276,6 +277,7 @@ class TooltipHeatMap extends React.Component {
 			RED = 100; GREEN = 100 - value; BLUE = 100-value; 
 		}
 	
+		//return { r: RED, g: GREEN, b: BLUE };
 		return "rgb("+RED+"%,"+GREEN+"%, "+BLUE+"%)";
 	}
 
@@ -358,8 +360,16 @@ class TooltipHeatMap extends React.Component {
 							casesDataRefreshDate={this.state.casesDataRefreshDate}
 						/>
 						<p className="MapContainer__block__headline">Hover over a Borough to view its COVID case counts</p>
+
+					<div className="MapContainer__block__MapLegendContainer">
 						
-						<div className="MapContainer__block__map MapContainer__block__map--london" style={{ width: "50vw", height: "25vw" }} > 
+						{/* To the Left of Map */}
+						<div className="MapContainer__block__MapLegendContainer__LegendWrapper">
+								<MapLegend colorGenerator={this.heatMapColorforValue}/>
+						</div>
+
+						{/* Centered Map */}
+						<div className="MapContainer__block__MapLegendContainer__map MapContainer__block__MapLegendContainer__map--london" style={{ width: "50vw", height: "25vw" }} > 
 								<SVGMap
 									map={LondonMap}
 									locationClassName={this.getLocationClassName}
@@ -374,13 +384,19 @@ class TooltipHeatMap extends React.Component {
 									className="svg-map" />	
 									<ClipLoader css={this.getLoadingWheelStyles()} />
 									<ErrorIcon css={this.getErrorIconStyles()} />
-						
-							<div className="MapContainer__block__map__tooltip" style={this.state.tooltipStyle}>
+									{/*MapContainer__block__map__tooltip*/}
+							<div className="MapContainer__block__MapLegendContainer__map__tooltip" style={this.state.tooltipStyle}>
 								{this.state.pointedLocation}
 							</div>
-				</div>
+							</div>
+
+							{/*To the Right of Map */}
+							<div className="MapContainer__block__MapLegendContainer__PlaceHolderRight">
+
+							</div>
+					</div>
 					
-				<p className="MapContainer__block__refreshDate">Using dataload of { casesDataLoaded?casesDataRefreshDate: casesDataLoaded===null?"⚠":"Loading..."} </p>
+				<p className="MapContainer__block__refreshDate">Last Updated   { casesDataLoaded?casesDataRefreshDate: casesDataLoaded===null?"⚠":"..."} </p>
 			</article>
 					<PostCodeForm setSelectedLocationName={this.setSelectedLocationName} unselectSelectedLocation={this.unselectSelectedLocation}/>
 		</section>

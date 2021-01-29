@@ -203,5 +203,7 @@
         width: 100%;
         text-align: center;
         margin-top: 10px;
+        margin-left: 0;
+        margin-right: 0;
     }
 }
