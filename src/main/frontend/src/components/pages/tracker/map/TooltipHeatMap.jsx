@@ -277,6 +277,7 @@ class TooltipHeatMap extends React.Component {
 			RED = 100; GREEN = 100 - value; BLUE = 100-value; 
 		}
 	
+		//return { r: RED, g: GREEN, b: BLUE };
 		return "rgb("+RED+"%,"+GREEN+"%, "+BLUE+"%)";
 	}
 
@@ -364,7 +365,7 @@ class TooltipHeatMap extends React.Component {
 						
 						{/* To the Left of Map */}
 						<div className="MapContainer__block__MapLegendContainer__LegendWrapper">
-							<MapLegend />
+								<MapLegend colorGenerator={this.heatMapColorforValue}/>
 						</div>
 
 						{/* Centered Map */}
