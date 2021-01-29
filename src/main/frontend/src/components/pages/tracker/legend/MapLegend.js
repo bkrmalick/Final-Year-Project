@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback} from 'react'
+import LegendToolTip from './LegendToolTip';
 
 //styles
 import './MapLegend.css';
 
-/*
-    Credits: https://tilemill-project.github.io/tilemill/docs/guides/advanced-legends/
-*/
+/* LEGEND Credits: https://tilemill-project.github.io/tilemill/docs/guides/advanced-legends/ */
 
 function MapLegend(props)
 {
     const INCREMENT = 25; //amount by which the legend values increment
     const CLIENT_WINDOW_WIDTH_LIMIT = 1100; //pixels
+    const CLIENT_WINDOW_WIDTH_LIMIT_2 = 750;
 
 
     const [clientWidth, setCW] = useState(getCurrentClientWindowwSize());
@@ -28,7 +28,7 @@ function MapLegend(props)
         , []
     );
     
-    //one the first component load - add resize listener 
+    //on the first component load - add resize listener 
     useEffect(
         () =>
         {
@@ -40,7 +40,13 @@ function MapLegend(props)
     
     return (
         <div className="legend">
-            <div className="legend-title">Danger {clientWidth<CLIENT_WINDOW_WIDTH_LIMIT?"%":"Percentage" }</div>
+            <div className="legend-title">Danger {clientWidth < CLIENT_WINDOW_WIDTH_LIMIT ? "% " : "Percentage "}
+               
+               
+               <LegendToolTip/>
+                
+            
+            </div>
         <div className="legend-scale">
         <ul className="legend-labels">
         {
@@ -49,7 +55,7 @@ function MapLegend(props)
         }
         </ul>
         </div>
-        <div className="legend-source"> {clientWidth<CLIENT_WINDOW_WIDTH_LIMIT?"":"Data Source: "} <a target="_blank" rel="noopener noreferrer" href="https://data.london.gov.uk/dataset/coronavirus--covid-19--cases">{clientWidth<735? "GLA" :"Greater London Authority"}</a></div>
+        <div className="legend-source"> {clientWidth<CLIENT_WINDOW_WIDTH_LIMIT?"":"Data Source: "} <a target="_blank" rel="noopener noreferrer" href="https://data.london.gov.uk/dataset/coronavirus--covid-19--cases">{clientWidth<CLIENT_WINDOW_WIDTH_LIMIT_2? "GLA" :"Greater London Authority"}</a></div>
         </div>
 
     );

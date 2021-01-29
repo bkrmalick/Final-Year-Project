@@ -1,0 +1,84 @@
+/* LEGEND Credits: https://tilemill-project.github.io/tilemill/docs/guides/advanced-legends/ */
+
+.legend .legend-title {
+    text-align: left;
+    margin-bottom: 10%;
+    font-weight: bold;
+    font-size: 90%;
+}
+
+.legend .legend-scale ul {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    margin-bottom: 10%;
+}
+
+.legend .legend-scale ul li {
+    font-size: 80%;
+    list-style: none;
+    margin-left: 0;
+    line-height: 18px;
+    margin-bottom: 10px;
+}
+
+.legend ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 16px;
+    width: 30px;
+    margin-right: 5px;
+    margin-left: 0;
+    border: 1px solid #999;
+}
+
+.legend .legend-source {
+    font-size: 70%;
+    color: #999;
+    clear: both;
+}
+
+.legend a {
+    color: #777;
+}
+
+.legend {
+    max-width: 300px !important;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: left;
+}
+
+/*HORIZONTAL when screen size small*/
+
+@media only screen and (max-width: 690px) { /* accompanying media rules are also defined in TooltipHeatMap.scss*/
+    .legend .legend-title {
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+    .legend .legend-scale ul {
+        margin: 0;
+    }
+    .legend .legend-scale ul li {
+        display: block;
+        float: left;
+        width: 50px;
+        margin-bottom: 6px;
+        text-align: center;
+    }
+    .legend ul.legend-labels li span {
+        height: 15px;
+        width: 50px;
+    }
+    
+    .legend {
+        padding: 5px;
+        margin: 5px;
+        box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
+    }
+    
+    .legend .legend-source {
+        display: none;
+    }
+}

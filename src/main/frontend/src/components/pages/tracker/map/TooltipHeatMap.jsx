@@ -9,7 +9,7 @@ import DatePicker from '../Datepicker'
 import PostCodeForm from '../PostCodeForm'
 import Popup from 'react-popup'
 import ErrorIcon from '../../../ErrorIcon'
-import MapLegend from '../MapLegend'
+import MapLegend from '../legend/MapLegend'
 
 //utils
 import {getLocationName} from '../../../../utils/MapUtils'
