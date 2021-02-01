@@ -9,10 +9,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class ExternalApisConfig
 {
-	@Value("${cases-api-url}")
+	@Value("${external-api-urls.cases}")
 	private String casesApiURL;
 
-	@Value("${postcode-api-url}")
+	@Value("${external-api-urls.postcode}")
 	private String postCodeApiURL;
 
 	private static final String [] BOROUGH_NAMES={"Barking and Dagenham","Barnet","Bexley","Brent","Bromley","Camden","Croydon","Ealing","Enfield","Greenwich","Hackney and City of London","Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon","Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames","Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames","Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster"};
