@@ -15,25 +15,19 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @Cacheable methods MUST
@@ -41,6 +35,7 @@ import java.util.stream.Stream;
  * 			+ only be called through the proxy
  */
 @Service
+//@Scope("prototype")
 public class RCallerService
 {
 	private static final Logger logger = LoggerFactory.getLogger(RCallerService.class);
@@ -54,7 +49,8 @@ public class RCallerService
 	public static LocalDate lastRefreshedDateCache; //lastRefreshedDate on data for which cache was generated
 
 	@Autowired
-	public RCallerService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS)
+	public RCallerService(CasesDataAccessService casesDataAccessService,
+						  @Qualifier("BOROUGH_NAMES") String[] BOROUGHS)
 	{
 		this.casesDataAccessService = casesDataAccessService;
 		this.BOROUGHS = BOROUGHS;
@@ -91,7 +87,7 @@ public class RCallerService
 	 * @param borough
 	 * @return predicted cases data rows
 	 */
-	@Cacheable(value="predictedCases",key="#borough")
+	@Cacheable(value="predictedCases",key="#borough", sync = true)
 	public CasesApiInputRow[] getPredictedDataUntilDate(LocalDate date, String borough) throws IOException, ScriptException, URISyntaxException
 	{
 		logger.info("TRAINING MODEL AND PREDICTING DATA FOR ["+borough+"] ON ["+date+"]" );
@@ -100,7 +96,7 @@ public class RCallerService
 		String boroughData= getBoroughDataAsDataFrame(borough);
 
 		engine.put("predict_date", date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))) ;
-
+		//logger.info("borough "+borough+" DATA : "+boroughData);
 		engine.eval(proxy.getScriptContent());
 
 		ListVector predictionsDataFrame = (ListVector) engine.eval("predictCasesUntilDate(predict_date,"+boroughData+")");
@@ -136,8 +132,29 @@ public class RCallerService
 				requestDate.isAfter(RCallerService.maxDateCache); //requestDate > cacheDate
 	}
 
-	@CacheEvict(value="predictedCases", condition ="#root.target.isCacheable(#date,#lastRefreshedDate)",allEntries = true, beforeInvocation = true)
-	public CasesApiInput getPredictedCasesDataForDate(LocalDate date, int days, LocalDate lastRefreshedDate) throws IOException, URISyntaxException, ScriptException
+//	public CasesApiInput getPredictedCasesDataForDate(LocalDate date, int days, LocalDate lastRefreshedDate) throws IOException, URISyntaxException, ScriptException, InterruptedException
+//	{
+//		//semaphore.acquire();
+//		CasesApiInput toReturn = getPredictedCasesDataForDateHelper(date,days,lastRefreshedDate);
+//		//semaphore.release();
+//
+//		return toReturn;
+//	}
+
+
+	/**
+	 *  NOT THREAD SAFE, CALL FROM OTHER METHOD
+	 * @param date
+	 * @param days
+	 * @param lastRefreshedDate
+	 * @return
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 * @throws ScriptException
+	 * @throws InterruptedException
+	 */
+	@CacheEvict(value="predictedCases", condition ="#root.target.isCacheable(#date,#lastRefreshedDate)", allEntries = true, beforeInvocation = true)
+	public CasesApiInput getPredictedCasesDataForDate(LocalDate date, int days, LocalDate lastRefreshedDate) throws IOException, URISyntaxException, ScriptException, InterruptedException
 	{
 		logger.info("INCOMING PREDICTION DATA REQUEST FOR ["+date+"]");
 
@@ -167,7 +184,7 @@ public class RCallerService
 					.filter(r-> r.getDate().isAfter(date.minusDays(days))  && r.getDate().isBefore(date.plusDays(1)))
 					.collect(Collectors.toList());
 
-			Assert.isTrue(dataForBorough.size()==14); //todo remove
+			Assert.isTrue(dataForBorough.size()==14,"Borough ["+borough+"] has data for only ["+dataForBorough.size()+"] days" ); //todo remove
 			//todo throwing  exception if multiple concurrent calls or cancelled requests from front end
 
 			rowsList.addAll(dataForBorough);

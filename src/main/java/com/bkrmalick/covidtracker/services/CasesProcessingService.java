@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 
 @Service
 public class CasesProcessingService
@@ -32,14 +33,21 @@ public class CasesProcessingService
 	private final PopulationDensityDataAccessService populationDensityDataAccessService;
 	private final RCallerService rCallerService;
 
+	public static Semaphore semaphore;
 
 	@Autowired
-	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService, RCallerService rCallerService)
+	public CasesProcessingService(CasesDataAccessService casesDataAccessService,
+								  @Qualifier("BOROUGH_NAMES") String[] BOROUGHS,
+								  PopulationDensityDataAccessService populationDensityDataAccessService,
+								  RCallerService rCallerService,
+								  @Qualifier("predictionServiceSemaphore") Semaphore semaphore
+								  )
 	{
 		this.casesDataAccessService = casesDataAccessService;
 		this.BOROUGHS = BOROUGHS;
 		this.populationDensityDataAccessService = populationDensityDataAccessService;
 		this.rCallerService = rCallerService;
+		this.semaphore = semaphore;
 	}
 
 	/**
@@ -62,13 +70,32 @@ public class CasesProcessingService
 		{
 			/*PREDICTION MODE - user asking for data beyond the data available*/
 			dateForOutput = date;
+			String currentThreadName = Thread.currentThread().getName();
 
 			try
 			{
+				logger.info( String.format( "Thread %s: Attempting to acquire prediction semaphore...", currentThreadName));
+				semaphore.acquire();
+				logger.info( String.format( "Thread %s: Prediction semaphore acquired", currentThreadName ));
 				inputData = rCallerService.getPredictedCasesDataForDate(date, 14, dataLastRefreshedDate);
-			} catch (IOException | ScriptException | URISyntaxException e)
+				logger.info( String.format( "Thread %s: Releasing prediction semaphore...", Thread.currentThread().getName()));
+				semaphore.release();
+			}
+//			catch(InterruptedException e)
+//			{
+//				logger.error(String.format("Thread %s was interrupted", currentThreadName),e);
+//				throw new GeneralUserVisibleException("There was an error processing your request, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
+			catch(InterruptedException e)
 			{
-				e.printStackTrace();
+				logger.error(String.format("Thread %s was interrupted", currentThreadName),e);
+				Thread.currentThread().interrupt(); //TODO add handling to frontend
+			}
+			catch (IOException | ScriptException | URISyntaxException e)
+			{
+				//e.printStackTrace();
+				logger.error("Exception while trying to predict",e);
+				throw new GeneralUserVisibleException("There was an error while trying to predict. Please contact admin.", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		else
