@@ -1,7 +1,9 @@
 package com.bkrmalick.covidtracker.services;
 
 import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
+import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
+import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
 import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
 import org.slf4j.Logger;
@@ -10,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
-import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
-import org.springframework.util.Assert;
 
 import javax.script.ScriptException;
 import java.io.IOException;
@@ -20,8 +19,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.concurrent.Semaphore;
+import java.util.Arrays;
+import java.util.Comparator;
 
 @Service
 public class CasesProcessingService
@@ -31,23 +30,21 @@ public class CasesProcessingService
 	private final String[] BOROUGHS;
 	private final CasesDataAccessService casesDataAccessService;
 	private final PopulationDensityDataAccessService populationDensityDataAccessService;
-	private final RCallerService rCallerService;
+	private final RPredictorService rPredictorService;
 
-	public static Semaphore semaphore;
+//	public static Semaphore semaphore; //TODO change to private?
 
 	@Autowired
 	public CasesProcessingService(CasesDataAccessService casesDataAccessService,
 								  @Qualifier("BOROUGH_NAMES") String[] BOROUGHS,
 								  PopulationDensityDataAccessService populationDensityDataAccessService,
-								  RCallerService rCallerService,
-								  @Qualifier("predictionServiceSemaphore") Semaphore semaphore
-								  )
+								  RPredictorService rPredictorService)
 	{
 		this.casesDataAccessService = casesDataAccessService;
 		this.BOROUGHS = BOROUGHS;
 		this.populationDensityDataAccessService = populationDensityDataAccessService;
-		this.rCallerService = rCallerService;
-		this.semaphore = semaphore;
+		this.rPredictorService = rPredictorService;
+		//this.semaphore = semaphore;
 	}
 
 	/**
@@ -70,30 +67,19 @@ public class CasesProcessingService
 		{
 			/*PREDICTION MODE - user asking for data beyond the data available*/
 			dateForOutput = date;
-			String currentThreadName = Thread.currentThread().getName();
 
 			try
 			{
-				logger.info( String.format( "Thread %s: Attempting to acquire prediction semaphore...", currentThreadName));
-				semaphore.acquire();
-				logger.info( String.format( "Thread %s: Prediction semaphore acquired", currentThreadName ));
-				inputData = rCallerService.getPredictedCasesDataForDate(date, 14, dataLastRefreshedDate);
-				logger.info( String.format( "Thread %s: Releasing prediction semaphore...", Thread.currentThread().getName()));
-				semaphore.release();
+				inputData = rPredictorService.getPredictedCasesDataForDate(date, 14, dataLastRefreshedDate);
 			}
-//			catch(InterruptedException e)
-//			{
-//				logger.error(String.format("Thread %s was interrupted", currentThreadName),e);
-//				throw new GeneralUserVisibleException("There was an error processing your request, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
 			catch(InterruptedException e)
 			{
-				logger.error(String.format("Thread %s was interrupted", currentThreadName),e);
-				Thread.currentThread().interrupt(); //TODO add handling to frontend
+				logger.error(String.format("Thread %s was interrupted", Thread.currentThread().getName()),e);
+				Thread.currentThread().interrupt(); //https://stackoverflow.com/a/20934895
+				throw new GeneralUserVisibleException("There was an error processing your request, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			catch (IOException | ScriptException | URISyntaxException e)
 			{
-				//e.printStackTrace();
 				logger.error("Exception while trying to predict",e);
 				throw new GeneralUserVisibleException("There was an error while trying to predict. Please contact admin.", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
