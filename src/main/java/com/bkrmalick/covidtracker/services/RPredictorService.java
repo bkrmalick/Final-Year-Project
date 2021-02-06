@@ -41,13 +41,12 @@ public class RPredictorService
 
 	private final CasesDataAccessService casesDataAccessService;
 	private final String[] BOROUGHS;
+	private final Semaphore semaphore;
 
 	private RPredictorService proxy; //@Cacheable methods MUST only be called through this proxy
 
-	private static LocalDate maxDateCache; //request Date on data for which cache was generated
-	private static LocalDate lastRefreshedDateCache; //lastRefreshedDate on data for which cache was generated
-
-	private static Semaphore semaphore;
+	private LocalDate maxDateCache; //request Date on data for which cache was generated
+	private LocalDate lastRefreshedDateCache; //lastRefreshedDate on data for which cache was generated
 
 	@Autowired
 	public RPredictorService(CasesDataAccessService casesDataAccessService,
@@ -151,9 +150,9 @@ public class RPredictorService
 	 */
 	public boolean isCacheable(LocalDate requestDate, LocalDate lastRefreshedDate)
 	{
-		return RPredictorService.maxDateCache == null ||  //no caches previously
-				!lastRefreshedDate.isEqual(RPredictorService.lastRefreshedDateCache) || //external data has since been refreshed
-				requestDate.isAfter(RPredictorService.maxDateCache); //requestDate > cacheDate
+		return this.maxDateCache == null ||  //no caches previously
+				!lastRefreshedDate.isEqual(this.lastRefreshedDateCache) || //external data has since been refreshed
+				requestDate.isAfter(this.maxDateCache); //requestDate > cacheDate
 	}
 
 	/**
@@ -174,8 +173,8 @@ public class RPredictorService
 			//and that the next run of getPredictedDataUntilDate
 			//will store new cache
 
-			RPredictorService.maxDateCache = date;
-			RPredictorService.lastRefreshedDateCache = lastRefreshedDate;
+			this.maxDateCache = date;
+			this.lastRefreshedDateCache = lastRefreshedDate;
 			logger.info("ANY EXISTING CACHE REMOVED, CACHE TO BE UPDATED");
 		}
 		else
