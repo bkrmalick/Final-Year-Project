@@ -6,11 +6,21 @@ amazon:
   end-point:
     url: dynamodb.eu-west-2.amazonaws.com
 server:
-    port: 5000
-cases-api-url: https://data.london.gov.uk/api/table/s8c9t_j4fs2?sql=
-postcode-api-url: http://api.postcodes.io/postcodes/
+  port: 5000
+  #tomcat:
+  #  max-threads: 1
+
+external-api-urls:
+  cases: https://data.london.gov.uk/api/table/s8c9t_j4fs2?sql=
+  postcode: http://api.postcodes.io/postcodes/
+
+concurrency:
+  prediction-service-threads: 1 #number of threads allowed to access critical region
+
 logging:
   level:
     org:
       springframework:
         cache: INFO #TRACE
+
+
