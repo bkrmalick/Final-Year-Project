@@ -171,10 +171,13 @@ public class CasesProcessingService
 				.orElseThrow(() -> new IllegalStateException("Cannot find max danger value of boroughs"))
 				.getAbsolute_danger_value();
 
-		return dangerValueOfBorough
-				.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100))
-				.doubleValue();
+
+		return maxDanger_value.compareTo(BigDecimal.ZERO) ==0 ? //can happen if the new case count hasn't increased over last two weeks
+				BigDecimal.ZERO.doubleValue() :
+				dangerValueOfBorough
+						.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)
+						.multiply(BigDecimal.valueOf(100))
+						.doubleValue();
 	}
 
 	/**
