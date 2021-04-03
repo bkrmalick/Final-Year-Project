@@ -1,7 +1,9 @@
 package com.bkrmalick.covidtracker.services;
 
 import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
+import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
 import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInputRow;
+import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
 import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutputRow;
 import com.bkrmalick.covidtracker.models.dynamo_db.PopulationDensityRecord;
 import org.slf4j.Logger;
@@ -10,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import com.bkrmalick.covidtracker.models.cases_api.input.CasesApiInput;
-import com.bkrmalick.covidtracker.models.cases_api.output.CasesApiOutput;
-import org.springframework.util.Assert;
 
 import javax.script.ScriptException;
 import java.io.IOException;
@@ -20,7 +19,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 @Service
 public class CasesProcessingService
@@ -30,16 +30,21 @@ public class CasesProcessingService
 	private final String[] BOROUGHS;
 	private final CasesDataAccessService casesDataAccessService;
 	private final PopulationDensityDataAccessService populationDensityDataAccessService;
-	private final RCallerService rCallerService;
+	private final RPredictorService rPredictorService;
 
+//	public static Semaphore semaphore; //TODO change to private?
 
 	@Autowired
-	public CasesProcessingService(CasesDataAccessService casesDataAccessService, @Qualifier("BOROUGH_NAMES") String[] BOROUGHS, PopulationDensityDataAccessService populationDensityDataAccessService, RCallerService rCallerService)
+	public CasesProcessingService(CasesDataAccessService casesDataAccessService,
+								  @Qualifier("BOROUGH_NAMES") String[] BOROUGHS,
+								  PopulationDensityDataAccessService populationDensityDataAccessService,
+								  RPredictorService rPredictorService)
 	{
 		this.casesDataAccessService = casesDataAccessService;
 		this.BOROUGHS = BOROUGHS;
 		this.populationDensityDataAccessService = populationDensityDataAccessService;
-		this.rCallerService = rCallerService;
+		this.rPredictorService = rPredictorService;
+		//this.semaphore = semaphore;
 	}
 
 	/**
@@ -65,10 +70,18 @@ public class CasesProcessingService
 
 			try
 			{
-				inputData = rCallerService.getPredictedCasesDataForDate(date, 14, dataLastRefreshedDate);
-			} catch (IOException | ScriptException | URISyntaxException e)
+				inputData = rPredictorService.getPredictedCasesDataForDate(date, 14, dataLastRefreshedDate);
+			}
+			catch(InterruptedException e)
 			{
-				e.printStackTrace();
+				logger.error(String.format("Thread %s was interrupted", Thread.currentThread().getName()),e);
+				Thread.currentThread().interrupt(); //https://stackoverflow.com/a/20934895
+				throw new GeneralUserVisibleException("There was an error processing your request, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			catch (IOException | ScriptException | URISyntaxException e)
+			{
+				logger.error("Exception while trying to predict",e);
+				throw new GeneralUserVisibleException("There was an error while trying to predict. Please contact admin.", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		else
@@ -158,10 +171,13 @@ public class CasesProcessingService
 				.orElseThrow(() -> new IllegalStateException("Cannot find max danger value of boroughs"))
 				.getAbsolute_danger_value();
 
-		return dangerValueOfBorough
-				.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)
-				.multiply(BigDecimal.valueOf(100))
-				.doubleValue();
+
+		return maxDanger_value.compareTo(BigDecimal.ZERO) ==0 ? //can happen if the new case count hasn't increased over last two weeks
+				BigDecimal.ZERO.doubleValue() :
+				dangerValueOfBorough
+						.divide(maxDanger_value, 4, RoundingMode.HALF_EVEN)
+						.multiply(BigDecimal.valueOf(100))
+						.doubleValue();
 	}
 
 	/**

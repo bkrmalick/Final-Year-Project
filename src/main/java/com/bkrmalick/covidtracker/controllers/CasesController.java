@@ -31,7 +31,7 @@ public class CasesController
 	{
 		logger.info("INCOMING REQUEST FOR MOST RECENT CASES DATA");
 		//if no date path variable has been provided, just get most recent data
-		return casesProcessingService.produceOutputResponse(null);
+		return casesProcessingService.produceOutputResponse(null); //TODO replace with Optional.empty()?
 	}
 
 	@GetMapping("/{date}")

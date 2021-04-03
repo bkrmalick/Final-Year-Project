@@ -107,9 +107,6 @@ class TooltipHeatMap extends React.Component {
 					const errorDuringLoad = (this.state.casesDataLoaded === null);
 					if (!errorDuringLoad)
 					{
-						console.log(err.response.status )
-						console.log(typeof err.response.status )
-
 						if (err.response.status === 500)
 						{
 							//server error
