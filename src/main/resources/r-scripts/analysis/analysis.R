@@ -7,8 +7,6 @@ predict_borough_pd=4208.8
 predict_year<-format(as.Date(predict_date,format="%d-%m-%Y"),"%Y")
 
 #######################-PREPPING DATA-##################################
-setwd("C:\\Users\\bkrma\\Google Drive\\Year 4\\Final Year Project")
-
 data<-read.csv("phe_cases_london_boroughs.csv") 
 data_pd<-read.csv("housing-density-borough.csv") 
 
@@ -25,6 +23,10 @@ data<- data.frame(data,
 )
 
 bdata<-data[data$area_name==predict_borough,]
+bdata<-bdata[order(bdata$day_index),]
+train<-1:(0.9*nrow(bdata))
+bdata_train<-bdata[train,]
+bdata_test<-bdata[-train,]
 
 ##data for one borough
 summary(bdata)
@@ -58,28 +60,24 @@ summary(lin_m)
 
 library(e1071)
 set.seed(1)
-bdata<-bdata[order(bdata$day_index),]
-train<-1:(0.7*nrow(bdata))
-bdata_train<-bdata[train,]
-bdata_test<-bdata[-train,]
 
 ##SVM Regression
 svm_cv<-tune( svm,
        total_cases~day_index, 
        #kernel="polynomial",
-       data=bdata_train,
+       data=bdata,
        ranges = list(epsilon = seq(0,1,0.1), cost = 2^(2:9)),
        )
 
 summary(svm_cv$best.model)
 
-plot(x=bdata_train$day_index, y=bdata_train$total_cases, col="blue", xlim=c(0,nrow(bdata)), ylim=c(0,max(bdata$total_cases)), ylab="TOTAL CASES", xlab="DAY INDEX")
-points(x=bdata_test$day_index, y=bdata_test$total_cases, col="red")
+plot(x=bdata$day_index, y=bdata$total_cases, col="blue", xlim=c(0,nrow(bdata)+100), ylim=c(0,max(bdata$total_cases)+5000), ylab="TOTAL CASES", xlab="DAY INDEX")
+#points(x=bdata_test$day_index, y=bdata_test$total_cases, col="red")
 legend("bottomright",legend=c("training data","test data", "predicted data"),pch=c("o","o", "x"),col=c("blue","red", "purple"))
 
-isoreg_pred<-predict(svm_cv$best.model, bdata)
-isoreg_pred<-isoreg(isoreg_pred)$yf
-points(bdata$day_index,isoreg_pred,col = "purple", pch=4)
+isoreg_pred<-predict(svm_cv$best.model, bdata_test)
+#isoreg_pred<-isoreg(isoreg_pred)$yf
+points(bdata_test$day_index,isoreg_pred,col = "purple", pch=4)
 
 ########################-Polynomial Regression -##############################
 # find most optimal degree
@@ -95,41 +93,53 @@ for(i in 1:10)
 }
 plot(1:10,error, xlab="Degree", ylab="Mean Squared Error", type="b")
 
-optimal_degree<-4 #which.min(error)
+bdata_test<-data.frame(day_index=0:700)
+
+optimal_degree<-3 #which.min(error)
 
 # train a model using it
-optimal_m<-glm(total_cases~poly(day_index,optimal_degree),data=bdata_train)
+optimal_m<-glm(total_cases~poly(day_index,optimal_degree),data=bdata)
 
-plot(x=bdata_train$day_index, y=bdata_train$total_cases, col="blue", xlim=c(0,nrow(bdata)), ylim=c(0,max(bdata$total_cases)), ylab="TOTAL CASES", xlab="DAY INDEX")
-points(x=bdata_test$day_index, y=bdata_test$total_cases, col="red")
+plot(x=bdata$day_index, y=bdata$total_cases, col="blue", xlim=c(0,nrow(bdata)+100), ylim=c(0,max(bdata$total_cases)+5000), ylab="TOTAL CASES", xlab="DAY INDEX")
+#points(x=bdata_test$day_index, y=bdata_test$total_cases, col="red")
 legend("bottomright",legend=c("training data","test data", "predicted data"),pch=c("o","o", "x"),col=c("blue","red", "purple"))
 
-isoreg_pred<-predict(optimal_m, bdata)
+isoreg_pred<-predict(optimal_m, bdata_test)
 isoreg_pred<-isoreg(isoreg_pred)$yf
-points(bdata$day_index,isoreg_pred,col = "purple", pch=4)
-
-plot(bdata$day_index,bdata$total_cases)
-points(
-  bdata$day_index
-  ,
-  predict(optimal_m,bdata))
-
-
-predict(lin_m,data.frame(day_index=200))
+points(bdata_test$day_index,isoreg_pred,col = "purple", pch=4)
+summary(optimal_m)
 
 ########################- Poisson Regression -##############################
+install.packages("AER")
+
+error<-rep(0,10) #MSE
+
+for(i in 1:10)
+{
+  lin_m<-glm(total_cases~poly(day_index,i), data=bdata, poisson)
+  
+  error[i]<-mean(
+    (bdata$total_cases-predict(lin_m,bdata))^2
+  )
+}
+plot(1:10,error, xlab="Degree", ylab="Mean Squared Error", type="b")
 
 
 # train a model using it
-optimal_m<-glm(total_cases~day_index,data=bdata_train, family="poisson")
-
-plot(x=bdata_train$day_index, y=bdata_train$total_cases, col="blue", xlim=c(0,nrow(bdata)), ylim=c(0,max(bdata$total_cases)), ylab="TOTAL CASES", xlab="DAY INDEX")
-points(x=bdata_test$day_index, y=bdata_test$total_cases, col="red")
+optimal_m<-glm(total_cases~day_index,data=bdata, poisson)
+summary(optimal_m)
+dispersiontest(poisson)
+plot(x=bdata$day_index, y=bdata$total_cases, col="blue", xlim=c(0,nrow(bdata)+100), ylim=c(0,max(bdata$total_cases)+5000), ylab="TOTAL CASES", xlab="DAY INDEX")
+#points(x=bdata_test$day_index, y=bdata_test$total_cases, col="red")
 legend("bottomright",legend=c("training data","test data", "predicted data"),pch=c("o","o", "x"),col=c("blue","red", "purple"))
 summary(optimal_m)
-isoreg_pred<-predict(optimal_m, bdata)
+#isoreg_pred<-
 #isoreg_pred<-isoreg(isoreg_pred)$yf
-points(bdata$day_index,isoreg_pred,col = "purple", pch=4)
+points(bdata_test$day_index,predict(optimal_m, bdata_test, type="response"),col = "purple", pch=4)
+
+#plot(predict(optimal_m, bdata, type="response"))
+
+View(bdata[0:1,])
 
 ########################-lm BOROUGH using k-fold-##############################
 library(boot)
