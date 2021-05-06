@@ -2,24 +2,18 @@ package com.bkrmalick.covidtracker.services;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
 import com.bkrmalick.covidtracker.exceptions.GeneralUserVisibleException;
 import com.bkrmalick.covidtracker.models.dynamo_db.FormQuestionRecord;
 import com.bkrmalick.covidtracker.models.dynamo_db.FormResponseRecord;
-import com.bkrmalick.covidtracker.util.DateTimeUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Repository
 public class FormDataAccessService
