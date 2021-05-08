@@ -7,7 +7,10 @@ export default function ScrollToTop()
 
     useEffect(() => 
     {
-      document.querySelectorAll(".App")[0].scrollTo(0, 0);
+      if (document.querySelectorAll(".App")[0])
+      {
+        document.querySelectorAll(".App")[0].scrollTo(0, 0);
+      }
     }, [pathname]);
 
     return null;
