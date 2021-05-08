@@ -34,21 +34,21 @@ public class FormDataAccessService
 		return dynamoDBMapper.scan(FormQuestionRecord.class, new DynamoDBScanExpression());
 	}
 
-	public FormResponseRecord saveAnswers(Map<String,String> answers)
+	public FormResponseRecord saveAnswers(Map<String, String> answers)
 	{
 		FormResponseRecord item = new FormResponseRecord(answers);
 
 		try
 		{
 			dynamoDBMapper.save(item);
-			logger.info("saved to db response object ["+item+"]");
-		}
-		catch(Exception e)
+			logger.info("saved to db response object [" + item + "]");
+		} catch (Exception e)
 		{
-			logger.error("Failed to store response object ["+item+"]",e);
-			throw new GeneralUserVisibleException("There was an error storing the response, please try again later or contact admin! Response Reference: "+item.getId(), HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Failed to store response object [" + item + "]", e);
+			throw new GeneralUserVisibleException("There was an error storing the response, " +
+					"please try again later or contact admin! Response Reference: " +
+					item.getId(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 		return item;
 	}
 }

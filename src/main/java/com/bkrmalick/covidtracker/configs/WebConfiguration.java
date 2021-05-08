@@ -18,7 +18,7 @@ import java.io.IOException;
  * Credits: https://stackoverflow.com/a/52672246/12567585
  */
 @Configuration
-public class WebConfiguration implements WebMvcConfigurer // extends WebMvcConfigurerAdapter
+public class WebConfiguration implements WebMvcConfigurer
 {
 
 	@Override
