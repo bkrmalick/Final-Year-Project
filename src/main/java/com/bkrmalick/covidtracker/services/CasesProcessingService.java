@@ -32,8 +32,6 @@ public class CasesProcessingService
 	private final PopulationDensityDataAccessService populationDensityDataAccessService;
 	private final RPredictorService rPredictorService;
 
-//	public static Semaphore semaphore; //TODO change to private?
-
 	@Autowired
 	public CasesProcessingService(CasesDataAccessService casesDataAccessService,
 								  @Qualifier("BOROUGH_NAMES") String[] BOROUGHS,

@@ -122,7 +122,7 @@ DEBUG<-FALSE
 if(DEBUG){
   # need to session > set working directory >  select current one
   source("dataToDebug.r") # load data frame from file because console cannot manage large dataframes
-  predictions<-predictCasesUntilDate("21-09-2021",x)
+  predictions<-predictCasesUntilDate("21-09-2021",bdata)
   
 
   plot(bdata$total_cases, col="blue", xlim=c(0,nrow(bdata)+100), ylim=c(0,max(bdata$total_cases)+5000), ylab="TOTAL CASES", xlab="DAY INDEX")
