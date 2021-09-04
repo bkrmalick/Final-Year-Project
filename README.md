@@ -1,0 +1,16 @@
+# COVIDTracker.london
+*PROJECT: BSC COMPUTING (2020_21) @ Birkbeck, UOL.*
+
+A web application to inspect, visualise and predict infection counts in London.
+
+
+## Desktop demo
+[![desktop demo]( https://lh3.googleusercontent.com/fife/AAWUweXX9tSb-J7ApN6DNOBxCjGnFuSgV1tcn8q8WsaXeHN1ZgejfdtAxh2vHRQLPK34h6b6E8Rh14kTAlNAIqyIJWlr1oMgRjA9rOHLyzevr3SAMgpMNYivOAGCDabzFNmcK2x1S40R8BgBgYCV9LdHH3B-sCid2PHxjEndffqPCxzDTrzSeU4F2Ip3kkd6MAOxIKs67RHWYAynYLA7rDKRCOlBcWf27wKNo2rdxSc8pzEmuTReNqO4ldWS4YURT47WGcDvkwrcdc0ay1ktB8tiVEc13lyomQUeTF9Zgavd2TQwCRCwq7_b9X5F7kbNhhtSmKynoHwC5CQwM1dn5brI9fFP3pL_x7wZWZpYOHhQVe6k57cg-O6Whb7ZFecaZO7zBPZXDjc6BgSI9sRMwMa4QhpVeaeC26RAKLto-K1Q8wCPKkCUj1xcqR64smuJxTjBMLj33cz_EL3r9VfjU8r2R2MiChIVV9rmY-y-cOZRALVZtqlCR7SudlUMRSXxBEXhdhKjnWLmJRsfmVywmoTqq-7lcoGyt1wB-4j4RaF-MVHrpQNuYGaUsEdlpZfi8kiKdU5ScH2XxhYI6Lrr8TjU3IZ1xXVb-g50xTrLbwZ2dteNqfpQqAtVoYy1wJTqtr-9cXlymuWxKyZ5qLKfspsK5TqvH2tyD64gBN3jE8HOmN2yZbGxBl50lHXI6g9DfuJk_aS-zi2d_z08EwszB5YD8eOCzeNjPZmtyQ=w200-h190-p-k-nu-ft)](https://drive.google.com/file/d/1A0if-m_RmtkYLQFw1FenPMvkqkS_OuBU/view?usp=sharing)
+
+## Mobile demo
+[![mobile demo](https://lh3.googleusercontent.com/fife/AAWUweXAR9eeQeZtIgqd7l8JJe9N5kbKy2ynO8iONgd9FMHD9xBizHGkh7L4jsiqI_OgkepXFvIipetVhFu1S86HuiRXnGY2T4tZcIpagT23-8ECf6Mggzfc_FW4aS_eGXPRdUEmjtXnMDpzJHT4vFwrPNWn3mO_GtWzk73xRjd6yxJJUtjIDJPf0pTBEJiCeyRY_zlxe-mw6yuBU4bTaz8R3OFC3lJMa7nw8XrWO4kwdP-f3StO_jFGmvTpegxy5R_EQc30J89RnvPA7qkcQLalrFL-EnCSHTx-ZYUc8tipthpXc1762GWCr3VKjpc63jAYgMcEozNkkd3W0EVsH2tQ9DD5QfjHKRXPIeu1q_fSZBL1XpMdrw4Ir8J01G9PQU1AJexux012-V1g7CiEp0IBxvMPgNL8kLmkKanBMAz6zTg6FygGrLMrZjPpcpFIvSdqMdi9qp2U5fczIwbsFp912KrRKYGLC__AaAlp9P-J9-B1RPD7UcSGcA9N96eVXolncuQY9lcxCqM8YxvLAJljOzn9DGVdeT-lonFnyKar8Twb9tWm7k-k774LNqrikrXlfv-C10YEta9mIlqJJwcnjmSiPsEnNeJiFBkraQqCy6rAVBrx6318BFUUIU-UPk6SjsgBw7hwOh-eJwS8IP1_-GeLPHie8i1KNpeIykN2dw4RVsH8k0NfprfMeaeP7DK4zZM8Ug2fwQ49m2DiZF74zWXZcFI_sMLTAg=w200-h190-p-k-nu-ft)](https://drive.google.com/file/d/1_DP-as8eWhRvmCW9kQoOtBQsrQi5TyyQ/view?usp=sharing)
+
+
+
+Find the full report <a href="./13139991_Type4_Report.pdf" target="_blank">here</a> and the video demos <a href="https://drive.google.com/drive/folders/16QSIIRYD73sGxeWnhUl4iOJ8gCGFDVC7f" target="_blank">here.</a>
+
